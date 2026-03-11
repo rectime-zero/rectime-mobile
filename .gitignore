@@ -25,7 +25,13 @@ DerivedData
 # Android/IntelliJ
 #
 build/
-.idea
+.idea/*
+!.idea/.gitignore
+!.idea/misc.xml
+!.idea/modules.xml
+!.idea/vcs.xml
+!.idea/runConfigurations/
+!.idea/runConfigurations/*.xml
 .gradle
 local.properties
 *.iml

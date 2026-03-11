@@ -4,6 +4,15 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
+## JetBrains / Android Studio
+
+Shared run configurations live in `.idea/runConfigurations/`.
+
+- `Metro`: starts the Metro dev server.
+- `Android No Packager`: builds, installs, and launches the Android app while reusing the existing Metro server.
+
+These configurations call `scripts/Start-Metro.ps1` and `scripts/Run-Android.ps1`, which auto-detect `JAVA_HOME` and `ANDROID_SDK_ROOT` from either existing environment variables or the standard Android Studio / SDK install locations on Windows.
+
 ## Step 1: Start Metro
 
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
