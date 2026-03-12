@@ -1,16 +1,20 @@
 import React from 'react';
-import {StatusBar, StyleSheet, View} from 'react-native';
+import {StatusBar, StyleSheet} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import StageProvider from '../stage/StageProvider';
 import StageRenderer from '../stage/StageRenderer';
 
 function App() {
     return (
-        <View style={styles.root}>
+        <GestureHandlerRootView style={styles.root}>
             <StatusBar barStyle="dark-content" backgroundColor="#E7ECF7" />
-            <StageProvider>
-                <StageRenderer />
-            </StageProvider>
-        </View>
+            <SafeAreaProvider>
+                <StageProvider>
+                    <StageRenderer />
+                </StageProvider>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
     );
 }
 

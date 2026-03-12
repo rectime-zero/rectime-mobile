@@ -1,5 +1,5 @@
-import React, {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {Animated} from 'react-native';
+import React, {createContext, useContext, useMemo, useState} from 'react';
+import {useSharedValue, withSpring, type SharedValue} from 'react-native-reanimated';
 import {
     type ActiveGesture,
     type PresentationMode,
@@ -16,9 +16,8 @@ type StageContextValue = {
     rootRoute: StageRoute<RootScreenName>;
     pushStack: StageRoute<PushScreenName>[];
     sheetRoute: StageRoute<SheetScreenName> | null;
-    menuProgress: Animated.Value;
-    menuProgressValueRef: React.MutableRefObject<number>;
-    activeGestureRef: React.MutableRefObject<ActiveGesture>;
+    menuProgress: SharedValue<number>;
+    activeGestureValue: SharedValue<ActiveGesture>;
     stageState: StageState;
     openMenu: () => void;
     closeMenu: () => void;
@@ -44,7 +43,7 @@ const SPRING_CONFIG = {
     damping: 24,
     stiffness: 220,
     mass: 0.95,
-};
+} as const;
 
 function createRoute<TName extends StageScreenName>(
     name: TName,
@@ -69,37 +68,21 @@ function StageProvider({children}: StageProviderProps) {
     const [sheetRoute, setSheetRoute] = useState<StageRoute<SheetScreenName> | null>(null);
     const [activeGesture, setActiveGestureState] = useState<ActiveGesture>('none');
 
-    const menuProgress = useRef(new Animated.Value(0)).current;
-    const menuProgressValueRef = useRef(0);
-    const activeGestureRef = useRef<ActiveGesture>('none');
+    const menuProgress = useSharedValue(0);
+    const activeGestureValue = useSharedValue<ActiveGesture>('none');
 
     const rootRoute = useMemo(
         () => createRoute(rootScreen, 'root', undefined),
         [rootScreen],
     );
 
-    useEffect(() => {
-        const listenerId = menuProgress.addListener(({value}) => {
-            menuProgressValueRef.current = value;
-        });
-
-        return () => {
-            menuProgress.removeListener(listenerId);
-        };
-    }, [menuProgress]);
-
     const setActiveGesture = (gesture: ActiveGesture) => {
         setActiveGestureState(gesture);
-        activeGestureRef.current = gesture;
+        activeGestureValue.value = gesture;
     };
 
     const animateMenu = (toValue: number) => {
-        Animated.spring(menuProgress, {
-            toValue,
-            useNativeDriver: true,
-            bounciness: 0,
-            speed: 18,
-        }).start();
+        menuProgress.value = withSpring(toValue, SPRING_CONFIG);
     };
 
     const closeMenu = () => {
@@ -161,10 +144,10 @@ function StageProvider({children}: StageProviderProps) {
         () => ({
             routeStack: [rootRoute, ...pushStack],
             overlays: sheetRoute ? [sheetRoute] : [],
-            menuProgress: 0,
+            menuProgress: menuProgress.value,
             activeGesture,
         }),
-        [activeGesture, pushStack, rootRoute, sheetRoute],
+        [activeGesture, menuProgress, pushStack, rootRoute, sheetRoute],
     );
 
     const value = useMemo<StageContextValue>(
@@ -173,8 +156,7 @@ function StageProvider({children}: StageProviderProps) {
             pushStack,
             sheetRoute,
             menuProgress,
-            menuProgressValueRef,
-            activeGestureRef,
+            activeGestureValue,
             stageState,
             openMenu,
             closeMenu,
@@ -188,6 +170,7 @@ function StageProvider({children}: StageProviderProps) {
             setActiveGesture,
         }),
         [
+            activeGestureValue,
             stageState,
             menuProgress,
             pushStack,

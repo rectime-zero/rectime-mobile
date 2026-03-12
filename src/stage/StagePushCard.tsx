@@ -1,11 +1,25 @@
 import React, {useEffect} from 'react';
-import {Animated, Dimensions, PanResponder, SafeAreaView, StyleSheet, View} from 'react-native';
+import {Dimensions, StyleSheet, View} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import Animated, {
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+    withTiming,
+} from 'react-native-reanimated';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {renderPushScreen} from './renderStageRoute';
 import {type PushScreenName, type StageRoute} from './types';
 import {useStage} from './useStage';
 
 const EDGE_WIDTH = 28;
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
+const SPRING_CONFIG = {
+    damping: 24,
+    stiffness: 220,
+    mass: 0.95,
+} as const;
 
 type StagePushCardProps = {
     route: StageRoute<PushScreenName>;
@@ -13,105 +27,78 @@ type StagePushCardProps = {
 };
 
 function StagePushCard({route, isTopCard}: StagePushCardProps) {
-    const {activeGestureRef, completePop, setActiveGesture, sheetRoute} = useStage();
-    const translateX = React.useRef(new Animated.Value(SCREEN_WIDTH)).current;
-    const translateXValueRef = React.useRef(SCREEN_WIDTH);
-    const dragStart = React.useRef(0);
+    const {activeGestureValue, completePop, setActiveGesture, sheetRoute} = useStage();
+    const translateX = useSharedValue(SCREEN_WIDTH);
+    const dragStart = useSharedValue(SCREEN_WIDTH);
 
     useEffect(() => {
-        const listenerId = translateX.addListener(({value}) => {
-            translateXValueRef.current = value;
-        });
-
-        Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-            bounciness: 0,
-            speed: 18,
-        }).start();
-
-        return () => {
-            translateX.removeListener(listenerId);
-        };
+        translateX.value = withSpring(0, SPRING_CONFIG);
     }, [translateX]);
 
-    const panResponder = React.useMemo(
+    const backGesture = React.useMemo(
         () =>
-            PanResponder.create({
-                onMoveShouldSetPanResponder: (_, gestureState) => {
-                    if (!isTopCard || !!sheetRoute || activeGestureRef.current !== 'none') {
-                        return false;
-                    }
-
-                    const isHorizontalSwipe =
-                        Math.abs(gestureState.dx) > Math.abs(gestureState.dy) &&
-                        Math.abs(gestureState.dx) > 4;
-
-                    if (!isHorizontalSwipe || gestureState.x0 > EDGE_WIDTH) {
-                        return false;
-                    }
-
-                    dragStart.current = translateXValueRef.current;
-                    setActiveGesture('back');
-                    return true;
-                },
-                onPanResponderMove: (_, gestureState) => {
-                    if (!isTopCard || activeGestureRef.current !== 'back') {
+            Gesture.Pan()
+                .enabled(isTopCard && !sheetRoute)
+                .activeOffsetX([-10, 10])
+                .failOffsetY([-12, 12])
+                .onStart(event => {
+                    if (!isTopCard || activeGestureValue.value !== 'none' || event.absoluteX > EDGE_WIDTH) {
                         return;
                     }
 
-                    translateX.setValue(Math.max(0, dragStart.current + gestureState.dx));
-                },
-                onPanResponderRelease: (_, gestureState) => {
-                    if (!isTopCard || activeGestureRef.current !== 'back') {
+                    dragStart.value = translateX.value;
+                    activeGestureValue.value = 'back';
+                    runOnJS(setActiveGesture)('back');
+                })
+                .onUpdate(event => {
+                    if (!isTopCard || activeGestureValue.value !== 'back') {
                         return;
                     }
 
-                    const shouldPop =
-                        translateXValueRef.current > SCREEN_WIDTH * 0.35 || gestureState.vx > 0.9;
+                    translateX.value = Math.max(0, dragStart.value + event.translationX);
+                })
+                .onEnd(event => {
+                    if (!isTopCard || activeGestureValue.value !== 'back') {
+                        return;
+                    }
+
+                    const shouldPop = translateX.value > SCREEN_WIDTH * 0.35 || event.velocityX > 900;
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
 
                     if (shouldPop) {
-                        Animated.timing(translateX, {
-                            toValue: SCREEN_WIDTH,
-                            duration: 180,
-                            useNativeDriver: true,
-                        }).start(() => {
-                            setActiveGesture('none');
-                            completePop(route.key);
+                        translateX.value = withTiming(SCREEN_WIDTH, {duration: 180}, finished => {
+                            if (finished) {
+                                runOnJS(completePop)(route.key);
+                            }
                         });
                         return;
                     }
 
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 20,
-                    }).start(() => setActiveGesture('none'));
-                },
-                onPanResponderTerminate: () => {
-                    if (!isTopCard || activeGestureRef.current !== 'back') {
+                    translateX.value = withSpring(0, SPRING_CONFIG);
+                })
+                .onFinalize(() => {
+                    if (activeGestureValue.value !== 'back') {
                         return;
                     }
 
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 20,
-                    }).start(() => setActiveGesture('none'));
-                },
-            }),
-        [activeGestureRef, completePop, isTopCard, route.key, setActiveGesture, sheetRoute, translateX],
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
+                }),
+        [activeGestureValue, completePop, dragStart, isTopCard, route.key, setActiveGesture, sheetRoute, translateX],
     );
 
+    const cardStyle = useAnimatedStyle(() => ({
+        transform: [{translateX: translateX.value}],
+    }));
+
     return (
-        <Animated.View
-            {...panResponder.panHandlers}
-            style={[styles.cardLayer, {transform: [{translateX}]}]}>
-            <View style={styles.cardShadow} />
-            <SafeAreaView style={styles.cardSurface}>{renderPushScreen(route)}</SafeAreaView>
-        </Animated.View>
+        <GestureDetector gesture={backGesture}>
+            <Animated.View style={[styles.cardLayer, cardStyle]}>
+                <View style={styles.cardShadow} />
+                <SafeAreaView style={styles.cardSurface}>{renderPushScreen(route)}</SafeAreaView>
+            </Animated.View>
+        </GestureDetector>
     );
 }
 

@@ -1,150 +1,128 @@
 import React, {useEffect} from 'react';
-import {Animated, Dimensions, PanResponder, Platform, Pressable, StyleSheet, View} from 'react-native';
+import {Dimensions, Pressable, StyleSheet, View} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import Animated, {
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+    withTiming,
+} from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {renderSheetScreen} from './renderStageRoute';
 import {type SheetScreenName, type StageRoute} from './types';
 import {useStage} from './useStage';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const SPRING_CONFIG = {
+    damping: 24,
+    stiffness: 220,
+    mass: 0.95,
+} as const;
 
 type StageSheetProps = {
     route: StageRoute<SheetScreenName>;
 };
 
 function StageSheet({route}: StageSheetProps) {
-    const bottomInset = Platform.OS === 'ios' ? 34 : 18;
-    const {activeGestureRef, clearSheet, setActiveGesture} = useStage();
-    const translateY = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-    const backdropOpacity = React.useRef(new Animated.Value(0)).current;
-    const translateYValueRef = React.useRef(SCREEN_HEIGHT);
-    const dragStart = React.useRef(0);
+    const insets = useSafeAreaInsets();
+    const bottomInset = Math.max(insets.bottom, 18);
+    const {activeGestureValue, clearSheet, setActiveGesture} = useStage();
+    const translateY = useSharedValue(SCREEN_HEIGHT);
+    const backdropOpacity = useSharedValue(0);
+    const dragStart = useSharedValue(0);
 
     useEffect(() => {
-        const listenerId = translateY.addListener(({value}) => {
-            translateYValueRef.current = value;
-        });
-
-        Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: true,
-            bounciness: 0,
-            speed: 18,
-        }).start();
-        Animated.timing(backdropOpacity, {
-            toValue: 1,
-            duration: 180,
-            useNativeDriver: true,
-        }).start();
-
-        return () => {
-            translateY.removeListener(listenerId);
-        };
+        translateY.value = withSpring(0, SPRING_CONFIG);
+        backdropOpacity.value = withTiming(1, {duration: 180});
     }, [backdropOpacity, translateY]);
 
-    const dismissSheet = () => {
-        Animated.timing(backdropOpacity, {
-            toValue: 0,
-            duration: 140,
-            useNativeDriver: true,
-        }).start();
-        Animated.timing(translateY, {
-            toValue: SCREEN_HEIGHT,
-            duration: 180,
-            useNativeDriver: true,
-        }).start(({finished}) => {
+    const dismissSheet = React.useCallback(() => {
+        setActiveGesture('none');
+        backdropOpacity.value = withTiming(0, {duration: 140});
+        translateY.value = withTiming(SCREEN_HEIGHT, {duration: 180}, finished => {
             if (finished) {
-                setActiveGesture('none');
-                clearSheet(route.key);
+                runOnJS(clearSheet)(route.key);
             }
         });
-    };
+    }, [backdropOpacity, clearSheet, route.key, setActiveGesture, translateY]);
 
-    const panResponder = React.useMemo(
+    const sheetGesture = React.useMemo(
         () =>
-            PanResponder.create({
-                onMoveShouldSetPanResponder: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'none') {
-                        return false;
-                    }
-
-                    const isVerticalSwipe =
-                        Math.abs(gestureState.dy) > Math.abs(gestureState.dx) &&
-                        Math.abs(gestureState.dy) > 4;
-
-                    if (!isVerticalSwipe) {
-                        return false;
-                    }
-
-                    dragStart.current = translateYValueRef.current;
-                    setActiveGesture('sheet');
-                    return true;
-                },
-                onPanResponderMove: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'sheet') {
+            Gesture.Pan()
+                .activeOffsetY([10, 10])
+                .failOffsetX([-12, 12])
+                .onStart(() => {
+                    if (activeGestureValue.value !== 'none') {
                         return;
                     }
 
-                    const nextY = Math.max(0, dragStart.current + gestureState.dy);
-                    translateY.setValue(nextY);
-                    backdropOpacity.setValue(Math.max(0.2, 1 - nextY / SCREEN_HEIGHT));
-                },
-                onPanResponderRelease: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'sheet') {
+                    dragStart.value = translateY.value;
+                    activeGestureValue.value = 'sheet';
+                    runOnJS(setActiveGesture)('sheet');
+                })
+                .onUpdate(event => {
+                    if (activeGestureValue.value !== 'sheet') {
                         return;
                     }
 
-                    const shouldDismiss =
-                        translateYValueRef.current > SCREEN_HEIGHT * 0.18 || gestureState.vy > 1;
+                    const nextY = Math.max(0, dragStart.value + event.translationY);
+                    translateY.value = nextY;
+                    backdropOpacity.value = Math.max(0.2, 1 - nextY / SCREEN_HEIGHT);
+                })
+                .onEnd(event => {
+                    if (activeGestureValue.value !== 'sheet') {
+                        return;
+                    }
+
+                    const shouldDismiss = translateY.value > SCREEN_HEIGHT * 0.18 || event.velocityY > 1000;
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
 
                     if (shouldDismiss) {
-                        dismissSheet();
+                        backdropOpacity.value = withTiming(0, {duration: 140});
+                        translateY.value = withTiming(SCREEN_HEIGHT, {duration: 180}, finished => {
+                            if (finished) {
+                                runOnJS(clearSheet)(route.key);
+                            }
+                        });
                         return;
                     }
 
-                    Animated.spring(translateY, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 18,
-                    }).start(() => setActiveGesture('none'));
-                    Animated.timing(backdropOpacity, {
-                        toValue: 1,
-                        duration: 180,
-                        useNativeDriver: true,
-                    }).start();
-                },
-                onPanResponderTerminate: () => {
-                    if (activeGestureRef.current !== 'sheet') {
+                    translateY.value = withSpring(0, SPRING_CONFIG);
+                    backdropOpacity.value = withTiming(1, {duration: 180});
+                })
+                .onFinalize(() => {
+                    if (activeGestureValue.value !== 'sheet') {
                         return;
                     }
 
-                    Animated.spring(translateY, {
-                        toValue: 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 18,
-                    }).start(() => setActiveGesture('none'));
-                    Animated.timing(backdropOpacity, {
-                        toValue: 1,
-                        duration: 180,
-                        useNativeDriver: true,
-                    }).start();
-                },
-            }),
-        [activeGestureRef, backdropOpacity, clearSheet, route.key, setActiveGesture, translateY],
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
+                }),
+        [activeGestureValue, backdropOpacity, clearSheet, dragStart, route.key, setActiveGesture, translateY],
     );
+
+    const backdropStyle = useAnimatedStyle(() => ({
+        opacity: backdropOpacity.value,
+    }));
+
+    const sheetStyle = useAnimatedStyle(() => ({
+        transform: [{translateY: translateY.value}],
+    }));
 
     return (
         <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-            <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, {opacity: backdropOpacity}]}>
+            <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}>
                 <Pressable style={StyleSheet.absoluteFill} onPress={dismissSheet} />
             </Animated.View>
 
-            <Animated.View
-                {...panResponder.panHandlers}
-                style={[styles.sheet, {paddingBottom: bottomInset, transform: [{translateY}]}]}>
-                <View style={styles.handle} />
-                {renderSheetScreen(route)}
-            </Animated.View>
+            <GestureDetector gesture={sheetGesture}>
+                <Animated.View style={[styles.sheet, {paddingBottom: bottomInset}, sheetStyle]}>
+                    <View style={styles.handle} />
+                    {renderSheetScreen(route)}
+                </Animated.View>
+            </GestureDetector>
         </View>
     );
 }

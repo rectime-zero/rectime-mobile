@@ -1,5 +1,14 @@
 import React from 'react';
-import {Animated, PanResponder, SafeAreaView, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import Animated, {
+    interpolate,
+    runOnJS,
+    useAnimatedStyle,
+    useSharedValue,
+    withSpring,
+} from 'react-native-reanimated';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import SideMenu from './SideMenu';
 import StagePushCard from './StagePushCard';
 import StageSheet from './StageSheet';
@@ -8,6 +17,11 @@ import {useStage} from './useStage';
 
 const EDGE_WIDTH = 28;
 const MENU_REVEAL_WIDTH = 280;
+const SPRING_CONFIG = {
+    damping: 24,
+    stiffness: 220,
+    mass: 0.95,
+} as const;
 
 function StageRenderer() {
     const {
@@ -15,125 +29,94 @@ function StageRenderer() {
         pushStack,
         sheetRoute,
         menuProgress,
-        menuProgressValueRef,
-        activeGestureRef,
+        activeGestureValue,
         setActiveGesture,
     } = useStage();
 
-    const rootCardPanStart = React.useRef(0);
+    const rootCardPanStart = useSharedValue(0);
+    const canUseMenuGesture = pushStack.length === 0 && !sheetRoute;
 
-    const rootPanResponder = React.useMemo(
+    const menuGesture = React.useMemo(
         () =>
-            PanResponder.create({
-                onMoveShouldSetPanResponder: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'none' || pushStack.length > 0 || !!sheetRoute) {
-                        return false;
+            Gesture.Pan()
+                .enabled(canUseMenuGesture)
+                .activeOffsetX([-10, 10])
+                .failOffsetY([-12, 12])
+                .onStart(event => {
+                    if (activeGestureValue.value !== 'none') {
+                        return;
                     }
 
-                    const isHorizontalSwipe =
-                        Math.abs(gestureState.dx) > Math.abs(gestureState.dy) &&
-                        Math.abs(gestureState.dx) > 4;
-
-                    if (!isHorizontalSwipe) {
-                        return false;
-                    }
-
-                    const canOpenMenu =
-                        menuProgressValueRef.current === 0 && gestureState.x0 <= EDGE_WIDTH;
-                    const canCloseMenu = menuProgressValueRef.current > 0.01;
+                    const canOpenMenu = menuProgress.value <= 0.01 && event.absoluteX <= EDGE_WIDTH;
+                    const canCloseMenu = menuProgress.value > 0.01;
 
                     if (!canOpenMenu && !canCloseMenu) {
-                        return false;
+                        return;
                     }
 
-                    rootCardPanStart.current = menuProgressValueRef.current;
-                    setActiveGesture('menu');
-                    return true;
-                },
-                onPanResponderMove: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'menu') {
+                    rootCardPanStart.value = menuProgress.value;
+                    activeGestureValue.value = 'menu';
+                    runOnJS(setActiveGesture)('menu');
+                })
+                .onUpdate(event => {
+                    if (activeGestureValue.value !== 'menu') {
                         return;
                     }
 
                     const nextProgress = Math.min(
                         1,
-                        Math.max(0, rootCardPanStart.current + gestureState.dx / MENU_REVEAL_WIDTH),
+                        Math.max(0, rootCardPanStart.value + event.translationX / MENU_REVEAL_WIDTH),
                     );
-                    menuProgress.setValue(nextProgress);
-                },
-                onPanResponderRelease: (_, gestureState) => {
-                    if (activeGestureRef.current !== 'menu') {
+                    menuProgress.value = nextProgress;
+                })
+                .onEnd(event => {
+                    if (activeGestureValue.value !== 'menu') {
                         return;
                     }
 
-                    const shouldOpen =
-                        menuProgressValueRef.current > 0.45 || gestureState.vx > 0.7;
-
-                    Animated.spring(menuProgress, {
-                        toValue: shouldOpen ? 1 : 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 18,
-                    }).start(() => setActiveGesture('none'));
-                },
-                onPanResponderTerminate: () => {
-                    if (activeGestureRef.current !== 'menu') {
+                    const shouldOpen = menuProgress.value > 0.45 || event.velocityX > 700;
+                    menuProgress.value = withSpring(shouldOpen ? 1 : 0, SPRING_CONFIG);
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
+                })
+                .onFinalize(() => {
+                    if (activeGestureValue.value !== 'menu') {
                         return;
                     }
 
-                    Animated.spring(menuProgress, {
-                        toValue: menuProgressValueRef.current > 0.45 ? 1 : 0,
-                        useNativeDriver: true,
-                        bounciness: 0,
-                        speed: 18,
-                    }).start(() => setActiveGesture('none'));
-                },
-            }),
-        [activeGestureRef, menuProgress, menuProgressValueRef, pushStack.length, setActiveGesture, sheetRoute],
+                    activeGestureValue.value = 'none';
+                    runOnJS(setActiveGesture)('none');
+                }),
+        [activeGestureValue, canUseMenuGesture, menuProgress, rootCardPanStart, setActiveGesture],
     );
 
-    const translateX = menuProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, MENU_REVEAL_WIDTH],
-    });
-    const scale = menuProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0.92],
-    });
-    const borderRadius = menuProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 32],
-    });
-    const scrimOpacity = menuProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 0.18],
-    });
-    const shadowOpacity = menuProgress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 0.18],
-    });
+    const rootCardStyle = useAnimatedStyle(() => ({
+        borderRadius: interpolate(menuProgress.value, [0, 1], [0, 32]),
+        shadowOpacity: interpolate(menuProgress.value, [0, 1], [0, 0.18]),
+        transform: [
+            {translateX: interpolate(menuProgress.value, [0, 1], [0, MENU_REVEAL_WIDTH])},
+            {scale: interpolate(menuProgress.value, [0, 1], [1, 0.92])},
+        ],
+    }));
+
+    const scrimStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(menuProgress.value, [0, 1], [0, 0.18]),
+    }));
 
     return (
         <View style={styles.container}>
             <SideMenu />
 
-            <Animated.View
-                {...rootPanResponder.panHandlers}
-                style={[
-                    styles.rootCardLayer,
-                    {
-                        borderRadius,
-                        shadowOpacity,
-                        transform: [{translateX}, {scale}],
-                    },
-                ]}>
-                <SafeAreaView style={styles.safeArea}>{renderRootScreen(rootRoute)}</SafeAreaView>
+            <GestureDetector gesture={menuGesture}>
+                <Animated.View style={[styles.rootCardLayer, rootCardStyle]}>
+                    <SafeAreaView style={styles.safeArea}>{renderRootScreen(rootRoute)}</SafeAreaView>
 
-                <Animated.View
-                    pointerEvents="none"
-                    style={[StyleSheet.absoluteFillObject, styles.rootScrim, {opacity: scrimOpacity}]}
-                />
-            </Animated.View>
+                    <Animated.View
+                        pointerEvents="none"
+                        style={[StyleSheet.absoluteFillObject, styles.rootScrim, scrimStyle]}
+                    />
+                </Animated.View>
+            </GestureDetector>
 
             {pushStack.map((route, index) => (
                 <StagePushCard
