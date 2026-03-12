@@ -8,9 +8,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-. (Join-Path $PSScriptRoot 'Shared-AndroidEnv.ps1')
+. (Join-Path $PSScriptRoot '..\lib\Shared-AndroidEnv.ps1')
 
-$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $tooling = Set-AndroidToolingEnvironment
 $reactNativeArgsList = @(@($ReactNativeArgs) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 

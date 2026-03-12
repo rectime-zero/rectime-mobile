@@ -7,7 +7,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location $projectRoot
 $metroArgsList = @(@($MetroArgs) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 
