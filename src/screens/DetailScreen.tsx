@@ -1,6 +1,7 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import ActionButton from '../components/ActionButton';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import HeaderIconButton from '../components/HeaderIconButton';
 import PageLayout from '../components/PageLayout';
 import {type StageRoute} from '../stage/types';
 import {useStage} from '../stage/useStage';
@@ -10,46 +11,185 @@ type DetailScreenProps = {
     route: StageRoute<'detail'>;
 };
 
+const recentMatches = [
+    {title: '100m走 予選', rival: 'IH22', delta: '+50 pts', result: '勝利', tone: 'success' as const},
+    {title: '大玉転がし', rival: 'IS41', delta: '+10 pts', result: '敗北', tone: 'danger' as const},
+    {title: 'クラス対抗リレー', rival: 'IW11', delta: '+40 pts', result: '勝利', tone: 'success' as const},
+];
+
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
     const {pop, presentSheet} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
-            eyebrow="Push Layer"
-            title={route.params.title}
-            description={route.params.summary}
-            headerSlot={
-                <View className="flex-row items-center justify-between gap-3">
-                    <ActionButton label="戻る" onPress={pop} tone="secondary" size="compact" />
-                    <Text style={{color: theme.colors.textMuted, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.1}}>
-                        Interactive Pop
+            headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={pop} />}
+            headerTrailing={<HeaderIconButton icon="ellipsis-h" label="その他" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            title={route.params.title}>
+            <View style={styles.scoreCard}>
+                <View>
+                    <Text style={styles.scoreLabel}>現在の総合得点</Text>
+                    <Text style={styles.scoreValue}>
+                        450 <Text style={styles.scoreUnit}>pts</Text>
                     </Text>
                 </View>
-            }>
-            <View className="gap-4 rounded-[26px] p-5" style={{backgroundColor: theme.colors.surfacePrimary}}>
-                <Text style={{color: theme.colors.textPrimary, fontSize: 24, fontWeight: '800'}}>
-                    右から重なって出る詳細ページ
-                </Text>
-                <Text style={{color: theme.colors.textSecondary, fontSize: 14, lineHeight: 24}}>
-                    この画面は現在ページの上にカードとして積まれています。左端から右へドラッグすると、
-                    途中で止められる interactive pop で戻れます。
-                </Text>
-                <ActionButton
-                    label="この上からシートを出す"
-                    onPress={() => presentSheet('sample-sheet', undefined)}
-                />
+                <View style={styles.scoreIcon}>
+                    <FontAwesome5 color={theme.colors.navigationActive} iconStyle="solid" name="trophy" size={22} />
+                </View>
             </View>
 
-            <View className="gap-3 rounded-[26px] p-5" style={{backgroundColor: theme.colors.surfaceInverse}}>
-                <Text style={{color: theme.colors.textInverse, fontSize: 18, fontWeight: '700'}}>拡張ポイント</Text>
-                <Text style={{color: theme.mode === 'dark' ? theme.colors.textSecondary : '#CBD5E1', fontSize: 14, lineHeight: 24}}>
-                    ここに feature ごとの detail content を差し替えても、push 表示や gesture
-                    の責務は stage 側に残せます。
-                </Text>
-            </View>
+            <Text style={styles.sectionTitle}>対戦結果（直近5試合）</Text>
+
+            {recentMatches.map(match => (
+                <Pressable key={`${match.title}-${match.rival}`} style={styles.matchCard}>
+                    <View style={styles.matchTopRow}>
+                        <Text style={styles.matchTag}>{match.title}</Text>
+                        <View
+                            style={[
+                                styles.resultPill,
+                                match.tone === 'success' ? styles.resultPillSuccess : styles.resultPillDanger,
+                            ]}>
+                            <Text
+                                style={[
+                                    styles.resultPillText,
+                                    match.tone === 'success' ? styles.resultPillTextSuccess : styles.resultPillTextDanger,
+                                ]}>
+                                {match.result}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.matchBottomRow}>
+                        <Text style={styles.matchNames}>
+                            IA31 <Text style={styles.matchVs}>vs</Text> {match.rival}
+                        </Text>
+                        <Text
+                            style={[
+                                styles.matchDelta,
+                                match.tone === 'success' ? styles.matchDeltaSuccess : styles.matchDeltaDanger,
+                            ]}>
+                            {match.delta}
+                        </Text>
+                    </View>
+                </Pressable>
+            ))}
         </PageLayout>
     );
+}
+
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        scoreCard: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 24,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+            paddingHorizontal: 20,
+            paddingVertical: 22,
+        },
+        scoreLabel: {
+            color: theme.colors.textSecondary,
+            fontSize: 16,
+            fontWeight: '700',
+        },
+        scoreValue: {
+            marginTop: 8,
+            color: theme.colors.textPrimary,
+            fontSize: 44,
+            fontWeight: '900',
+        },
+        scoreUnit: {
+            fontSize: 28,
+            fontWeight: '700',
+            color: theme.colors.textMuted,
+        },
+        scoreIcon: {
+            width: 72,
+            height: 72,
+            borderRadius: 36,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: theme.colors.surfaceAccent,
+        },
+        sectionTitle: {
+            color: theme.colors.textSecondary,
+            fontSize: 18,
+            fontWeight: '800',
+        },
+        matchCard: {
+            borderRadius: 22,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+            padding: 16,
+            gap: 16,
+        },
+        matchTopRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        },
+        matchTag: {
+            alignSelf: 'flex-start',
+            borderRadius: 10,
+            overflow: 'hidden',
+            color: theme.colors.textSecondary,
+            fontSize: 14,
+            fontWeight: '700',
+            backgroundColor: theme.colors.surfaceMuted,
+            paddingHorizontal: 10,
+            paddingVertical: 8,
+        },
+        resultPill: {
+            borderRadius: 10,
+            paddingHorizontal: 10,
+            paddingVertical: 8,
+        },
+        resultPillSuccess: {
+            backgroundColor: theme.colors.surfaceSuccess,
+        },
+        resultPillDanger: {
+            backgroundColor: theme.colors.surfaceDanger,
+        },
+        resultPillText: {
+            fontSize: 14,
+            fontWeight: '800',
+        },
+        resultPillTextSuccess: {
+            color: theme.colors.textSuccess,
+        },
+        resultPillTextDanger: {
+            color: theme.colors.textDanger,
+        },
+        matchBottomRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+        },
+        matchNames: {
+            color: theme.colors.textPrimary,
+            fontSize: 20,
+            fontWeight: '900',
+        },
+        matchVs: {
+            color: theme.colors.textMuted,
+            fontSize: 16,
+        },
+        matchDelta: {
+            fontSize: 18,
+            fontWeight: '800',
+        },
+        matchDeltaSuccess: {
+            color: theme.colors.textSuccess,
+        },
+        matchDeltaDanger: {
+            color: theme.colors.textDanger,
+        },
+    });
 }
 
 export default DetailScreen;

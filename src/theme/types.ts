@@ -7,6 +7,10 @@ export type ThemeTokens = {
     mode: ResolvedThemeMode;
     colors: {
         appBackground: string;
+        navigationBackground: string;
+        navigationBorder: string;
+        navigationActive: string;
+        navigationInactive: string;
         stageBackdrop: string;
         stageSurface: string;
         stageShadow: string;
@@ -15,16 +19,24 @@ export type ThemeTokens = {
         menuPanel: string;
         sheetBackground: string;
         sheetHandle: string;
+        headerActionBackground: string;
+        headerActionForeground: string;
         surfacePrimary: string;
         surfaceMuted: string;
         surfaceAccent: string;
         surfaceAccentStrong: string;
         surfaceInverse: string;
+        surfaceSuccess: string;
+        surfaceDanger: string;
+        surfaceWarning: string;
         textPrimary: string;
         textSecondary: string;
         textMuted: string;
         textInverse: string;
         textBrand: string;
+        textSuccess: string;
+        textDanger: string;
+        textWarning: string;
         textOnAccent: string;
         borderSubtle: string;
         borderStrong: string;

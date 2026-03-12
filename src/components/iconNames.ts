@@ -1,0 +1,18 @@
+export type AppIconName =
+    | 'bell'
+    | 'book-open'
+    | 'bullseye'
+    | 'calendar-alt'
+    | 'camera'
+    | 'chevron-left'
+    | 'chevron-right'
+    | 'clipboard-check'
+    | 'clock'
+    | 'ellipsis-h'
+    | 'home'
+    | 'list-ul'
+    | 'map-marked-alt'
+    | 'play-circle'
+    | 'sticky-note'
+    | 'trophy'
+    | 'users';

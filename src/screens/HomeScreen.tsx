@@ -1,116 +1,118 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import ActionButton from '../components/ActionButton';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import HeaderIconButton from '../components/HeaderIconButton';
+import MenuAvatarButton from '../components/MenuAvatarButton';
 import PageLayout from '../components/PageLayout';
+import {type AppIconName} from '../components/iconNames';
 import {useStage} from '../stage/useStage';
-import {availableThemes, useTheme, type ThemeMode} from '../theme';
+import {useTheme} from '../theme';
 
-const modes: Array<{key: ThemeMode; label: string}> = [
-    {key: 'system', label: 'System'},
-    {key: 'light', label: 'Light'},
-    {key: 'dark', label: 'Dark'},
+const actions = [
+    {label: '次の試合', icon: 'play-circle' as AppIconName, tone: 'primary' as const},
+    {label: '通知を確認', icon: 'bell' as AppIconName, tone: 'secondary' as const},
+    {label: '会場メモ', icon: 'sticky-note' as AppIconName, tone: 'secondary' as const},
+];
+
+const highlights = [
+    {label: '来場者', value: '1,280'},
+    {label: '進行率', value: '68%'},
+    {label: 'コート数', value: '12'},
 ];
 
 function HomeScreen() {
-    const {theme, selectedMode, resolvedMode, selectedThemeId, setSelectedMode, setSelectedThemeId} = useTheme();
+    const {theme} = useTheme();
     const {openMenu, presentSheet, push} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
-            eyebrow="Rectime Zero"
-            title="ホーム"
-            description="今日の進行、注目の試合、会場全体の空気感をひと目でつかめる入口です。"
-            headerSlot={
-                <View className="flex-row items-center justify-between gap-3">
-                    <ActionButton
-                        label="メニュー"
-                        onPress={openMenu}
-                        tone="secondary"
-                        size="compact"
+            headerLeading={<MenuAvatarButton onPress={openMenu} />}
+            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            title="ホーム">
+            <View style={styles.heroCard}>
+                <Text style={styles.heroEyebrow}>本日のメインイベント</Text>
+                <Text style={styles.heroTitle}>100m走 決勝</Text>
+                <Text style={styles.heroBody}>3年生ブロックが開始直前です。センターコート周辺はまもなく混雑します。</Text>
+                <Pressable
+                    onPress={() =>
+                        push('detail', {
+                            title: 'IA31 の対戦履歴',
+                            summary: '直近5試合の結果と総合得点を確認できます。',
+                        })
+                    }
+                    style={styles.heroAction}>
+                    <Text style={styles.heroActionText}>詳細を見る</Text>
+                    <FontAwesome5
+                        color={theme.colors.textOnAccent}
+                        iconStyle="solid"
+                        name="chevron-right"
+                        size={13}
                     />
-                    <Text className="text-xs font-bold uppercase tracking-[1.1px] text-slate-500">
-                        Root Card
-                    </Text>
-                </View>
-            }>
-            <View className="flex-row gap-3">
-                <View className="flex-1">
-                    <ActionButton
-                        label="詳細ページを開く"
-                        onPress={() =>
-                            push('detail', {
-                                title: 'Aブロック 第2試合',
-                                summary:
-                                    '現在ページはそのまま残し、次ページだけが右から重なる構造です。',
-                            })
-                        }
-                    />
-                </View>
-                <View className="flex-1">
-                    <ActionButton
-                        label="シートを出す"
-                        onPress={() => presentSheet('sample-sheet', undefined)}
-                        tone="secondary"
-                    />
-                </View>
+                </Pressable>
+            </View>
+
+            <View style={styles.actionRow}>
+                {actions.map(action => (
+                    <Pressable
+                        key={action.label}
+                        onPress={() => {
+                            if (action.label === '次の試合') {
+                                push('detail', {
+                                    title: 'Aブロック 第2試合',
+                                    summary: '右から重なるカードとして試合詳細を確認できます。',
+                                });
+                                return;
+                            }
+
+                            presentSheet('sample-sheet', undefined);
+                        }}
+                        style={[
+                            styles.actionCard,
+                            action.tone === 'primary' ? styles.primaryActionCard : null,
+                        ]}>
+                        <FontAwesome5
+                            color={action.tone === 'primary' ? theme.colors.textOnAccent : theme.colors.navigationActive}
+                            iconStyle="solid"
+                            name={action.icon}
+                            size={16}
+                        />
+                        <Text
+                            style={[
+                                styles.actionLabel,
+                                action.tone === 'primary' ? styles.primaryActionLabel : null,
+                            ]}>
+                            {action.label}
+                        </Text>
+                    </Pressable>
+                ))}
+            </View>
+
+            <View style={styles.metricsGrid}>
+                {highlights.map(item => (
+                    <View key={item.label} style={styles.metricCard}>
+                        <Text style={styles.metricLabel}>{item.label}</Text>
+                        <Text style={styles.metricValue}>{item.value}</Text>
+                    </View>
+                ))}
             </View>
 
             <View style={styles.panel}>
-                <Text style={styles.panelTitle}>Theme Sandbox</Text>
-                <Text style={styles.panelBody}>
-                    現在は `{selectedMode}` 指定で、実際の表示は `{resolvedMode}`。テーマは `{selectedThemeId}` です。
-                </Text>
-                <View className="flex-row flex-wrap gap-3">
-                    {modes.map(mode => (
-                        <View key={mode.key} className="min-w-[92px] flex-1">
-                            <ActionButton
-                                label={mode.label}
-                                onPress={() => setSelectedMode(mode.key)}
-                                tone={selectedMode === mode.key ? 'primary' : 'secondary'}
-                                size="compact"
-                            />
-                        </View>
-                    ))}
+                <Text style={styles.sectionTitle}>本日の動き</Text>
+                <View style={styles.timelineRow}>
+                    <View style={styles.timelineMarker} />
+                    <View style={styles.timelineCard}>
+                        <Text style={styles.timelineTitle}>09:30 開会式</Text>
+                        <Text style={styles.timelineMeta}>アリーナ中央 / 司会進行あり</Text>
+                    </View>
                 </View>
-                <View className="flex-row flex-wrap gap-3">
-                    {availableThemes.map(item => (
-                        <View key={item.id} className="min-w-[120px] flex-1">
-                            <ActionButton
-                                label={item.label}
-                                onPress={() => setSelectedThemeId(item.id)}
-                                tone={selectedThemeId === item.id ? 'primary' : 'ghost'}
-                                size="compact"
-                            />
-                        </View>
-                    ))}
+                <View style={styles.timelineRow}>
+                    <View style={[styles.timelineMarker, styles.timelineMarkerMuted]} />
+                    <View style={styles.timelineCard}>
+                        <Text style={styles.timelineTitle}>10:30 予選第2組</Text>
+                        <Text style={styles.timelineMeta}>センターコート / 進行中</Text>
+                    </View>
                 </View>
-            </View>
-
-            <View style={styles.grid}>
-                <View style={[styles.card, styles.primaryCard]}>
-                    <Text style={styles.cardLabel}>次の試合</Text>
-                    <Text style={styles.primaryTitle}>Aブロック 第2試合</Text>
-                    <Text style={styles.primaryMeta}>10:30 / センターコート</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.cardLabel}>来場者</Text>
-                    <Text style={styles.metric}>1,280</Text>
-                    <Text style={styles.cardMeta}>会場内チェックイン</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.cardLabel}>進行状況</Text>
-                    <Text style={styles.metric}>68%</Text>
-                    <Text style={styles.cardMeta}>本日のプログラム消化率</Text>
-                </View>
-            </View>
-
-            <View style={styles.panel}>
-                <Text style={styles.panelTitle}>今日のハイライト</Text>
-                <Text style={styles.panelBody}>
-                    午後はランキング上位同士の直接対決が続きます。マップから休憩エリアを確認して、
-                    混雑前に移動しておくのがおすすめです。
-                </Text>
             </View>
         </PageLayout>
     );
@@ -118,60 +120,136 @@ function HomeScreen() {
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
-        grid: {
-            gap: 14,
+        heroCard: {
+            borderRadius: 28,
+            padding: 22,
+            gap: 10,
+            backgroundColor: theme.colors.surfaceAccentStrong,
         },
-        card: {
-            backgroundColor: theme.colors.surfacePrimary,
-            borderRadius: 24,
-            padding: 18,
-            gap: 6,
-            borderWidth: 1,
-            borderColor: theme.colors.borderSubtle,
-        },
-        primaryCard: {
-            backgroundColor: theme.colors.surfaceAccent,
-            borderColor: theme.colors.borderStrong,
-        },
-        cardLabel: {
-            color: theme.colors.textSecondary,
+        heroEyebrow: {
+            color: theme.colors.textBrand,
             fontSize: 12,
             fontWeight: '700',
         },
-        primaryTitle: {
-            color: theme.colors.textPrimary,
-            fontSize: 22,
+        heroTitle: {
+            color: theme.colors.textOnAccent,
+            fontSize: 30,
             fontWeight: '800',
         },
-        primaryMeta: {
-            color: theme.colors.textBrand,
+        heroBody: {
+            color: theme.colors.textOnAccent,
             fontSize: 14,
+            lineHeight: 22,
+            opacity: 0.92,
+        },
+        heroAction: {
+            alignSelf: 'flex-start',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+            borderRadius: 16,
+            backgroundColor: 'rgba(255, 255, 255, 0.16)',
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+        },
+        heroActionText: {
+            color: theme.colors.textOnAccent,
+            fontSize: 14,
+            fontWeight: '700',
+        },
+        actionRow: {
+            flexDirection: 'row',
+            gap: 12,
+        },
+        actionCard: {
+            flex: 1,
+            minHeight: 88,
+            borderRadius: 22,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+            paddingHorizontal: 14,
+            paddingVertical: 16,
+            justifyContent: 'space-between',
+        },
+        primaryActionCard: {
+            backgroundColor: theme.colors.navigationBackground,
+            borderColor: theme.colors.navigationBackground,
+        },
+        actionLabel: {
+            color: theme.colors.textPrimary,
+            fontSize: 14,
+            fontWeight: '700',
+        },
+        primaryActionLabel: {
+            color: theme.colors.textOnAccent,
+        },
+        metricsGrid: {
+            flexDirection: 'row',
+            gap: 12,
+        },
+        metricCard: {
+            flex: 1,
+            borderRadius: 22,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+            padding: 16,
+            gap: 8,
+        },
+        metricLabel: {
+            color: theme.colors.textMuted,
+            fontSize: 13,
             fontWeight: '600',
         },
-        metric: {
+        metricValue: {
             color: theme.colors.textPrimary,
             fontSize: 28,
             fontWeight: '800',
         },
-        cardMeta: {
-            color: theme.colors.textMuted,
-            fontSize: 13,
-        },
         panel: {
-            backgroundColor: theme.colors.surfaceMuted,
-            borderRadius: 24,
+            borderRadius: 26,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
             padding: 18,
-            gap: 8,
+            gap: 14,
         },
-        panelTitle: {
+        sectionTitle: {
             color: theme.colors.textPrimary,
             fontSize: 18,
+            fontWeight: '800',
+        },
+        timelineRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+        },
+        timelineMarker: {
+            width: 10,
+            height: 52,
+            borderRadius: 5,
+            backgroundColor: theme.colors.navigationActive,
+        },
+        timelineMarkerMuted: {
+            backgroundColor: theme.colors.textMuted,
+        },
+        timelineCard: {
+            flex: 1,
+            borderRadius: 18,
+            backgroundColor: theme.colors.surfaceMuted,
+            paddingHorizontal: 14,
+            paddingVertical: 14,
+            gap: 4,
+        },
+        timelineTitle: {
+            color: theme.colors.textPrimary,
+            fontSize: 15,
             fontWeight: '700',
         },
-        panelBody: {
+        timelineMeta: {
             color: theme.colors.textSecondary,
-            fontSize: 14,
-            lineHeight: 22,
+            fontSize: 13,
         },
     });
 }

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Platform, StatusBar, Text, View} from 'react-native';
-import ActionButton from '../components/ActionButton';
+import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {Platform, Pressable, StatusBar, Text, View} from 'react-native';
 import {navigationTabs} from '../config/navigationTabs';
 import {useStage} from './useStage';
 import {useTheme} from '../theme';
@@ -18,37 +18,64 @@ function SideMenu() {
                 paddingTop: topInset + 18,
                 paddingBottom: 18,
             }}>
-            <View className="gap-2">
-                <Text style={{color: theme.colors.textBrand, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.2}}>
-                    Rectime Zero
-                </Text>
-                <Text style={{color: theme.colors.textInverse, fontSize: 30, fontWeight: '800'}}>Stage Menu</Text>
-                <Text style={{color: theme.colors.textSecondary, fontSize: 14, lineHeight: 24}}>
-                    背面メニューは常時ここにあり、前景カードだけがスライドして見える構成です。
-                </Text>
+            <View className="flex-row items-center gap-3">
+                <View
+                    className="h-14 w-14 items-center justify-center rounded-full"
+                    style={{backgroundColor: theme.colors.surfaceAccent}}>
+                    <View
+                        className="h-12 w-12 items-center justify-center rounded-full"
+                        style={{backgroundColor: theme.colors.surfacePrimary}}>
+                        <Text style={{color: theme.colors.textPrimary, fontSize: 16, fontWeight: '800'}}>RK</Text>
+                    </View>
+                </View>
+                <View className="flex-1 gap-1">
+                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>佐藤 健太</Text>
+                    <Text style={{color: theme.colors.textSecondary, fontSize: 14, fontWeight: '600'}}>3-A / ID: 20240001</Text>
+                </View>
             </View>
 
-            <View className="mt-8 gap-3">
+            <View className="mt-8 gap-2">
                 {navigationTabs.map(item => {
                     const isActive = item.key === rootRoute.name;
 
                     return (
-                        <ActionButton
+                        <Pressable
                             key={item.key}
-                            label={item.label}
                             onPress={() => setRootScreen(item.key)}
-                            tone={isActive ? 'primary' : 'ghost'}
-                        />
+                            className="flex-row items-center gap-4 rounded-2xl px-4 py-4"
+                            style={{
+                                backgroundColor: isActive ? theme.colors.menuPanel : 'transparent',
+                            }}>
+                            <FontAwesome5
+                                color={isActive ? theme.colors.navigationActive : theme.colors.textSecondary}
+                                iconStyle="solid"
+                                name={item.icon}
+                                size={18}
+                            />
+                            <Text
+                                style={{
+                                    flex: 1,
+                                    color: isActive ? theme.colors.textInverse : theme.colors.textSecondary,
+                                    fontSize: 17,
+                                    fontWeight: '700',
+                                }}>
+                                {item.label}
+                            </Text>
+                        </Pressable>
                     );
                 })}
             </View>
 
             <View className="mt-auto gap-3 rounded-[28px] p-4" style={{backgroundColor: theme.colors.menuPanel}}>
-                <Text style={{color: theme.colors.textInverse, fontSize: 16, fontWeight: '700'}}>Today&apos;s note</Text>
+                <Text style={{color: theme.colors.textInverse, fontSize: 16, fontWeight: '700'}}>ヘルプセンター</Text>
                 <Text style={{color: theme.colors.textSecondary, fontSize: 14, lineHeight: 24}}>
-                    右から被さるページと下から上がる sheet は、すべて同じ Stage 管理下で動きます。
+                    下部タブとメニューはそのままに、各画面の見た目だけを切り替える構成です。
                 </Text>
-                <ActionButton label="メニューを閉じる" onPress={closeMenu} tone="secondary" />
+                <Text
+                    onPress={closeMenu}
+                    style={{color: theme.colors.textBrand, fontSize: 14, fontWeight: '700'}}>
+                    メニューを閉じる
+                </Text>
             </View>
         </View>
     );
