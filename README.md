@@ -24,7 +24,8 @@ rectime の React Native モバイルアプリです。
 ## 開発の入口
 
 - アプリ本体: `src/app/App.tsx`
-- ボトムナビゲーション: `src/navigation/AppNavigator.tsx`
+- Stage 状態管理: `src/stage/StageProvider.tsx`
+- Stage 描画: `src/stage/StageRenderer.tsx`
 - 各ページ: `src/screens/*`
 - アイコン元画像: `src/assets/icons/app-icon.png`
 
@@ -32,4 +33,3 @@ rectime の React Native モバイルアプリです。
 
 - Android の初回セットアップ: `SETUP_ANDROID.md`
 - Android の日常起動手順: `STARTUP_ANDROID.md`
-
