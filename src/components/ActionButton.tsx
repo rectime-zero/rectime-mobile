@@ -1,5 +1,6 @@
 import React from 'react';
-import {Pressable, Text} from 'react-native';
+import {Pressable, StyleSheet, Text} from 'react-native';
+import {useTheme} from '../theme';
 
 type ActionButtonTone = 'primary' | 'secondary' | 'ghost';
 type ActionButtonSize = 'regular' | 'compact';
@@ -9,18 +10,6 @@ type ActionButtonProps = {
     onPress: () => void;
     tone?: ActionButtonTone;
     size?: ActionButtonSize;
-};
-
-const toneClasses: Record<ActionButtonTone, string> = {
-    primary: 'bg-slate-950',
-    secondary: 'border border-slate-200 bg-white',
-    ghost: 'bg-slate-100',
-};
-
-const textClasses: Record<ActionButtonTone, string> = {
-    primary: 'text-white',
-    secondary: 'text-slate-900',
-    ghost: 'text-slate-700',
 };
 
 const sizeClasses: Record<ActionButtonSize, string> = {
@@ -34,13 +23,58 @@ function ActionButton({
     tone = 'primary',
     size = 'regular',
 }: ActionButtonProps) {
+    const {theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
+
+    const buttonToneStyles = {
+        primary: styles.primaryButton,
+        secondary: styles.secondaryButton,
+        ghost: styles.ghostButton,
+    };
+
+    const textToneStyles = {
+        primary: styles.primaryText,
+        secondary: styles.secondaryText,
+        ghost: styles.ghostText,
+    };
+
     return (
         <Pressable
             onPress={onPress}
-            className={`items-center justify-center ${toneClasses[tone]} ${sizeClasses[size]}`}>
-            <Text className={`text-sm font-bold ${textClasses[tone]}`}>{label}</Text>
+            className={`items-center justify-center ${sizeClasses[size]}`}
+            style={buttonToneStyles[tone]}>
+            <Text style={[styles.label, textToneStyles[tone]]}>{label}</Text>
         </Pressable>
     );
+}
+
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        primaryButton: {
+            backgroundColor: theme.colors.buttonPrimary,
+        },
+        secondaryButton: {
+            backgroundColor: theme.colors.buttonSecondary,
+            borderWidth: 1,
+            borderColor: theme.colors.buttonSecondaryBorder,
+        },
+        ghostButton: {
+            backgroundColor: theme.colors.buttonGhost,
+        },
+        label: {
+            fontSize: 14,
+            fontWeight: '700',
+        },
+        primaryText: {
+            color: theme.colors.buttonPrimaryText,
+        },
+        secondaryText: {
+            color: theme.colors.buttonSecondaryText,
+        },
+        ghostText: {
+            color: theme.colors.buttonGhostText,
+        },
+    });
 }
 
 export default ActionButton;

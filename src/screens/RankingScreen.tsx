@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {useStage} from '../stage/useStage';
+import {useTheme} from '../theme';
 
 const ranking = [
     {name: 'Team Horizon', point: 96, trend: '+4'},
@@ -12,7 +13,9 @@ const ranking = [
 ];
 
 function RankingScreen() {
+    const {theme} = useTheme();
     const {openMenu} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
@@ -43,12 +46,13 @@ function RankingScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
     card: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 22,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: theme.colors.borderSubtle,
         padding: 16,
         flexDirection: 'row',
         alignItems: 'center',
@@ -58,12 +62,12 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#FDE68A',
+        backgroundColor: theme.colors.rankBadge,
         alignItems: 'center',
         justifyContent: 'center',
     },
     rankText: {
-        color: '#92400E',
+        color: theme.colors.rankBadgeText,
         fontSize: 18,
         fontWeight: '800',
     },
@@ -72,19 +76,20 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     name: {
-        color: '#0F172A',
+        color: theme.colors.textPrimary,
         fontSize: 17,
         fontWeight: '700',
     },
     meta: {
-        color: '#64748B',
+        color: theme.colors.textMuted,
         fontSize: 13,
     },
     point: {
-        color: '#0F172A',
+        color: theme.colors.textPrimary,
         fontSize: 24,
         fontWeight: '800',
     },
-});
+    });
+}
 
 export default RankingScreen;

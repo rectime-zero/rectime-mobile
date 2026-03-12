@@ -12,6 +12,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {renderSheetScreen} from './renderStageRoute';
 import {type SheetScreenName, type StageRoute} from './types';
 import {useStage} from './useStage';
+import {useTheme} from '../theme';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const SPRING_CONFIG = {
@@ -25,6 +26,7 @@ type StageSheetProps = {
 };
 
 function StageSheet({route}: StageSheetProps) {
+    const {theme} = useTheme();
     const insets = useSafeAreaInsets();
     const bottomInset = Math.max(insets.bottom, 18);
     const {activeGestureValue, clearSheet, setActiveGesture} = useStage();
@@ -110,6 +112,7 @@ function StageSheet({route}: StageSheetProps) {
     const sheetStyle = useAnimatedStyle(() => ({
         transform: [{translateY: translateY.value}],
     }));
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
@@ -127,34 +130,36 @@ function StageSheet({route}: StageSheetProps) {
     );
 }
 
-const styles = StyleSheet.create({
-    backdrop: {
-        backgroundColor: 'rgba(15, 23, 42, 0.36)',
-    },
-    sheet: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        borderTopLeftRadius: 32,
-        borderTopRightRadius: 32,
-        backgroundColor: '#FFFFFF',
-        paddingHorizontal: 20,
-        paddingTop: 12,
-        shadowColor: '#020617',
-        shadowOffset: {width: 0, height: -10},
-        shadowOpacity: 0.18,
-        shadowRadius: 24,
-        elevation: 18,
-    },
-    handle: {
-        alignSelf: 'center',
-        marginBottom: 16,
-        width: 56,
-        height: 8,
-        borderRadius: 999,
-        backgroundColor: '#CBD5E1',
-    },
-});
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        backdrop: {
+            backgroundColor: theme.colors.overlayBackdrop,
+        },
+        sheet: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderTopLeftRadius: 32,
+            borderTopRightRadius: 32,
+            backgroundColor: theme.colors.sheetBackground,
+            paddingHorizontal: 20,
+            paddingTop: 12,
+            shadowColor: theme.colors.stageShadow,
+            shadowOffset: {width: 0, height: -10},
+            shadowOpacity: 0.18,
+            shadowRadius: 24,
+            elevation: 18,
+        },
+        handle: {
+            alignSelf: 'center',
+            marginBottom: 16,
+            width: 56,
+            height: 8,
+            borderRadius: 999,
+            backgroundColor: theme.colors.sheetHandle,
+        },
+    });
+}
 
 export default StageSheet;

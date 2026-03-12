@@ -12,6 +12,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {renderPushScreen} from './renderStageRoute';
 import {type PushScreenName, type StageRoute} from './types';
 import {useStage} from './useStage';
+import {useTheme} from '../theme';
 
 const EDGE_WIDTH = 28;
 const {width: SCREEN_WIDTH} = Dimensions.get('window');
@@ -27,6 +28,7 @@ type StagePushCardProps = {
 };
 
 function StagePushCard({route, isTopCard}: StagePushCardProps) {
+    const {theme} = useTheme();
     const {activeGestureValue, completePop, setActiveGesture, sheetRoute} = useStage();
     const translateX = useSharedValue(SCREEN_WIDTH);
     const dragStart = useSharedValue(SCREEN_WIDTH);
@@ -91,6 +93,7 @@ function StagePushCard({route, isTopCard}: StagePushCardProps) {
     const cardStyle = useAnimatedStyle(() => ({
         transform: [{translateX: translateX.value}],
     }));
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <GestureDetector gesture={backGesture}>
@@ -102,24 +105,26 @@ function StagePushCard({route, isTopCard}: StagePushCardProps) {
     );
 }
 
-const styles = StyleSheet.create({
-    cardLayer: {
-        ...StyleSheet.absoluteFillObject,
-        paddingHorizontal: 10,
-        paddingTop: 8,
-        paddingBottom: 8,
-    },
-    cardSurface: {
-        flex: 1,
-        overflow: 'hidden',
-        borderRadius: 30,
-        backgroundColor: '#E7ECF7',
-    },
-    cardShadow: {
-        ...StyleSheet.absoluteFillObject,
-        borderRadius: 30,
-        backgroundColor: 'rgba(15, 23, 42, 0.08)',
-    },
-});
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        cardLayer: {
+            ...StyleSheet.absoluteFillObject,
+            paddingHorizontal: 10,
+            paddingTop: 8,
+            paddingBottom: 8,
+        },
+        cardSurface: {
+            flex: 1,
+            overflow: 'hidden',
+            borderRadius: 30,
+            backgroundColor: theme.colors.stageSurface,
+        },
+        cardShadow: {
+            ...StyleSheet.absoluteFillObject,
+            borderRadius: 30,
+            backgroundColor: theme.mode === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(15, 23, 42, 0.08)',
+        },
+    });
+}
 
 export default StagePushCard;

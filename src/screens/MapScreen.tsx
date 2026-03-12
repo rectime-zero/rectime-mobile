@@ -3,9 +3,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {useStage} from '../stage/useStage';
+import {useTheme} from '../theme';
 
 function MapScreen() {
+    const {theme} = useTheme();
     const {openMenu} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
@@ -52,9 +55,10 @@ function MapScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
     mapCard: {
-        backgroundColor: '#0F172A',
+        backgroundColor: theme.colors.surfaceInverse,
         borderRadius: 28,
         padding: 16,
         gap: 12,
@@ -71,39 +75,40 @@ const styles = StyleSheet.create({
         flex: 1,
         minHeight: 92,
         borderRadius: 20,
-        backgroundColor: '#1E293B',
+        backgroundColor: theme.colors.mapZone,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 12,
     },
     zoneWide: {
         flex: 2,
-        backgroundColor: '#1D4ED8',
+        backgroundColor: theme.colors.mapZoneStrong,
     },
     zoneTitle: {
-        color: '#F8FAFC',
+        color: theme.colors.mapZoneText,
         fontSize: 16,
         fontWeight: '700',
         textAlign: 'center',
     },
     tipCard: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 22,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: theme.colors.borderSubtle,
         padding: 18,
         gap: 8,
     },
     tipTitle: {
-        color: '#0F172A',
+        color: theme.colors.textPrimary,
         fontSize: 18,
         fontWeight: '700',
     },
     tipBody: {
-        color: '#475569',
+        color: theme.colors.textSecondary,
         fontSize: 14,
         lineHeight: 21,
     },
-});
+    });
+}
 
 export default MapScreen;

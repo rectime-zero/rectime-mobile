@@ -4,12 +4,14 @@ import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {type StageRoute} from '../stage/types';
 import {useStage} from '../stage/useStage';
+import {useTheme} from '../theme';
 
 type DetailScreenProps = {
     route: StageRoute<'detail'>;
 };
 
 function DetailScreen({route}: DetailScreenProps) {
+    const {theme} = useTheme();
     const {pop, presentSheet} = useStage();
 
     return (
@@ -20,16 +22,16 @@ function DetailScreen({route}: DetailScreenProps) {
             headerSlot={
                 <View className="flex-row items-center justify-between gap-3">
                     <ActionButton label="戻る" onPress={pop} tone="secondary" size="compact" />
-                    <Text className="text-xs font-bold uppercase tracking-[1.1px] text-slate-500">
+                    <Text style={{color: theme.colors.textMuted, fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.1}}>
                         Interactive Pop
                     </Text>
                 </View>
             }>
-            <View className="gap-4 rounded-[26px] bg-white p-5">
-                <Text className="text-2xl font-extrabold text-slate-950">
+            <View className="gap-4 rounded-[26px] p-5" style={{backgroundColor: theme.colors.surfacePrimary}}>
+                <Text style={{color: theme.colors.textPrimary, fontSize: 24, fontWeight: '800'}}>
                     右から重なって出る詳細ページ
                 </Text>
-                <Text className="text-sm leading-6 text-slate-600">
+                <Text style={{color: theme.colors.textSecondary, fontSize: 14, lineHeight: 24}}>
                     この画面は現在ページの上にカードとして積まれています。左端から右へドラッグすると、
                     途中で止められる interactive pop で戻れます。
                 </Text>
@@ -39,9 +41,9 @@ function DetailScreen({route}: DetailScreenProps) {
                 />
             </View>
 
-            <View className="gap-3 rounded-[26px] bg-slate-950 p-5">
-                <Text className="text-lg font-bold text-white">拡張ポイント</Text>
-                <Text className="text-sm leading-6 text-slate-300">
+            <View className="gap-3 rounded-[26px] p-5" style={{backgroundColor: theme.colors.surfaceInverse}}>
+                <Text style={{color: theme.colors.textInverse, fontSize: 18, fontWeight: '700'}}>拡張ポイント</Text>
+                <Text style={{color: theme.mode === 'dark' ? theme.colors.textSecondary : '#CBD5E1', fontSize: 14, lineHeight: 24}}>
                     ここに feature ごとの detail content を差し替えても、push 表示や gesture
                     の責務は stage 側に残せます。
                 </Text>

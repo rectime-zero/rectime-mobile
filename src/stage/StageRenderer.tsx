@@ -14,6 +14,7 @@ import StagePushCard from './StagePushCard';
 import StageSheet from './StageSheet';
 import {renderRootScreen} from './renderStageRoute';
 import {useStage} from './useStage';
+import {useTheme} from '../theme';
 
 const EDGE_WIDTH = 28;
 const MENU_REVEAL_WIDTH = 280;
@@ -24,6 +25,7 @@ const SPRING_CONFIG = {
 } as const;
 
 function StageRenderer() {
+    const {theme} = useTheme();
     const {
         rootRoute,
         pushStack,
@@ -103,6 +105,8 @@ function StageRenderer() {
         opacity: interpolate(menuProgress.value, [0, 1], [0, 0.18]),
     }));
 
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
+
     return (
         <View style={styles.container}>
             <SideMenu />
@@ -131,26 +135,28 @@ function StageRenderer() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#020617',
-    },
-    rootCardLayer: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#E7ECF7',
-        overflow: 'hidden',
-        shadowColor: '#020617',
-        shadowOffset: {width: 0, height: 12},
-        shadowRadius: 36,
-        elevation: 20,
-    },
-    rootScrim: {
-        backgroundColor: '#020617',
-    },
-    safeArea: {
-        flex: 1,
-    },
-});
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: theme.colors.stageBackdrop,
+        },
+        rootCardLayer: {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: theme.colors.stageSurface,
+            overflow: 'hidden',
+            shadowColor: theme.colors.stageShadow,
+            shadowOffset: {width: 0, height: 12},
+            shadowRadius: 36,
+            elevation: 20,
+        },
+        rootScrim: {
+            backgroundColor: theme.colors.stageScrim,
+        },
+        safeArea: {
+            flex: 1,
+        },
+    });
+}
 
 export default StageRenderer;

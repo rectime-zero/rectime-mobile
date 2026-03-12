@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {useStage} from '../stage/useStage';
+import {useTheme} from '../theme';
 
 const rules = [
     '試合開始5分前までに指定エリアへ集合してください。',
@@ -12,7 +13,9 @@ const rules = [
 ];
 
 function RulesScreen() {
+    const {theme} = useTheme();
     const {openMenu} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
@@ -37,15 +40,16 @@ function RulesScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
     ruleRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         gap: 12,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: theme.colors.borderSubtle,
         padding: 16,
     },
     bullet: {
@@ -53,14 +57,15 @@ const styles = StyleSheet.create({
         height: 10,
         borderRadius: 5,
         marginTop: 6,
-        backgroundColor: '#2563EB',
+        backgroundColor: theme.colors.bullet,
     },
     ruleText: {
         flex: 1,
-        color: '#334155',
+        color: theme.colors.textSecondary,
         fontSize: 14,
         lineHeight: 22,
     },
-});
+    });
+}
 
 export default RulesScreen;

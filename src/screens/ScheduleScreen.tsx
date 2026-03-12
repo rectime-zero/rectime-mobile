@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {useStage} from '../stage/useStage';
+import {useTheme} from '../theme';
 
 const items = [
     {time: '09:30', title: '受付開始', place: 'エントランス'},
@@ -13,7 +14,9 @@ const items = [
 ];
 
 function ScheduleScreen() {
+    const {theme} = useTheme();
     const {openMenu} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
@@ -43,7 +46,8 @@ function ScheduleScreen() {
     );
 }
 
-const styles = StyleSheet.create({
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
     row: {
         flexDirection: 'row',
         alignItems: 'stretch',
@@ -53,32 +57,33 @@ const styles = StyleSheet.create({
         width: 72,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#E0F2FE',
+        backgroundColor: theme.colors.timelinePill,
         borderRadius: 18,
     },
     time: {
-        color: '#0369A1',
+        color: theme.colors.timelinePillText,
         fontSize: 14,
         fontWeight: '800',
     },
     card: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: theme.colors.surfacePrimary,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: '#E2E8F0',
+        borderColor: theme.colors.borderSubtle,
         padding: 16,
         gap: 4,
     },
     title: {
-        color: '#0F172A',
+        color: theme.colors.textPrimary,
         fontSize: 17,
         fontWeight: '700',
     },
     place: {
-        color: '#64748B',
+        color: theme.colors.textMuted,
         fontSize: 13,
     },
-});
+    });
+}
 
 export default ScheduleScreen;

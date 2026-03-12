@@ -3,9 +3,18 @@ import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../components/ActionButton';
 import PageLayout from '../components/PageLayout';
 import {useStage} from '../stage/useStage';
+import {availableThemes, useTheme, type ThemeMode} from '../theme';
+
+const modes: Array<{key: ThemeMode; label: string}> = [
+    {key: 'system', label: 'System'},
+    {key: 'light', label: 'Light'},
+    {key: 'dark', label: 'Dark'},
+];
 
 function HomeScreen() {
+    const {theme, selectedMode, resolvedMode, selectedThemeId, setSelectedMode, setSelectedThemeId} = useTheme();
     const {openMenu, presentSheet, push} = useStage();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
@@ -47,6 +56,37 @@ function HomeScreen() {
                 </View>
             </View>
 
+            <View style={styles.panel}>
+                <Text style={styles.panelTitle}>Theme Sandbox</Text>
+                <Text style={styles.panelBody}>
+                    現在は `{selectedMode}` 指定で、実際の表示は `{resolvedMode}`。テーマは `{selectedThemeId}` です。
+                </Text>
+                <View className="flex-row flex-wrap gap-3">
+                    {modes.map(mode => (
+                        <View key={mode.key} className="min-w-[92px] flex-1">
+                            <ActionButton
+                                label={mode.label}
+                                onPress={() => setSelectedMode(mode.key)}
+                                tone={selectedMode === mode.key ? 'primary' : 'secondary'}
+                                size="compact"
+                            />
+                        </View>
+                    ))}
+                </View>
+                <View className="flex-row flex-wrap gap-3">
+                    {availableThemes.map(item => (
+                        <View key={item.id} className="min-w-[120px] flex-1">
+                            <ActionButton
+                                label={item.label}
+                                onPress={() => setSelectedThemeId(item.id)}
+                                tone={selectedThemeId === item.id ? 'primary' : 'ghost'}
+                                size="compact"
+                            />
+                        </View>
+                    ))}
+                </View>
+            </View>
+
             <View style={styles.grid}>
                 <View style={[styles.card, styles.primaryCard]}>
                     <Text style={styles.cardLabel}>次の試合</Text>
@@ -76,62 +116,64 @@ function HomeScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    grid: {
-        gap: 14,
-    },
-    card: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 24,
-        padding: 18,
-        gap: 6,
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
-    },
-    primaryCard: {
-        backgroundColor: '#DBEAFE',
-        borderColor: '#93C5FD',
-    },
-    cardLabel: {
-        color: '#475569',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    primaryTitle: {
-        color: '#0F172A',
-        fontSize: 22,
-        fontWeight: '800',
-    },
-    primaryMeta: {
-        color: '#1D4ED8',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    metric: {
-        color: '#0F172A',
-        fontSize: 28,
-        fontWeight: '800',
-    },
-    cardMeta: {
-        color: '#64748B',
-        fontSize: 13,
-    },
-    panel: {
-        backgroundColor: '#F8FAFC',
-        borderRadius: 24,
-        padding: 18,
-        gap: 8,
-    },
-    panelTitle: {
-        color: '#0F172A',
-        fontSize: 18,
-        fontWeight: '700',
-    },
-    panelBody: {
-        color: '#334155',
-        fontSize: 14,
-        lineHeight: 22,
-    },
-});
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        grid: {
+            gap: 14,
+        },
+        card: {
+            backgroundColor: theme.colors.surfacePrimary,
+            borderRadius: 24,
+            padding: 18,
+            gap: 6,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+        },
+        primaryCard: {
+            backgroundColor: theme.colors.surfaceAccent,
+            borderColor: theme.colors.borderStrong,
+        },
+        cardLabel: {
+            color: theme.colors.textSecondary,
+            fontSize: 12,
+            fontWeight: '700',
+        },
+        primaryTitle: {
+            color: theme.colors.textPrimary,
+            fontSize: 22,
+            fontWeight: '800',
+        },
+        primaryMeta: {
+            color: theme.colors.textBrand,
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        metric: {
+            color: theme.colors.textPrimary,
+            fontSize: 28,
+            fontWeight: '800',
+        },
+        cardMeta: {
+            color: theme.colors.textMuted,
+            fontSize: 13,
+        },
+        panel: {
+            backgroundColor: theme.colors.surfaceMuted,
+            borderRadius: 24,
+            padding: 18,
+            gap: 8,
+        },
+        panelTitle: {
+            color: theme.colors.textPrimary,
+            fontSize: 18,
+            fontWeight: '700',
+        },
+        panelBody: {
+            color: theme.colors.textSecondary,
+            fontSize: 14,
+            lineHeight: 22,
+        },
+    });
+}
 
 export default HomeScreen;
