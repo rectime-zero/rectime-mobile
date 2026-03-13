@@ -1,12 +1,12 @@
-﻿import React from 'react';
+import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import {Image, Platform, Pressable, StatusBar, Text, View} from 'react-native';
+import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {mockUserAvatarSource} from '../assets/mockUserAvatar';
+import UserAvatar from '../components/UserAvatar';
 import {sideNavigationTabs} from '../config/sideNavigationTabs';
 import {pushRoutes} from '../config/navigationRoutes';
-import UserAvatar from '../components/UserAvatar';
-import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
+import {useNavigation} from './useNavigation';
 
 const appIcon = require('../assets/icons/app-icon.png');
 
@@ -15,16 +15,11 @@ function SideMenu() {
     const {rootRoute, setRootRoute, closeMenu, pushRoute} = useNavigation();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
     const isBlueTheme = selectedThemeId === 'blue-2024';
+    const styles = React.useMemo(() => createStyles(theme, topInset), [theme, topInset]);
 
     return (
-        <View
-            className="absolute inset-y-0 left-0 w-[78%] px-5"
-            style={{
-                backgroundColor: theme.colors.menuBackground,
-                paddingTop: topInset + 18,
-                paddingBottom: 18,
-            }}>
-            <View className="flex-row items-center gap-3">
+        <View style={styles.container}>
+            <View style={styles.profileRow}>
                 <UserAvatar
                     initials="RK"
                     imageSource={mockUserAvatarSource}
@@ -35,13 +30,13 @@ function SideMenu() {
                     textColor={theme.colors.textPrimary}
                     textSize={16}
                 />
-                <View className="flex-1 gap-1">
-                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>HAL 太郎</Text>
-                    <Text style={{color: theme.colors.textSecondary, fontSize: 14, fontWeight: '600'}}>IA12B / ID: 12345</Text>
+                <View style={styles.profileTextBlock}>
+                    <Text style={styles.profileName}>HAL 太郎</Text>
+                    <Text style={styles.profileMeta}>IA12B / ID: 12345</Text>
                 </View>
             </View>
 
-            <View className="mt-8 gap-2">
+            <View style={styles.tabList}>
                 {sideNavigationTabs.map(item => {
                     const isActive = item.route.name === rootRoute.name;
 
@@ -49,23 +44,14 @@ function SideMenu() {
                         <Pressable
                             key={item.route.name}
                             onPress={() => setRootRoute(item.route)}
-                            className="flex-row items-center gap-4 rounded-2xl px-4 py-4"
-                            style={{
-                                backgroundColor: isActive ? theme.colors.menuPanel : 'transparent',
-                            }}>
+                            style={[styles.tabButton, isActive ? styles.activeTab : null]}>
                             <FontAwesome5
                                 color={isActive ? theme.colors.navigationActive : theme.colors.textSecondary}
                                 iconStyle="solid"
                                 name={item.icon}
                                 size={18}
                             />
-                            <Text
-                                style={{
-                                    flex: 1,
-                                    color: isActive ? theme.colors.textInverse : theme.colors.textSecondary,
-                                    fontSize: 17,
-                                    fontWeight: '700',
-                                }}>
+                            <Text style={[styles.tabLabel, isActive ? styles.activeTabLabel : styles.inactiveTabLabel]}>
                                 {item.label}
                             </Text>
                         </Pressable>
@@ -73,15 +59,12 @@ function SideMenu() {
                 })}
             </View>
 
-            <View
-                className="mt-auto flex-row items-center justify-between rounded-[24px] px-4 py-3"
-                style={{backgroundColor: theme.colors.menuPanel}}>
-                <View className="flex-row items-center gap-2">
+            <View style={styles.footerPanel}>
+                <View style={styles.footerActions}>
                     <Pressable
                         accessibilityRole="button"
                         onPress={() => setSelectedThemeId(isBlueTheme ? 'default' : 'blue-2024')}
-                        className="h-11 w-11 items-center justify-center rounded-[18px]"
-                        style={{backgroundColor: theme.colors.surfacePrimary}}>
+                        style={styles.footerButton}>
                         <FontAwesome5
                             color={theme.colors.navigationActive}
                             iconStyle="solid"
@@ -93,8 +76,7 @@ function SideMenu() {
                     <Pressable
                         accessibilityRole="button"
                         onPress={() => pushRoute(pushRoutes.colorMode())}
-                        className="h-11 w-11 items-center justify-center rounded-[18px]"
-                        style={{backgroundColor: theme.colors.surfacePrimary}}>
+                        style={styles.footerButton}>
                         <FontAwesome5
                             color={theme.colors.textSecondary}
                             iconStyle="solid"
@@ -104,24 +86,112 @@ function SideMenu() {
                     </Pressable>
                 </View>
 
-                <Pressable
-                    accessibilityRole="button"
-                    onPress={closeMenu}
-                    className="flex-row items-center gap-2">
-                    <Image source={appIcon} className="h-6 w-6 rounded-[6px]" resizeMode="cover" />
-                    <Text
-                        style={{
-                            color: theme.colors.textSecondary,
-                            fontSize: 15,
-                            fontWeight: '800',
-                        }}>
-                        rectime
-                    </Text>
+                <Pressable accessibilityRole="button" onPress={closeMenu} style={styles.brandButton}>
+                    <Image source={appIcon} style={styles.brandIcon} resizeMode="cover" />
+                    <Text style={styles.brandLabel}>rectime</Text>
                 </Pressable>
             </View>
         </View>
     );
 }
 
-export default SideMenu;
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: number) {
+    return StyleSheet.create({
+        container: {
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: '78%',
+            paddingTop: topInset + 18,
+            paddingBottom: 18,
+            paddingHorizontal: 20,
+            backgroundColor: theme.colors.menuBackground,
+        },
+        profileRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 12,
+        },
+        profileTextBlock: {
+            flex: 1,
+            gap: 4,
+        },
+        profileName: {
+            color: theme.colors.textInverse,
+            fontSize: 26,
+            fontWeight: '800',
+        },
+        profileMeta: {
+            color: theme.colors.textSecondary,
+            fontSize: 14,
+            fontWeight: '600',
+        },
+        tabList: {
+            marginTop: 32,
+            gap: 8,
+        },
+        tabButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 16,
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+        },
+        activeTab: {
+            backgroundColor: theme.colors.menuPanel,
+        },
+        tabLabel: {
+            flex: 1,
+            fontSize: 17,
+            fontWeight: '700',
+        },
+        activeTabLabel: {
+            color: theme.colors.textInverse,
+        },
+        inactiveTabLabel: {
+            color: theme.colors.textSecondary,
+        },
+        footerPanel: {
+            marginTop: 'auto',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 24,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            backgroundColor: theme.colors.menuPanel,
+        },
+        footerActions: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+        },
+        footerButton: {
+            width: 44,
+            height: 44,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 18,
+            backgroundColor: theme.colors.surfacePrimary,
+        },
+        brandButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+        },
+        brandIcon: {
+            width: 24,
+            height: 24,
+            borderRadius: 6,
+        },
+        brandLabel: {
+            color: theme.colors.textSecondary,
+            fontSize: 15,
+            fontWeight: '800',
+        },
+    });
+}
 
+export default SideMenu;

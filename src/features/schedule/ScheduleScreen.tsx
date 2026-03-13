@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
@@ -17,7 +17,13 @@ function ScheduleScreen() {
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
+            headerTrailing={
+                <HeaderIconButton
+                    icon="bell"
+                    label="通知"
+                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                />
+            }
             title="タイムテーブル">
             <View style={styles.topRow}>
                 <Text style={styles.date}>{scheduleCopy.date}</Text>
@@ -67,7 +73,9 @@ function ScheduleScreen() {
 
             <View style={styles.noteCard}>
                 <Text style={styles.noteTitle}>{scheduleCopy.noteTitle}</Text>
-                <Text style={styles.noteBody}>現在の配色は {selectedThemeId} です。時間軸とカードはこのテーマに合わせて変化します。</Text>
+                <Text style={styles.noteBody}>
+                    現在の配色は {selectedThemeId} です。時間軸とカードはこのテーマに合わせて変化します。
+                </Text>
             </View>
         </PageLayout>
     );
@@ -87,27 +95,28 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         switcher: {
             flexDirection: 'row',
-            borderRadius: 16,
-            backgroundColor: theme.colors.surfaceMuted,
-            padding: 6,
             gap: 6,
+            borderRadius: 16,
+            padding: 6,
+            backgroundColor: theme.colors.surfaceMuted,
         },
         switcherActive: {
             width: 42,
             height: 36,
-            borderRadius: 12,
             alignItems: 'center',
             justifyContent: 'center',
+            borderRadius: 12,
             backgroundColor: theme.colors.surfacePrimary,
         },
         switcherInactive: {
             width: 42,
             height: 36,
-            borderRadius: 12,
             alignItems: 'center',
             justifyContent: 'center',
+            borderRadius: 12,
         },
         timeline: {
+            marginTop: 12,
             gap: 10,
         },
         entryRow: {
@@ -124,16 +133,16 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         axisTrack: {
             width: 1,
             alignSelf: 'stretch',
-            backgroundColor: theme.colors.borderSubtle,
             marginVertical: 6,
+            backgroundColor: theme.colors.borderSubtle,
         },
         entryCard: {
             flex: 1,
             flexDirection: 'row',
+            minHeight: 74,
             overflow: 'hidden',
             borderRadius: 18,
             backgroundColor: theme.colors.surfaceMuted,
-            minHeight: 74,
         },
         entryCardBlue: {
             backgroundColor: theme.colors.surfaceAccent,
@@ -159,9 +168,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         entryContent: {
             flex: 1,
             justifyContent: 'center',
+            gap: 4,
             paddingHorizontal: 14,
             paddingVertical: 12,
-            gap: 4,
         },
         entryTitle: {
             color: theme.colors.textPrimary,
@@ -174,12 +183,13 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '600',
         },
         noteCard: {
+            marginTop: 12,
+            gap: 8,
             borderRadius: 22,
+            padding: 16,
             backgroundColor: theme.colors.surfacePrimary,
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
-            padding: 16,
-            gap: 8,
         },
         noteTitle: {
             color: theme.colors.textPrimary,

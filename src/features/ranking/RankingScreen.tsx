@@ -1,6 +1,6 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
@@ -17,16 +17,22 @@ function RankingScreen() {
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
+            headerTrailing={
+                <HeaderIconButton
+                    icon="bell"
+                    label="通知"
+                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                />
+            }
             title="ランキング">
             <Text style={styles.sectionLabel}>総合順位</Text>
 
             <View style={styles.topGrid}>
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '最新の勝敗と得点推移を確認できます。'))}
-                    style={[styles.topCard, styles.firstCard]}>
-                    <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{rankingEntries[0].medal}</Text>
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '最新の試合結果と順位推移を確認できます。'))}
+                    style={styles.firstCard}>
+                    <View style={styles.topBadge}>
+                        <Text style={styles.topBadgeText}>{rankingEntries[0].medal}</Text>
                     </View>
                     <Text style={styles.topName}>{rankingEntries[0].name}</Text>
                     <Text style={styles.topPoint}>{rankingEntries[0].point} pts</Text>
@@ -40,10 +46,10 @@ function RankingScreen() {
                 </Pressable>
 
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IH22', '上位チームの勝敗サマリーです。'))}
-                    style={[styles.topCard, styles.secondCard]}>
-                    <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{rankingEntries[1].medal}</Text>
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IH22', '上位チームの試合サマリーを確認できます。'))}
+                    style={styles.secondCard}>
+                    <View style={styles.topBadge}>
+                        <Text style={styles.topBadgeText}>{rankingEntries[1].medal}</Text>
                     </View>
                     <Text style={styles.topName}>{rankingEntries[1].name}</Text>
                     <Text style={styles.topPoint}>{rankingEntries[1].point} pts</Text>
@@ -51,7 +57,7 @@ function RankingScreen() {
             </View>
 
             <Pressable
-                onPress={() => pushRoute(pushRoutes.matchHistory('IS41', '直近5試合の結果を一覧で確認できます。'))}
+                onPress={() => pushRoute(pushRoutes.matchHistory('IS41', '決勝までの試合内容を一覧で確認できます。'))}
                 style={styles.thirdRow}>
                 <View style={styles.thirdRank}>
                     <Text style={styles.thirdRankText}>3</Text>
@@ -64,11 +70,8 @@ function RankingScreen() {
                 {rankingEntries.slice(3).map((item, index) => (
                     <Pressable
                         key={item.name}
-                        onPress={() => pushRoute(pushRoutes.matchHistory(item.name, '順位テーブルから選んだチームの履歴です。'))}
-                        style={[
-                            styles.listRow,
-                            index < rankingEntries.slice(3).length - 1 ? styles.listRowBorder : null,
-                        ]}>
+                        onPress={() => pushRoute(pushRoutes.matchHistory(item.name, 'チーム別の試合結果と得点履歴を確認できます。'))}
+                        style={[styles.listRow, index < rankingEntries.slice(3).length - 1 ? styles.listRowBorder : null]}>
                         <Text style={styles.listRank}>{index + 4}</Text>
                         <Text style={styles.listName}>{item.name}</Text>
                         <Text style={styles.listPoint}>{item.point} pts</Text>
@@ -87,30 +90,34 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '700',
         },
         topGrid: {
+            marginTop: 12,
             flexDirection: 'row',
             gap: 12,
         },
-        topCard: {
+        firstCard: {
             flex: 1,
             minHeight: 176,
+            overflow: 'hidden',
             borderRadius: 24,
             padding: 18,
-            overflow: 'hidden',
-        },
-        firstCard: {
             backgroundColor: '#EAB308',
         },
         secondCard: {
+            flex: 1,
+            minHeight: 176,
+            overflow: 'hidden',
+            borderRadius: 24,
+            padding: 18,
             backgroundColor: '#BFC6D2',
         },
-        badge: {
+        topBadge: {
             alignSelf: 'flex-start',
             borderRadius: 12,
-            backgroundColor: 'rgba(255,255,255,0.22)',
             paddingHorizontal: 10,
             paddingVertical: 6,
+            backgroundColor: 'rgba(255,255,255,0.22)',
         },
-        badgeText: {
+        topBadgeText: {
             color: '#FFFFFF',
             fontSize: 14,
             fontWeight: '800',
@@ -133,21 +140,22 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             bottom: 10,
         },
         thirdRow: {
+            marginTop: 12,
             flexDirection: 'row',
             alignItems: 'center',
+            gap: 14,
             borderRadius: 22,
-            backgroundColor: '#FB923C',
             paddingHorizontal: 16,
             paddingVertical: 18,
-            gap: 14,
+            backgroundColor: '#FB923C',
         },
         thirdRank: {
             width: 36,
             height: 36,
-            borderRadius: 18,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'rgba(255,255,255,0.25)',
+            borderRadius: 18,
+            backgroundColor: 'rgba(255,255,255,0.22)',
         },
         thirdRankText: {
             color: '#FFFFFF',
@@ -166,11 +174,12 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '700',
         },
         listCard: {
+            marginTop: 12,
+            overflow: 'hidden',
             borderRadius: 24,
             backgroundColor: theme.colors.surfacePrimary,
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
-            overflow: 'hidden',
         },
         listRow: {
             flexDirection: 'row',

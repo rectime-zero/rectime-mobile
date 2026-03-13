@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useMemo, useState} from 'react';
+import React, {createContext, useCallback, useContext, useMemo, useState} from 'react';
 import {useSharedValue, withSpring, type SharedValue} from 'react-native-reanimated';
 import {
     type ActiveGesture,
@@ -82,81 +82,81 @@ function NavigationProvider({children}: NavigationProviderProps) {
         [rootScreen],
     );
 
-    const setActiveGesture = (gesture: ActiveGesture) => {
+    const setActiveGesture = useCallback((gesture: ActiveGesture) => {
         setActiveGestureState(gesture);
         activeGestureValue.value = gesture;
-    };
+    }, [activeGestureValue]);
 
-    const animateMenu = (toValue: number) => {
+    const animateMenu = useCallback((toValue: number) => {
         menuProgress.value = withSpring(toValue, SPRING_CONFIG);
-    };
+    }, [menuProgress]);
 
-    const closeMenu = () => {
+    const closeMenu = useCallback(() => {
         animateMenu(0);
-    };
+    }, [animateMenu]);
 
-    const openMenu = () => {
+    const openMenu = useCallback(() => {
         if (pushStack.length > 0 || sheetRoute) {
             return;
         }
         animateMenu(1);
-    };
+    }, [animateMenu, pushStack.length, sheetRoute]);
 
-    const setRootScreen = (screen: RootScreenName) => {
+    const setRootScreen = useCallback((screen: RootScreenName) => {
         setRootScreenState(screen);
         setPushStack([]);
         setSheetRoute(null);
         closeMenu();
         setActiveGesture('none');
-    };
+    }, [closeMenu, setActiveGesture]);
 
-    const setRootRoute = (route: RootRouteTarget) => {
+    const setRootRoute = useCallback((route: RootRouteTarget) => {
         setRootScreen(route.name);
-    };
+    }, [setRootScreen]);
 
-    const push = <TName extends PushScreenName>(
+    const push = useCallback(<TName extends PushScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
     ) => {
         closeMenu();
         setPushStack(current => [...current, createRoute(screen, 'push', params)]);
-    };
+    }, [closeMenu]);
 
-    const pushRoute = <TName extends PushScreenName>(route: PushRouteTarget<TName>) => {
+    const pushRoute = useCallback(<TName extends PushScreenName>(route: PushRouteTarget<TName>) => {
         push(route.name, route.params);
-    };
+    }, [push]);
 
-    const pop = () => {
+    const pop = useCallback(() => {
         setPushStack(current => current.slice(0, -1));
         setActiveGesture('none');
-    };
+    }, [setActiveGesture]);
 
-    const completePop = (key: string) => {
+    const completePop = useCallback((key: string) => {
         setPushStack(current => current.filter(route => route.key !== key));
         setActiveGesture('none');
-    };
+    }, [setActiveGesture]);
 
-    const presentSheet = <TName extends SheetScreenName>(
+    const presentSheet = useCallback(<TName extends SheetScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
     ) => {
         setSheetRoute(createRoute(screen, 'bottom-sheet', params));
         setActiveGesture('none');
-    };
+    }, [setActiveGesture]);
 
-    const presentSheetRoute = <TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => {
+    const presentSheetRoute = useCallback(<TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => {
         presentSheet(route.name, route.params);
-    };
+    }, [presentSheet]);
 
-    const dismissSheet = () => {
+    const dismissSheet = useCallback(() => {
         setSheetRoute(null);
         setActiveGesture('none');
-    };
+    }, [setActiveGesture]);
 
-    const clearSheet = (key: string) => {
+    const clearSheet = useCallback((key: string) => {
         setSheetRoute(current => (current?.key === key ? null : current));
         setActiveGesture('none');
-    };
+    }, [setActiveGesture]);
 
     const navigationState = useMemo(
         () => ({
@@ -191,13 +191,23 @@ function NavigationProvider({children}: NavigationProviderProps) {
             setActiveGesture,
         }),
         [
+            clearSheet,
+            closeMenu,
+            completePop,
+            dismissSheet,
             activeGestureValue,
             navigationState,
             menuProgress,
+            openMenu,
+            pop,
+            presentSheet,
+            push,
             pushStack,
             rootRoute,
             sheetRoute,
+            setActiveGesture,
             setRootRoute,
+            setRootScreen,
             pushRoute,
             presentSheetRoute,
         ],

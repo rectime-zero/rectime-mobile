@@ -1,6 +1,6 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
@@ -17,7 +17,13 @@ function MapScreen() {
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
+            headerTrailing={
+                <HeaderIconButton
+                    icon="bell"
+                    label="通知"
+                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                />
+            }
             title="マップ">
             <View style={styles.mapPlaceholder}>
                 <View style={styles.blurLayer} />
@@ -36,8 +42,8 @@ function MapScreen() {
                 <View style={styles.placeHandle} />
                 <Text style={styles.placeTitle}>{mapCopy.placeTitle}</Text>
                 <View style={styles.placeList}>
-                    {mapPlaces.map(place => (
-                        <Pressable key={place.id} style={styles.placeRow}>
+                    {mapPlaces.map((place, index) => (
+                        <Pressable key={place.id} style={[styles.placeRow, index < mapPlaces.length - 1 ? styles.placeRowBorder : null]}>
                             <Text style={styles.placeName}>{place.name}</Text>
                             <FontAwesome5 color={theme.colors.textMuted} iconStyle="solid" name="chevron-right" size={12} />
                         </Pressable>
@@ -52,9 +58,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
         mapPlaceholder: {
             height: 360,
-            borderRadius: 28,
-            overflow: 'hidden',
             justifyContent: 'flex-end',
+            overflow: 'hidden',
+            borderRadius: 28,
             padding: 20,
             backgroundColor: theme.colors.surfaceMuted,
         },
@@ -81,9 +87,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             bottom: 22,
             width: 56,
             height: 56,
-            borderRadius: 28,
             alignItems: 'center',
             justifyContent: 'center',
+            borderRadius: 28,
             backgroundColor: theme.colors.navigationActive,
         },
         floatingRight: {
@@ -92,21 +98,21 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             bottom: 22,
             width: 56,
             height: 56,
-            borderRadius: 28,
             alignItems: 'center',
             justifyContent: 'center',
+            borderRadius: 28,
             backgroundColor: theme.colors.surfacePrimary,
         },
         placeCard: {
             marginTop: -78,
+            gap: 12,
             borderRadius: 28,
-            backgroundColor: theme.colors.surfacePrimary,
-            borderWidth: 1,
-            borderColor: theme.colors.borderSubtle,
             paddingHorizontal: 18,
             paddingTop: 10,
             paddingBottom: 8,
-            gap: 12,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
         },
         placeHandle: {
             alignSelf: 'center',
@@ -121,8 +127,8 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '800',
         },
         placeList: {
-            borderRadius: 20,
             overflow: 'hidden',
+            borderRadius: 20,
             backgroundColor: theme.colors.surfaceMuted,
         },
         placeRow: {
@@ -131,6 +137,8 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             justifyContent: 'space-between',
             paddingHorizontal: 16,
             paddingVertical: 15,
+        },
+        placeRowBorder: {
             borderBottomWidth: 1,
             borderBottomColor: theme.colors.borderSubtle,
         },

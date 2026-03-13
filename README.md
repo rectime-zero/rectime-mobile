@@ -7,29 +7,20 @@ rectime の React Native モバイルアプリです。
 - React Native 0.84
 - React 19
 - TypeScript
-- NativeWind
 
 ## ディレクトリ
 
-- `src/app`: アプリ入口
-- `src/navigation`: ナビゲーション
-- `src/screens`: 画面
-- `src/components`: 共通 UI
-- `src/assets`: 画像などの共通アセット
+- `src/assets`: 画像やアイコンなどの静的アセット
+- `src/components`: 複数画面で共有する UI コンポーネント
+- `src/config`: ルート定義やアプリ共通設定
+- `src/features`: 機能ごとの screen / data / local UI
+- `src/navigation`: 画面遷移とナビゲーション UI
+- `src/theme`: テーマ定義とトークン
 - `android`: Android ネイティブプロジェクト
 - `ios`: iOS ネイティブプロジェクト
-- `scripts`: 起動補助スクリプト
-- `.idea/runConfigurations`: JetBrains / Android Studio の共有実行設定
 
-## 開発の入口
+## 補助ドキュメント
 
-- アプリ本体: `src/app/App.tsx`
-- Stage 状態管理: `src/stage/StageProvider.tsx`
-- Stage 描画: `src/stage/StageRenderer.tsx`
-- 各ページ: `src/screens/*`
-- アイコン元画像: `src/assets/icons/app-icon.png`
-
-## ドキュメント
-
-- Android の初回セットアップ: `SETUP_ANDROID.md`
-- Android の日常起動手順: `STARTUP_ANDROID.md`
+- Android セットアップ: `SETUP_ANDROID.md`
+- Android 起動手順: `STARTUP_ANDROID.md`
+- 実装ポリシー: `react-native-policy.md`

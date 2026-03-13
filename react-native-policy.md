@@ -565,3 +565,48 @@ When there is uncertainty:
 - prefer shared extraction later, not earlier
 
 This is the default standard for the codebase.
+
+---
+
+## 22. Styling Policy
+
+Use React Native default styling as the standard.
+
+### Default Rule
+
+- Use `StyleSheet.create` for component styles.
+- Use style arrays for state-based variants when needed.
+- Use inline style objects only for truly runtime-calculated values that do not fit a stable stylesheet.
+
+### Theme Rule
+
+If a value comes from app theme tokens, prefer `StyleSheet.create` with `theme.colors.*`.
+
+- Theme tokens are the single source of truth for semantic colors.
+- Do not duplicate semantic colors in unrelated local constants.
+
+### Component Rule
+
+Inside a component, keep style ownership consistent.
+
+- Layout, spacing, radius, typography, and color should normally live in the same stylesheet.
+- Avoid mixing large inline objects with stylesheet-driven components.
+- If a style difference is only a state variant, prefer `[styles.base, isActive ? styles.active : null]`.
+
+### Runtime Rule
+
+Inline style objects are allowed only when values are computed from runtime context.
+
+Examples:
+
+- animated values
+- platform-derived offsets
+- dimensions derived from props
+
+Even in these cases, keep the inline part as small as possible and move stable values into `StyleSheet.create`.
+
+### Migration Rule
+
+- New code must follow React Native default styling.
+- Existing code should be migrated incrementally when touched.
+- Do not introduce new styling layers unless there is a clear technical reason.

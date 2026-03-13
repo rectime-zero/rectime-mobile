@@ -1,5 +1,3 @@
-const React = require('react');
-
 const createGesture = () => {
   const chain = {
     enabled: () => chain,

@@ -12,11 +12,6 @@ type ActionButtonProps = {
     size?: ActionButtonSize;
 };
 
-const sizeClasses: Record<ActionButtonSize, string> = {
-    regular: 'min-h-12 rounded-2xl px-4 py-3',
-    compact: 'min-h-10 rounded-xl px-3 py-2',
-};
-
 function ActionButton({
     label,
     onPress,
@@ -25,6 +20,11 @@ function ActionButton({
 }: ActionButtonProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
+
+    const buttonSizeStyles = {
+        regular: styles.regularButton,
+        compact: styles.compactButton,
+    };
 
     const buttonToneStyles = {
         primary: styles.primaryButton,
@@ -39,10 +39,7 @@ function ActionButton({
     };
 
     return (
-        <Pressable
-            onPress={onPress}
-            className={`items-center justify-center ${sizeClasses[size]}`}
-            style={buttonToneStyles[tone]}>
+        <Pressable onPress={onPress} style={[styles.buttonBase, buttonSizeStyles[size], buttonToneStyles[tone]]}>
             <Text style={[styles.label, textToneStyles[tone]]}>{label}</Text>
         </Pressable>
     );
@@ -50,6 +47,22 @@ function ActionButton({
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
+        buttonBase: {
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        regularButton: {
+            minHeight: 48,
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+        },
+        compactButton: {
+            minHeight: 40,
+            borderRadius: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+        },
         primaryButton: {
             backgroundColor: theme.colors.buttonPrimary,
         },

@@ -1,6 +1,6 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
@@ -17,14 +17,22 @@ function HomeScreen() {
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
+            headerTrailing={
+                <HeaderIconButton
+                    icon="bell"
+                    label="通知"
+                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                />
+            }
             title="ホーム">
             <View style={styles.heroCard}>
                 <Text style={styles.heroEyebrow}>本日のメインイベント</Text>
                 <Text style={styles.heroTitle}>100m走 決勝</Text>
-                <Text style={styles.heroBody}>3年生ブロックが開始直前です。センターコート周辺はまもなく混雑します。</Text>
+                <Text style={styles.heroBody}>
+                    3年生ブロックが開始直前です。センターコート周辺はまもなく混雑します。
+                </Text>
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '直近5試合の結果と総合得点を確認できます。'))}
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '予選から決勝までの勝ち上がりを確認できます。'))}
                     style={styles.heroAction}>
                     <Text style={styles.heroActionText}>詳細を見る</Text>
                     <FontAwesome5
@@ -42,27 +50,25 @@ function HomeScreen() {
                         key={action.label}
                         onPress={() => {
                             if (action.label === '次の試合') {
-                                pushRoute(pushRoutes.detail('Aブロック 第2試合', '右から重なるカードとして試合詳細を確認できます。'));
+                                pushRoute(
+                                    pushRoutes.detail(
+                                        'Aブロック 第2試合',
+                                        '勝敗と得点推移をまとめたカードとして試合詳細を確認できます。',
+                                    ),
+                                );
                                 return;
                             }
 
                             presentSheetRoute(sheetRoutes.notifications);
                         }}
-                        style={[
-                            styles.actionCard,
-                            action.tone === 'primary' ? styles.primaryActionCard : null,
-                        ]}>
+                        style={action.tone === 'primary' ? styles.primaryActionCard : styles.actionCard}>
                         <FontAwesome5
                             color={action.tone === 'primary' ? theme.colors.textOnAccent : theme.colors.navigationActive}
                             iconStyle="solid"
                             name={action.icon}
                             size={16}
                         />
-                        <Text
-                            style={[
-                                styles.actionLabel,
-                                action.tone === 'primary' ? styles.primaryActionLabel : null,
-                            ]}>
+                        <Text style={action.tone === 'primary' ? styles.primaryActionLabel : styles.actionLabel}>
                             {action.label}
                         </Text>
                     </Pressable>
@@ -88,7 +94,7 @@ function HomeScreen() {
                     </View>
                 </View>
                 <View style={styles.timelineRow}>
-                    <View style={[styles.timelineMarker, styles.timelineMarkerMuted]} />
+                    <View style={styles.timelineMarkerMuted} />
                     <View style={styles.timelineCard}>
                         <Text style={styles.timelineTitle}>10:30 予選第2組</Text>
                         <Text style={styles.timelineMeta}>センターコート / 進行中</Text>
@@ -104,7 +110,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         heroCard: {
             borderRadius: 28,
             padding: 22,
-            gap: 10,
             backgroundColor: theme.colors.surfaceAccentStrong,
         },
         heroEyebrow: {
@@ -113,25 +118,28 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '700',
         },
         heroTitle: {
+            marginTop: 8,
             color: theme.colors.textOnAccent,
             fontSize: 30,
             fontWeight: '800',
         },
         heroBody: {
+            marginTop: 8,
             color: theme.colors.textOnAccent,
             fontSize: 14,
             lineHeight: 22,
             opacity: 0.92,
         },
         heroAction: {
+            marginTop: 16,
             alignSelf: 'flex-start',
             flexDirection: 'row',
             alignItems: 'center',
             gap: 10,
             borderRadius: 16,
-            backgroundColor: 'rgba(255, 255, 255, 0.16)',
             paddingHorizontal: 14,
             paddingVertical: 12,
+            backgroundColor: 'rgba(255, 255, 255, 0.16)',
         },
         heroActionText: {
             color: theme.colors.textOnAccent,
@@ -139,22 +147,30 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '700',
         },
         actionRow: {
+            marginTop: 12,
             flexDirection: 'row',
             gap: 12,
         },
         actionCard: {
             flex: 1,
             minHeight: 88,
+            justifyContent: 'space-between',
             borderRadius: 22,
+            paddingHorizontal: 14,
+            paddingVertical: 16,
             backgroundColor: theme.colors.surfacePrimary,
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
-            paddingHorizontal: 14,
-            paddingVertical: 16,
-            justifyContent: 'space-between',
         },
         primaryActionCard: {
+            flex: 1,
+            minHeight: 88,
+            justifyContent: 'space-between',
+            borderRadius: 22,
+            paddingHorizontal: 14,
+            paddingVertical: 16,
             backgroundColor: theme.colors.navigationBackground,
+            borderWidth: 1,
             borderColor: theme.colors.navigationBackground,
         },
         actionLabel: {
@@ -164,19 +180,21 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         primaryActionLabel: {
             color: theme.colors.textOnAccent,
+            fontSize: 14,
+            fontWeight: '700',
         },
         metricsGrid: {
+            marginTop: 12,
             flexDirection: 'row',
             gap: 12,
         },
         metricCard: {
             flex: 1,
             borderRadius: 22,
+            padding: 16,
             backgroundColor: theme.colors.surfacePrimary,
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
-            padding: 16,
-            gap: 8,
         },
         metricLabel: {
             color: theme.colors.textMuted,
@@ -184,17 +202,19 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '600',
         },
         metricValue: {
+            marginTop: 8,
             color: theme.colors.textPrimary,
             fontSize: 28,
             fontWeight: '800',
         },
         panel: {
+            marginTop: 12,
+            gap: 14,
             borderRadius: 26,
+            padding: 18,
             backgroundColor: theme.colors.surfacePrimary,
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
-            padding: 18,
-            gap: 14,
         },
         sectionTitle: {
             color: theme.colors.textPrimary,
@@ -213,15 +233,17 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             backgroundColor: theme.colors.navigationActive,
         },
         timelineMarkerMuted: {
+            width: 10,
+            height: 52,
+            borderRadius: 5,
             backgroundColor: theme.colors.textMuted,
         },
         timelineCard: {
             flex: 1,
             borderRadius: 18,
-            backgroundColor: theme.colors.surfaceMuted,
             paddingHorizontal: 14,
             paddingVertical: 14,
-            gap: 4,
+            backgroundColor: theme.colors.surfaceMuted,
         },
         timelineTitle: {
             color: theme.colors.textPrimary,
@@ -229,6 +251,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '700',
         },
         timelineMeta: {
+            marginTop: 4,
             color: theme.colors.textSecondary,
             fontSize: 13,
         },

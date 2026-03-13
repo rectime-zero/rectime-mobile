@@ -3,9 +3,7 @@ module.exports = api => {
   api.cache(() => isTest);
 
   return {
-    presets: isTest
-      ? ['module:@react-native/babel-preset']
-      : ['module:@react-native/babel-preset', 'nativewind/babel'],
+    presets: ['module:@react-native/babel-preset'],
     plugins: ['react-native-worklets/plugin'],
   };
 };

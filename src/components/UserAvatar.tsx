@@ -34,64 +34,84 @@ function UserAvatar({
 }: UserAvatarProps) {
     const [hasImageError, setHasImageError] = React.useState(false);
     const shouldShowImage = Boolean(imageSource) && !hasImageError;
+    const styles = React.useMemo(
+        () =>
+            createStyles({
+                size,
+                innerSize,
+                outerBackgroundColor,
+                innerBackgroundColor,
+                textColor,
+                textSize,
+            }),
+        [innerBackgroundColor, innerSize, outerBackgroundColor, size, textColor, textSize],
+    );
 
     React.useEffect(() => {
         setHasImageError(false);
     }, [imageSource]);
 
     return (
-        <View
-            style={[
-                styles.outer,
-                {
-                    width: size,
-                    height: size,
-                    borderRadius: size / 2,
-                    backgroundColor: outerBackgroundColor,
-                },
-                style,
-            ]}>
-            <View
-                style={[
-                styles.inner,
-                    {
-                        width: innerSize,
-                        height: innerSize,
-                        borderRadius: innerSize / 2,
-                        backgroundColor: innerBackgroundColor,
-                    },
-                ]}>
+        <View style={[styles.outer, style]}>
+            <View style={styles.inner}>
                 {shouldShowImage ? (
                     <Image
                         source={imageSource}
-                        style={{
-                            width: innerSize,
-                            height: innerSize,
-                            borderRadius: innerSize / 2,
-                        }}
+                        style={styles.image}
                         resizeMode="cover"
                         onError={() => setHasImageError(true)}
                     />
                 ) : (
-                    <Text style={[styles.initials, {color: textColor, fontSize: textSize}]}>{initials}</Text>
+                    <Text style={styles.initials}>{initials}</Text>
                 )}
             </View>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    outer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    inner: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    initials: {
-        fontWeight: '800',
-    },
-});
+function createStyles({
+    size,
+    innerSize,
+    outerBackgroundColor,
+    innerBackgroundColor,
+    textColor,
+    textSize,
+}: {
+    size: number;
+    innerSize: number;
+    outerBackgroundColor: string;
+    innerBackgroundColor: string;
+    textColor: string;
+    textSize: number;
+}) {
+    return StyleSheet.create({
+        outer: {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: outerBackgroundColor,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        inner: {
+            width: innerSize,
+            height: innerSize,
+            borderRadius: innerSize / 2,
+            backgroundColor: innerBackgroundColor,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        image: {
+            width: innerSize,
+            height: innerSize,
+            borderRadius: innerSize / 2,
+        },
+        initials: {
+            color: textColor,
+            fontSize: textSize,
+            fontWeight: '800',
+        },
+    });
+}
 
 export default UserAvatar;
