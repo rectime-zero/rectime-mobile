@@ -28,7 +28,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             width: 44,
             height: 44,
             borderRadius: 22,
-            backgroundColor: theme.colors.surfaceAccent,
             alignItems: 'center',
             justifyContent: 'center',
         },

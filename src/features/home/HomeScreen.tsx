@@ -4,22 +4,10 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
-import {type AppIconName} from '../../components/iconNames';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-
-const actions = [
-    {label: '次の試合', icon: 'play-circle' as AppIconName, tone: 'primary' as const},
-    {label: '通知を確認', icon: 'bell' as AppIconName, tone: 'secondary' as const},
-    {label: '会場メモ', icon: 'sticky-note' as AppIconName, tone: 'secondary' as const},
-];
-
-const highlights = [
-    {label: '来場者', value: '1,280'},
-    {label: '進行率', value: '68%'},
-    {label: 'コート数', value: '12'},
-];
+import {homeActions, homeHighlights} from './data';
 
 function HomeScreen() {
     const {theme} = useTheme();
@@ -49,7 +37,7 @@ function HomeScreen() {
             </View>
 
             <View style={styles.actionRow}>
-                {actions.map(action => (
+                {homeActions.map(action => (
                     <Pressable
                         key={action.label}
                         onPress={() => {
@@ -82,7 +70,7 @@ function HomeScreen() {
             </View>
 
             <View style={styles.metricsGrid}>
-                {highlights.map(item => (
+                {homeHighlights.map(item => (
                     <View key={item.label} style={styles.metricCard}>
                         <Text style={styles.metricLabel}>{item.label}</Text>
                         <Text style={styles.metricValue}>{item.value}</Text>

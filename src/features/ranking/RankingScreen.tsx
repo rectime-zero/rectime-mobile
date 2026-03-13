@@ -7,15 +7,7 @@ import PageLayout from '../../components/PageLayout';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-
-const ranking = [
-    {name: 'IA31', point: 450, medal: '1位', tone: 'gold' as const},
-    {name: 'IH22', point: 420, medal: '2位', tone: 'silver' as const},
-    {name: 'IS41', point: 390, medal: '3位', tone: 'bronze' as const},
-    {name: 'IW11', point: 350},
-    {name: 'IA21', point: 340},
-    {name: 'IH12', point: 310},
-];
+import {rankingEntries} from './data';
 
 function RankingScreen() {
     const {theme} = useTheme();
@@ -34,10 +26,10 @@ function RankingScreen() {
                     onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '最新の勝敗と得点推移を確認できます。'))}
                     style={[styles.topCard, styles.firstCard]}>
                     <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{ranking[0].medal}</Text>
+                        <Text style={styles.badgeText}>{rankingEntries[0].medal}</Text>
                     </View>
-                    <Text style={styles.topName}>{ranking[0].name}</Text>
-                    <Text style={styles.topPoint}>{ranking[0].point} pts</Text>
+                    <Text style={styles.topName}>{rankingEntries[0].name}</Text>
+                    <Text style={styles.topPoint}>{rankingEntries[0].point} pts</Text>
                     <FontAwesome5
                         color="rgba(255,255,255,0.18)"
                         iconStyle="solid"
@@ -51,10 +43,10 @@ function RankingScreen() {
                     onPress={() => pushRoute(pushRoutes.matchHistory('IH22', '上位チームの勝敗サマリーです。'))}
                     style={[styles.topCard, styles.secondCard]}>
                     <View style={styles.badge}>
-                        <Text style={styles.badgeText}>{ranking[1].medal}</Text>
+                        <Text style={styles.badgeText}>{rankingEntries[1].medal}</Text>
                     </View>
-                    <Text style={styles.topName}>{ranking[1].name}</Text>
-                    <Text style={styles.topPoint}>{ranking[1].point} pts</Text>
+                    <Text style={styles.topName}>{rankingEntries[1].name}</Text>
+                    <Text style={styles.topPoint}>{rankingEntries[1].point} pts</Text>
                 </Pressable>
             </View>
 
@@ -64,18 +56,18 @@ function RankingScreen() {
                 <View style={styles.thirdRank}>
                     <Text style={styles.thirdRankText}>3</Text>
                 </View>
-                <Text style={styles.thirdName}>{ranking[2].name}</Text>
-                <Text style={styles.thirdPoint}>{ranking[2].point} pts</Text>
+                <Text style={styles.thirdName}>{rankingEntries[2].name}</Text>
+                <Text style={styles.thirdPoint}>{rankingEntries[2].point} pts</Text>
             </Pressable>
 
             <View style={styles.listCard}>
-                {ranking.slice(3).map((item, index) => (
+                {rankingEntries.slice(3).map((item, index) => (
                     <Pressable
                         key={item.name}
                         onPress={() => pushRoute(pushRoutes.matchHistory(item.name, '順位テーブルから選んだチームの履歴です。'))}
                         style={[
                             styles.listRow,
-                            index < ranking.slice(3).length - 1 ? styles.listRowBorder : null,
+                            index < rankingEntries.slice(3).length - 1 ? styles.listRowBorder : null,
                         ]}>
                         <Text style={styles.listRank}>{index + 4}</Text>
                         <Text style={styles.listName}>{item.name}</Text>
