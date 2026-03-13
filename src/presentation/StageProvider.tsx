@@ -13,7 +13,7 @@ import {
     type StageRouteParamsMap,
     type StageScreenName,
     type StageState,
-} from './types';
+} from '../navigation/types';
 
 type StageContextValue = {
     rootRoute: StageRoute<RootScreenName>;

@@ -10,7 +10,7 @@ jest.mock('react-native-reanimated', () => require('./mocks/reanimated'));
 jest.mock('react-native-safe-area-context', () => require('./mocks/safe-area-context'));
 jest.mock('@react-native-vector-icons/fontawesome5', () => 'FontAwesome5');
 
-import App from '../src/app/App';
+import App from '../src/navigation/AppRoot';
 
 test('renders correctly', async () => {
   await ReactTestRenderer.act(() => {

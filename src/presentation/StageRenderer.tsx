@@ -12,7 +12,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SideMenu from './SideMenu';
 import StagePushCard from './StagePushCard';
 import StageSheet from './StageSheet';
-import {renderRootScreen} from './renderStageRoute';
+import {renderRootScreen} from '../navigation/renderRoute';
 import {useStage} from './useStage';
 import {useTheme} from '../theme';
 

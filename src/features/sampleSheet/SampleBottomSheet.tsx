@@ -1,8 +1,8 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import ActionButton from '../components/ActionButton';
-import {useStage} from '../stage/useStage';
-import {useTheme} from '../theme';
+import ActionButton from '../../components/ActionButton';
+import {useStage} from '../../presentation/useStage';
+import {useTheme} from '../../theme';
 
 function SampleBottomSheet() {
     const {theme} = useTheme();

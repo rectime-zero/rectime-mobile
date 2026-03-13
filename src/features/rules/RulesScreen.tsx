@@ -1,13 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import HeaderIconButton from '../components/HeaderIconButton';
-import MenuAvatarButton from '../components/MenuAvatarButton';
-import PageLayout from '../components/PageLayout';
-import {type AppIconName} from '../components/iconNames';
-import {sheetRoutes} from '../config/stageRoutes';
-import {useStage} from '../stage/useStage';
-import {useTheme} from '../theme';
+import HeaderIconButton from '../../components/HeaderIconButton';
+import MenuAvatarButton from '../../components/MenuAvatarButton';
+import PageLayout from '../../components/PageLayout';
+import {type AppIconName} from '../../components/iconNames';
+import {sheetRoutes} from '../../config/stageRoutes';
+import {useStage} from '../../presentation/useStage';
+import {useTheme} from '../../theme';
 
 const rules = [
     {icon: 'clock' as AppIconName, title: '集合時間', body: '競技開始の5分前までに指定エリアへ集合してください。'},

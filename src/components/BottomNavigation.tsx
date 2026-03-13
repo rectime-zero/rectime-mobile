@@ -2,7 +2,7 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {navigationTabs} from '../config/navigationTabs';
-import {useStage} from '../stage/useStage';
+import {useStage} from '../presentation/useStage';
 import {useTheme} from '../theme';
 
 function BottomNavigation() {

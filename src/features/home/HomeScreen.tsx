@@ -1,13 +1,13 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import HeaderIconButton from '../components/HeaderIconButton';
-import MenuAvatarButton from '../components/MenuAvatarButton';
-import PageLayout from '../components/PageLayout';
-import {type AppIconName} from '../components/iconNames';
-import {pushRoutes, sheetRoutes} from '../config/stageRoutes';
-import {useStage} from '../stage/useStage';
-import {useTheme} from '../theme';
+import HeaderIconButton from '../../components/HeaderIconButton';
+import MenuAvatarButton from '../../components/MenuAvatarButton';
+import PageLayout from '../../components/PageLayout';
+import {type AppIconName} from '../../components/iconNames';
+import {pushRoutes, sheetRoutes} from '../../config/stageRoutes';
+import {useStage} from '../../presentation/useStage';
+import {useTheme} from '../../theme';
 
 const actions = [
     {label: '次の試合', icon: 'play-circle' as AppIconName, tone: 'primary' as const},

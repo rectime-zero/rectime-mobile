@@ -1,12 +1,12 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import HeaderIconButton from '../components/HeaderIconButton';
-import MenuAvatarButton from '../components/MenuAvatarButton';
-import PageLayout from '../components/PageLayout';
-import {pushRoutes, sheetRoutes} from '../config/stageRoutes';
-import {useStage} from '../stage/useStage';
-import {useTheme} from '../theme';
+import HeaderIconButton from '../../components/HeaderIconButton';
+import MenuAvatarButton from '../../components/MenuAvatarButton';
+import PageLayout from '../../components/PageLayout';
+import {pushRoutes, sheetRoutes} from '../../config/stageRoutes';
+import {useStage} from '../../presentation/useStage';
+import {useTheme} from '../../theme';
 
 const ranking = [
     {name: 'IA31', point: 450, medal: '1位', tone: 'gold' as const},

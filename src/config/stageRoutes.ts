@@ -2,7 +2,7 @@ import {
     type PushRouteTarget,
     type RootRouteTarget,
     type SheetRouteTarget,
-} from '../stage/types';
+} from '../navigation/types';
 
 export const rootRoutes = {
     home: {name: 'home'},

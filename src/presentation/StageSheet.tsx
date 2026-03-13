@@ -9,8 +9,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {renderSheetScreen} from './renderStageRoute';
-import {type SheetScreenName, type StageRoute} from './types';
+import {renderSheetScreen} from '../navigation/renderRoute';
+import {type SheetScreenName, type StageRoute} from '../navigation/types';
 import {useStage} from './useStage';
 import {useTheme} from '../theme';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import HeaderIconButton from '../components/HeaderIconButton';
-import PageLayout from '../components/PageLayout';
-import {sheetRoutes} from '../config/stageRoutes';
-import {type StageRoute} from '../stage/types';
-import {useStage} from '../stage/useStage';
-import {useTheme} from '../theme';
+import HeaderIconButton from '../../components/HeaderIconButton';
+import PageLayout from '../../components/PageLayout';
+import {sheetRoutes} from '../../config/stageRoutes';
+import {type StageRoute} from '../../navigation/types';
+import {useStage} from '../../presentation/useStage';
+import {useTheme} from '../../theme';
 
 type DetailScreenProps = {
     route: StageRoute<'detail'>;
