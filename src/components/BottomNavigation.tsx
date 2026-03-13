@@ -1,14 +1,16 @@
-﻿import React from 'react';
+import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {navigationTabs} from '../config/navigationTabs';
 import {useNavigation} from '../navigation/useNavigation';
 import {useTheme} from '../theme';
 
 function BottomNavigation() {
     const {theme} = useTheme();
+    const insets = useSafeAreaInsets();
     const {rootRoute, setRootRoute} = useNavigation();
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const styles = React.useMemo(() => createStyles(theme, Math.max(insets.bottom, 14)), [insets.bottom, theme]);
 
     return (
         <View pointerEvents="box-none" style={styles.wrapper}>
@@ -39,7 +41,7 @@ function BottomNavigation() {
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], bottomInset: number) {
     return StyleSheet.create({
         wrapper: {
             position: 'absolute',
@@ -56,7 +58,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             backgroundColor: theme.colors.navigationBackground,
             paddingHorizontal: 10,
             paddingTop: 10,
-            paddingBottom: 14,
+            paddingBottom: bottomInset,
         },
         tab: {
             flex: 1,
@@ -79,4 +81,3 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
 }
 
 export default BottomNavigation;
-

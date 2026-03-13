@@ -112,7 +112,9 @@ function NavigationRenderer() {
 
             <GestureDetector gesture={menuGesture}>
                 <Animated.View style={[styles.rootCardLayer, rootCardStyle]}>
-                    <SafeAreaView style={styles.safeArea}>{renderRootScreen(rootRoute)}</SafeAreaView>
+                    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
+                        {renderRootScreen(rootRoute)}
+                    </SafeAreaView>
 
                     <Animated.View
                         pointerEvents="none"

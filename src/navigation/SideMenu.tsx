@@ -1,8 +1,10 @@
 ﻿import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Image, Platform, Pressable, StatusBar, Text, View} from 'react-native';
+import {mockUserAvatarSource} from '../assets/mockUserAvatar';
 import {sideNavigationTabs} from '../config/sideNavigationTabs';
 import {pushRoutes} from '../config/navigationRoutes';
+import UserAvatar from '../components/UserAvatar';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
@@ -23,18 +25,19 @@ function SideMenu() {
                 paddingBottom: 18,
             }}>
             <View className="flex-row items-center gap-3">
-                <View
-                    className="h-14 w-14 items-center justify-center rounded-full"
-                    style={{backgroundColor: theme.colors.surfaceAccent}}>
-                    <View
-                        className="h-12 w-12 items-center justify-center rounded-full"
-                        style={{backgroundColor: theme.colors.surfacePrimary}}>
-                        <Text style={{color: theme.colors.textPrimary, fontSize: 16, fontWeight: '800'}}>RK</Text>
-                    </View>
-                </View>
+                <UserAvatar
+                    initials="RK"
+                    imageSource={mockUserAvatarSource}
+                    size={56}
+                    innerSize={48}
+                    outerBackgroundColor={theme.colors.surfaceAccent}
+                    innerBackgroundColor={theme.colors.surfacePrimary}
+                    textColor={theme.colors.textPrimary}
+                    textSize={16}
+                />
                 <View className="flex-1 gap-1">
-                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>菴占陸 蛛･螟ｪ</Text>
-                    <Text style={{color: theme.colors.textSecondary, fontSize: 14, fontWeight: '600'}}>3-A / ID: 20240001</Text>
+                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>HAL 太郎</Text>
+                    <Text style={{color: theme.colors.textSecondary, fontSize: 14, fontWeight: '600'}}>IA12B / ID: 12345</Text>
                 </View>
             </View>
 

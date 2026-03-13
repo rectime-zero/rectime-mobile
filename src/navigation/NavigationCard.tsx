@@ -99,7 +99,9 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
         <GestureDetector gesture={backGesture}>
             <Animated.View style={[styles.cardLayer, cardStyle]}>
                 <View style={styles.cardShadow} />
-                <SafeAreaView style={styles.cardSurface}>{renderPushScreen(route)}</SafeAreaView>
+                <SafeAreaView edges={['top', 'left', 'right']} style={styles.cardSurface}>
+                    {renderPushScreen(route)}
+                </SafeAreaView>
             </Animated.View>
         </GestureDetector>
     );

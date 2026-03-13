@@ -1,5 +1,5 @@
 import React from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
+import {StatusBar, StyleSheet, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import NavigationProvider from './NavigationProvider';
@@ -8,17 +8,19 @@ import {ThemeProvider, useTheme} from '../theme';
 
 function AppContent() {
     const {resolvedMode, theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme.colors.navigationSurface), [theme.colors.navigationSurface]);
 
     return (
-        <>
+        <View style={styles.appShell}>
             <StatusBar
                 barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'}
-                backgroundColor={theme.colors.appBackground}
+                backgroundColor={theme.colors.navigationSurface}
+                translucent={false}
             />
             <NavigationProvider>
                 <NavigationRenderer />
             </NavigationProvider>
-        </>
+        </View>
     );
 }
 
@@ -39,5 +41,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
+
+function createStyles(backgroundColor: string) {
+    return StyleSheet.create({
+        appShell: {
+            flex: 1,
+            backgroundColor,
+        },
+    });
+}
 
 export default App;
