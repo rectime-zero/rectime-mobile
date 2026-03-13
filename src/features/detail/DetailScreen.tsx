@@ -7,16 +7,11 @@ import {sheetRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
+import {recentMatches} from './data';
 
 type DetailScreenProps = {
     route: AppRoute<'detail'>;
 };
-
-const recentMatches = [
-    {title: '100m走 予選', rival: 'IH22', delta: '+50 pts', result: '勝利', tone: 'success' as const},
-    {title: '大玉転がし', rival: 'IS41', delta: '+10 pts', result: '敗北', tone: 'danger' as const},
-    {title: 'クラス対抗リレー', rival: 'IW11', delta: '+40 pts', result: '勝利', tone: 'success' as const},
-];
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
