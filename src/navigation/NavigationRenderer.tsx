@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, useWindowDimensions} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
     interpolate,
@@ -9,15 +9,15 @@ import Animated, {
     withSpring,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import SideMenu from './SideMenu';
+import {useTheme} from '../theme';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
+import SideMenu from './SideMenu';
+import {getMenuRevealWidth} from './menuLayout';
 import {renderRootScreen} from './renderRoute';
 import {useNavigation} from './useNavigation';
-import {useTheme} from '../theme';
 
 const EDGE_WIDTH = 28;
-const MENU_REVEAL_WIDTH = 280;
 const SPRING_CONFIG = {
     damping: 24,
     stiffness: 220,
@@ -26,6 +26,8 @@ const SPRING_CONFIG = {
 
 function NavigationRenderer() {
     const {theme} = useTheme();
+    const {width: screenWidth} = useWindowDimensions();
+    const menuRevealWidth = getMenuRevealWidth(screenWidth);
     const {
         rootRoute,
         pushStack,
@@ -67,7 +69,7 @@ function NavigationRenderer() {
 
                     const nextProgress = Math.min(
                         1,
-                        Math.max(0, rootCardPanStart.value + event.translationX / MENU_REVEAL_WIDTH),
+                        Math.max(0, rootCardPanStart.value + event.translationX / menuRevealWidth),
                     );
                     menuProgress.value = nextProgress;
                 })
@@ -89,15 +91,13 @@ function NavigationRenderer() {
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
                 }),
-        [activeGestureValue, canUseMenuGesture, menuProgress, rootCardPanStart, setActiveGesture],
+        [activeGestureValue, canUseMenuGesture, menuProgress, menuRevealWidth, rootCardPanStart, setActiveGesture],
     );
 
     const rootCardStyle = useAnimatedStyle(() => ({
         borderRadius: interpolate(menuProgress.value, [0, 1], [0, 32]),
         shadowOpacity: interpolate(menuProgress.value, [0, 1], [0, 0.18]),
-        transform: [
-            {translateX: interpolate(menuProgress.value, [0, 1], [0, MENU_REVEAL_WIDTH])},
-        ],
+        transform: [{translateX: interpolate(menuProgress.value, [0, 1], [0, menuRevealWidth])}],
     }));
 
     const scrimStyle = useAnimatedStyle(() => ({
