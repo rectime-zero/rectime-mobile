@@ -1,13 +1,13 @@
-import React from 'react';
+﻿import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {navigationTabs} from '../config/navigationTabs';
-import {useStage} from '../presentation/useStage';
+import {useNavigation} from '../presentation/useNavigation';
 import {useTheme} from '../theme';
 
 function BottomNavigation() {
     const {theme} = useTheme();
-    const {rootRoute, setRootRoute} = useStage();
+    const {rootRoute, setRootRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
@@ -79,3 +79,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
 }
 
 export default BottomNavigation;
+

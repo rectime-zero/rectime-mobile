@@ -2,8 +2,8 @@ import React from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import StageProvider from '../presentation/StageProvider';
-import StageRenderer from '../presentation/StageRenderer';
+import NavigationProvider from '../presentation/NavigationProvider';
+import NavigationRenderer from '../presentation/NavigationRenderer';
 import {ThemeProvider, useTheme} from '../theme';
 
 function AppContent() {
@@ -15,9 +15,9 @@ function AppContent() {
                 barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'}
                 backgroundColor={theme.colors.appBackground}
             />
-            <StageProvider>
-                <StageRenderer />
-            </StageProvider>
+            <NavigationProvider>
+                <NavigationRenderer />
+            </NavigationProvider>
         </>
     );
 }

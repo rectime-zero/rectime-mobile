@@ -5,8 +5,8 @@ import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
 import {type AppIconName} from '../../components/iconNames';
-import {sheetRoutes} from '../../config/stageRoutes';
-import {useStage} from '../../presentation/useStage';
+import {sheetRoutes} from '../../config/navigationRoutes';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 const rules = [
@@ -18,7 +18,7 @@ const rules = [
 
 function RulesScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheetRoute} = useStage();
+    const {openMenu, presentSheetRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (

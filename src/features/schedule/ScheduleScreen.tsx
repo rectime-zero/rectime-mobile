@@ -4,8 +4,8 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
-import {sheetRoutes} from '../../config/stageRoutes';
-import {useStage} from '../../presentation/useStage';
+import {sheetRoutes} from '../../config/navigationRoutes';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 const entries = [
@@ -17,7 +17,7 @@ const entries = [
 
 function ScheduleScreen() {
     const {theme, selectedThemeId} = useTheme();
-    const {openMenu, presentSheetRoute} = useStage();
+    const {openMenu, presentSheetRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (

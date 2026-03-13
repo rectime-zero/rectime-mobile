@@ -11,10 +11,10 @@ export type ThemeTokens = {
         navigationBorder: string;
         navigationActive: string;
         navigationInactive: string;
-        stageBackdrop: string;
-        stageSurface: string;
-        stageShadow: string;
-        stageScrim: string;
+        navigationBackdrop: string;
+        navigationSurface: string;
+        navigationShadow: string;
+        navigationScrim: string;
         menuBackground: string;
         menuPanel: string;
         sheetBackground: string;

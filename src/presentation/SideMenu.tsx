@@ -1,16 +1,16 @@
-import React from 'react';
+﻿import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Image, Platform, Pressable, StatusBar, Text, View} from 'react-native';
 import {sideNavigationTabs} from '../config/sideNavigationTabs';
-import {pushRoutes} from '../config/stageRoutes';
-import {useStage} from './useStage';
+import {pushRoutes} from '../config/navigationRoutes';
+import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
 const appIcon = require('../assets/icons/app-icon.png');
 
 function SideMenu() {
     const {theme, selectedThemeId, setSelectedThemeId} = useTheme();
-    const {rootRoute, setRootRoute, closeMenu, pushRoute} = useStage();
+    const {rootRoute, setRootRoute, closeMenu, pushRoute} = useNavigation();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
     const isBlueTheme = selectedThemeId === 'blue-2024';
 
@@ -33,7 +33,7 @@ function SideMenu() {
                     </View>
                 </View>
                 <View className="flex-1 gap-1">
-                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>佐藤 健太</Text>
+                    <Text style={{color: theme.colors.textInverse, fontSize: 26, fontWeight: '800'}}>菴占陸 蛛･螟ｪ</Text>
                     <Text style={{color: theme.colors.textSecondary, fontSize: 14, fontWeight: '600'}}>3-A / ID: 20240001</Text>
                 </View>
             </View>
@@ -121,3 +121,4 @@ function SideMenu() {
 }
 
 export default SideMenu;
+

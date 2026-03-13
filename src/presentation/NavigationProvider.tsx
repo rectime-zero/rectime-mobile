@@ -2,40 +2,40 @@ import React, {createContext, useContext, useMemo, useState} from 'react';
 import {useSharedValue, withSpring, type SharedValue} from 'react-native-reanimated';
 import {
     type ActiveGesture,
+    type AppRoute,
+    type AppScreenName,
+    type NavigationState,
     type PresentationMode,
     type PushRouteTarget,
     type PushScreenName,
+    type RouteParamsMap,
     type RootRouteTarget,
     type RootScreenName,
     type SheetRouteTarget,
     type SheetScreenName,
-    type StageRoute,
-    type StageRouteParamsMap,
-    type StageScreenName,
-    type StageState,
 } from '../navigation/types';
 
-type StageContextValue = {
-    rootRoute: StageRoute<RootScreenName>;
-    pushStack: StageRoute<PushScreenName>[];
-    sheetRoute: StageRoute<SheetScreenName> | null;
+type NavigationContextValue = {
+    rootRoute: AppRoute<RootScreenName>;
+    pushStack: AppRoute<PushScreenName>[];
+    sheetRoute: AppRoute<SheetScreenName> | null;
     menuProgress: SharedValue<number>;
     activeGestureValue: SharedValue<ActiveGesture>;
-    stageState: StageState;
+    navigationState: NavigationState;
     openMenu: () => void;
     closeMenu: () => void;
     setRootScreen: (screen: RootScreenName) => void;
     setRootRoute: (route: RootRouteTarget) => void;
     push: <TName extends PushScreenName>(
         screen: TName,
-        params: StageRouteParamsMap[TName],
+        params: RouteParamsMap[TName],
     ) => void;
     pushRoute: <TName extends PushScreenName>(route: PushRouteTarget<TName>) => void;
     pop: () => void;
     completePop: (key: string) => void;
     presentSheet: <TName extends SheetScreenName>(
         screen: TName,
-        params: StageRouteParamsMap[TName],
+        params: RouteParamsMap[TName],
     ) => void;
     presentSheetRoute: <TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => void;
     dismissSheet: () => void;
@@ -43,7 +43,7 @@ type StageContextValue = {
     setActiveGesture: (gesture: ActiveGesture) => void;
 };
 
-const StageContext = createContext<StageContextValue | null>(null);
+const NavigationContext = createContext<NavigationContextValue | null>(null);
 
 const SPRING_CONFIG = {
     damping: 24,
@@ -51,11 +51,11 @@ const SPRING_CONFIG = {
     mass: 0.95,
 } as const;
 
-function createRoute<TName extends StageScreenName>(
+function createRoute<TName extends AppScreenName>(
     name: TName,
     presentation: PresentationMode,
-    params: StageRouteParamsMap[TName],
-): StageRoute<TName> {
+    params: RouteParamsMap[TName],
+): AppRoute<TName> {
     return {
         key: `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         name,
@@ -64,14 +64,14 @@ function createRoute<TName extends StageScreenName>(
     };
 }
 
-type StageProviderProps = {
+type NavigationProviderProps = {
     children: React.ReactNode;
 };
 
-function StageProvider({children}: StageProviderProps) {
+function NavigationProvider({children}: NavigationProviderProps) {
     const [rootScreen, setRootScreenState] = useState<RootScreenName>('home');
-    const [pushStack, setPushStack] = useState<StageRoute<PushScreenName>[]>([]);
-    const [sheetRoute, setSheetRoute] = useState<StageRoute<SheetScreenName> | null>(null);
+    const [pushStack, setPushStack] = useState<AppRoute<PushScreenName>[]>([]);
+    const [sheetRoute, setSheetRoute] = useState<AppRoute<SheetScreenName> | null>(null);
     const [activeGesture, setActiveGestureState] = useState<ActiveGesture>('none');
 
     const menuProgress = useSharedValue(0);
@@ -116,7 +116,7 @@ function StageProvider({children}: StageProviderProps) {
 
     const push = <TName extends PushScreenName>(
         screen: TName,
-        params: StageRouteParamsMap[TName],
+        params: RouteParamsMap[TName],
     ) => {
         closeMenu();
         setPushStack(current => [...current, createRoute(screen, 'push', params)]);
@@ -138,7 +138,7 @@ function StageProvider({children}: StageProviderProps) {
 
     const presentSheet = <TName extends SheetScreenName>(
         screen: TName,
-        params: StageRouteParamsMap[TName],
+        params: RouteParamsMap[TName],
     ) => {
         setSheetRoute(createRoute(screen, 'bottom-sheet', params));
         setActiveGesture('none');
@@ -158,7 +158,7 @@ function StageProvider({children}: StageProviderProps) {
         setActiveGesture('none');
     };
 
-    const stageState = useMemo(
+    const navigationState = useMemo(
         () => ({
             routeStack: [rootRoute, ...pushStack],
             overlays: sheetRoute ? [sheetRoute] : [],
@@ -168,14 +168,14 @@ function StageProvider({children}: StageProviderProps) {
         [activeGesture, menuProgress, pushStack, rootRoute, sheetRoute],
     );
 
-    const value = useMemo<StageContextValue>(
+    const value = useMemo<NavigationContextValue>(
         () => ({
             rootRoute,
             pushStack,
             sheetRoute,
             menuProgress,
             activeGestureValue,
-            stageState,
+            navigationState,
             openMenu,
             closeMenu,
             setRootScreen,
@@ -192,7 +192,7 @@ function StageProvider({children}: StageProviderProps) {
         }),
         [
             activeGestureValue,
-            stageState,
+            navigationState,
             menuProgress,
             pushStack,
             rootRoute,
@@ -203,17 +203,17 @@ function StageProvider({children}: StageProviderProps) {
         ],
     );
 
-    return <StageContext.Provider value={value}>{children}</StageContext.Provider>;
+    return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
 }
 
-export function useStageContext() {
-    const context = useContext(StageContext);
+export function useNavigationContext() {
+    const context = useContext(NavigationContext);
 
     if (!context) {
-        throw new Error('useStageContext must be used within StageProvider');
+        throw new Error('useNavigationContext must be used within NavigationProvider');
     }
 
     return context;
 }
 
-export default StageProvider;
+export default NavigationProvider;

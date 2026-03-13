@@ -1,5 +1,5 @@
 import {type AppIconName} from '../components/iconNames';
-import {rootRoutes} from './stageRoutes';
+import {rootRoutes} from './navigationRoutes';
 
 export type TabItem = {
     route: (typeof rootRoutes)[keyof typeof rootRoutes];

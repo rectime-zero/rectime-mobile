@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import ActionButton from '../../components/ActionButton';
-import {useStage} from '../../presentation/useStage';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 function SampleBottomSheet() {
     const {theme} = useTheme();
-    const {dismissSheet} = useStage();
+    const {dismissSheet} = useNavigation();
 
     return (
         <View className="gap-4">

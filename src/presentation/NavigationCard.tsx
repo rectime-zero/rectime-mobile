@@ -10,8 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {renderPushScreen} from '../navigation/renderRoute';
-import {type PushScreenName, type StageRoute} from '../navigation/types';
-import {useStage} from './useStage';
+import {type AppRoute, type PushScreenName} from '../navigation/types';
+import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
 const EDGE_WIDTH = 28;
@@ -22,14 +22,14 @@ const SPRING_CONFIG = {
     mass: 0.95,
 } as const;
 
-type StagePushCardProps = {
-    route: StageRoute<PushScreenName>;
+type NavigationCardProps = {
+    route: AppRoute<PushScreenName>;
     isTopCard: boolean;
 };
 
-function StagePushCard({route, isTopCard}: StagePushCardProps) {
+function NavigationCard({route, isTopCard}: NavigationCardProps) {
     const {theme} = useTheme();
-    const {activeGestureValue, completePop, setActiveGesture, sheetRoute} = useStage();
+    const {activeGestureValue, completePop, setActiveGesture, sheetRoute} = useNavigation();
     const translateX = useSharedValue(SCREEN_WIDTH);
     const dragStart = useSharedValue(SCREEN_WIDTH);
 
@@ -117,7 +117,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             flex: 1,
             overflow: 'hidden',
             borderRadius: 30,
-            backgroundColor: theme.colors.stageSurface,
+            backgroundColor: theme.colors.navigationSurface,
         },
         cardShadow: {
             ...StyleSheet.absoluteFillObject,
@@ -127,4 +127,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default StagePushCard;
+export default NavigationCard;

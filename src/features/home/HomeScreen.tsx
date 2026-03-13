@@ -5,8 +5,8 @@ import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
 import {type AppIconName} from '../../components/iconNames';
-import {pushRoutes, sheetRoutes} from '../../config/stageRoutes';
-import {useStage} from '../../presentation/useStage';
+import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 const actions = [
@@ -23,7 +23,7 @@ const highlights = [
 
 function HomeScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheetRoute, pushRoute} = useStage();
+    const {openMenu, presentSheetRoute, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (

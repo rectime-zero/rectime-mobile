@@ -10,10 +10,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SideMenu from './SideMenu';
-import StagePushCard from './StagePushCard';
-import StageSheet from './StageSheet';
+import NavigationCard from './NavigationCard';
+import NavigationSheet from './NavigationSheet';
 import {renderRootScreen} from '../navigation/renderRoute';
-import {useStage} from './useStage';
+import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
 const EDGE_WIDTH = 28;
@@ -24,7 +24,7 @@ const SPRING_CONFIG = {
     mass: 0.95,
 } as const;
 
-function StageRenderer() {
+function NavigationRenderer() {
     const {theme} = useTheme();
     const {
         rootRoute,
@@ -33,7 +33,7 @@ function StageRenderer() {
         menuProgress,
         activeGestureValue,
         setActiveGesture,
-    } = useStage();
+    } = useNavigation();
 
     const rootCardPanStart = useSharedValue(0);
     const canUseMenuGesture = pushStack.length === 0 && !sheetRoute;
@@ -122,14 +122,14 @@ function StageRenderer() {
             </GestureDetector>
 
             {pushStack.map((route, index) => (
-                <StagePushCard
+                <NavigationCard
                     key={route.key}
                     route={route}
                     isTopCard={index === pushStack.length - 1}
                 />
             ))}
 
-            {sheetRoute ? <StageSheet route={sheetRoute} /> : null}
+            {sheetRoute ? <NavigationSheet route={sheetRoute} /> : null}
         </View>
     );
 }
@@ -138,19 +138,19 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: theme.colors.stageBackdrop,
+            backgroundColor: theme.colors.navigationBackdrop,
         },
         rootCardLayer: {
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: theme.colors.stageSurface,
+            backgroundColor: theme.colors.navigationSurface,
             overflow: 'hidden',
-            shadowColor: theme.colors.stageShadow,
+            shadowColor: theme.colors.navigationShadow,
             shadowOffset: {width: 0, height: 12},
             shadowRadius: 36,
             elevation: 20,
         },
         rootScrim: {
-            backgroundColor: theme.colors.stageScrim,
+            backgroundColor: theme.colors.navigationScrim,
         },
         safeArea: {
             flex: 1,
@@ -158,4 +158,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default StageRenderer;
+export default NavigationRenderer;

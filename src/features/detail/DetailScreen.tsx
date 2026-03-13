@@ -3,13 +3,13 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import PageLayout from '../../components/PageLayout';
-import {sheetRoutes} from '../../config/stageRoutes';
-import {type StageRoute} from '../../navigation/types';
-import {useStage} from '../../presentation/useStage';
+import {sheetRoutes} from '../../config/navigationRoutes';
+import {type AppRoute} from '../../navigation/types';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 type DetailScreenProps = {
-    route: StageRoute<'detail'>;
+    route: AppRoute<'detail'>;
 };
 
 const recentMatches = [
@@ -20,7 +20,7 @@ const recentMatches = [
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {pop, presentSheetRoute} = useStage();
+    const {pop, presentSheetRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (

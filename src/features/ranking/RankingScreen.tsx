@@ -4,8 +4,8 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
-import {pushRoutes, sheetRoutes} from '../../config/stageRoutes';
-import {useStage} from '../../presentation/useStage';
+import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
+import {useNavigation} from '../../presentation/useNavigation';
 import {useTheme} from '../../theme';
 
 const ranking = [
@@ -19,7 +19,7 @@ const ranking = [
 
 function RankingScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheetRoute, pushRoute} = useStage();
+    const {openMenu, presentSheetRoute, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (

@@ -10,8 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {renderSheetScreen} from '../navigation/renderRoute';
-import {type SheetScreenName, type StageRoute} from '../navigation/types';
-import {useStage} from './useStage';
+import {type AppRoute, type SheetScreenName} from '../navigation/types';
+import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
@@ -21,15 +21,15 @@ const SPRING_CONFIG = {
     mass: 0.95,
 } as const;
 
-type StageSheetProps = {
-    route: StageRoute<SheetScreenName>;
+type NavigationSheetProps = {
+    route: AppRoute<SheetScreenName>;
 };
 
-function StageSheet({route}: StageSheetProps) {
+function NavigationSheet({route}: NavigationSheetProps) {
     const {theme} = useTheme();
     const insets = useSafeAreaInsets();
     const bottomInset = Math.max(insets.bottom, 18);
-    const {activeGestureValue, clearSheet, setActiveGesture} = useStage();
+    const {activeGestureValue, clearSheet, setActiveGesture} = useNavigation();
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const backdropOpacity = useSharedValue(0);
     const dragStart = useSharedValue(0);
@@ -145,7 +145,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             backgroundColor: theme.colors.sheetBackground,
             paddingHorizontal: 20,
             paddingTop: 12,
-            shadowColor: theme.colors.stageShadow,
+            shadowColor: theme.colors.navigationShadow,
             shadowOffset: {width: 0, height: -10},
             shadowOpacity: 0.18,
             shadowRadius: 24,
@@ -162,4 +162,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default StageSheet;
+export default NavigationSheet;
