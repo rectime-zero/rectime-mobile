@@ -2,8 +2,8 @@ import React from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import NavigationProvider from '../presentation/NavigationProvider';
-import NavigationRenderer from '../presentation/NavigationRenderer';
+import NavigationProvider from './NavigationProvider';
+import NavigationRenderer from './NavigationRenderer';
 import {ThemeProvider, useTheme} from '../theme';
 
 function AppContent() {

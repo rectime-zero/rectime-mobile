@@ -5,7 +5,7 @@ import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
-import {useNavigation} from '../../presentation/useNavigation';
+import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 const entries = [

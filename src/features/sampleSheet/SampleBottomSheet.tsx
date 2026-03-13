@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import ActionButton from '../../components/ActionButton';
-import {useNavigation} from '../../presentation/useNavigation';
+import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 function SampleBottomSheet() {

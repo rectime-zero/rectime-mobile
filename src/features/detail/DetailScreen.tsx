@@ -5,7 +5,7 @@ import HeaderIconButton from '../../components/HeaderIconButton';
 import PageLayout from '../../components/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';
-import {useNavigation} from '../../presentation/useNavigation';
+import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 type DetailScreenProps = {

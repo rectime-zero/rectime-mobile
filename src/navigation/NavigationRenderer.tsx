@@ -12,7 +12,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SideMenu from './SideMenu';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
-import {renderRootScreen} from '../navigation/renderRoute';
+import {renderRootScreen} from './renderRoute';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 

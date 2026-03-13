@@ -6,7 +6,7 @@ import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
 import {type AppIconName} from '../../components/iconNames';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
-import {useNavigation} from '../../presentation/useNavigation';
+import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 const actions = [

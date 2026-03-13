@@ -13,7 +13,7 @@ import {
     type RootScreenName,
     type SheetRouteTarget,
     type SheetScreenName,
-} from '../navigation/types';
+} from './types';
 
 type NavigationContextValue = {
     rootRoute: AppRoute<RootScreenName>;

@@ -9,8 +9,8 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {renderPushScreen} from '../navigation/renderRoute';
-import {type AppRoute, type PushScreenName} from '../navigation/types';
+import {renderPushScreen} from './renderRoute';
+import {type AppRoute, type PushScreenName} from './types';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
