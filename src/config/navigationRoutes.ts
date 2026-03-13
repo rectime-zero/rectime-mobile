@@ -14,6 +14,7 @@ export const rootRoutes = {
 
 export const sheetRoutes = {
     notifications: {name: 'sample-sheet', params: undefined},
+    themePicker: {name: 'theme-sheet', params: undefined},
 } as const satisfies Record<string, SheetRouteTarget>;
 
 export const pushRoutes = {

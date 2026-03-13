@@ -6,6 +6,7 @@ import {RankingScreen} from '../features/ranking';
 import {RulesScreen} from '../features/rules';
 import {SampleBottomSheet} from '../features/sampleSheet';
 import {ScheduleScreen} from '../features/schedule';
+import {ThemeSheet} from '../features/themeSheet';
 import {type AppRoute, type PushScreenName, type RootScreenName, type SheetScreenName} from './types';
 
 export function renderRootScreen(route: AppRoute<RootScreenName>) {
@@ -34,6 +35,8 @@ export function renderPushScreen(route: AppRoute<PushScreenName>) {
 
 export function renderSheetScreen(route: AppRoute<SheetScreenName>) {
     switch (route.name) {
+        case 'theme-sheet':
+            return <ThemeSheet />;
         case 'sample-sheet':
         default:
             return <SampleBottomSheet />;

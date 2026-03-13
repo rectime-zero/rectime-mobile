@@ -2,8 +2,8 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
 import {mockUserAvatarSource} from '../../assets/mockUserAvatar';
+import {sheetRoutes} from '../../config/navigationRoutes';
 import {sideNavigationTabs} from '../../config/sideNavigationTabs';
-import {pushRoutes} from '../../config/navigationRoutes';
 import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -12,12 +12,12 @@ import UserAvatar from '../UserAvatar';
 const appIcon = require('../../assets/icons/app-icon.png');
 
 function SideMenu() {
-    const {theme, selectedThemeId, setSelectedThemeId} = useTheme();
-    const {rootRoute, setRootRoute, closeMenu, pushRoute} = useNavigation();
+    const {theme, selectedThemeId} = useTheme();
+    const {rootRoute, setRootRoute, closeMenu, presentSheetRoute} = useNavigation();
     const {width: screenWidth} = useWindowDimensions();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
-    const isBlueTheme = selectedThemeId === 'blue-2024';
     const revealWidth = getMenuRevealWidth(screenWidth);
+    const isBlueTheme = selectedThemeId === 'blue-2024';
     const styles = React.useMemo(() => createStyles(theme, topInset, revealWidth), [theme, topInset, revealWidth]);
 
     return (
@@ -36,7 +36,7 @@ function SideMenu() {
                     />
                     <View style={styles.profileTextBlock}>
                         <Text style={styles.profileName}>HAL 太郎</Text>
-                        <Text style={styles.profileMeta}>IA12B / ID: 12345</Text>
+                        <Text style={styles.profileMeta}>IA12B / 16 / No. 12345</Text>
                     </View>
                 </View>
 
@@ -68,34 +68,41 @@ function SideMenu() {
                 </View>
 
                 <View style={styles.footerPanel}>
-                    <View style={styles.footerActions}>
-                        <Pressable
-                            accessibilityRole="button"
-                            onPress={() => setSelectedThemeId(isBlueTheme ? 'default' : 'blue-2024')}
-                            style={styles.footerButton}>
-                            <FontAwesome5
-                                color={theme.colors.navigationActive}
-                                iconStyle="solid"
-                                name="palette"
-                                size={15}
-                            />
-                        </Pressable>
+                    <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="テーマを開く"
+                        onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
+                        style={styles.footerActions}>
 
-                        <Pressable
-                            accessibilityRole="button"
-                            onPress={() => pushRoute(pushRoutes.colorMode())}
-                            style={styles.footerButton}>
+                        <View style={styles.footerPreviewCluster}>
                             <FontAwesome5
                                 color={theme.colors.textSecondary}
                                 iconStyle="solid"
                                 name="moon"
-                                size={15}
+                                size={17}
                             />
-                        </Pressable>
-                    </View>
+                        </View>
+
+                        <View style={styles.footerPreviewCluster}>
+                            <View style={styles.footerPreviewShell}>
+                                <View
+                                    style={[
+                                        styles.footerPreviewFill,
+                                        isBlueTheme ? styles.footerPreviewFillBlue : styles.footerPreviewFillDefault,
+                                    ]}
+                                />
+                            </View>
+                            <View
+                                style={[
+                                    styles.footerPreviewAccent,
+                                    isBlueTheme ? styles.footerPreviewAccentBlue : styles.footerPreviewAccentDefault,
+                                ]}
+                            />
+                        </View>
+                    </Pressable>
 
                     <Pressable accessibilityRole="button" onPress={closeMenu} style={styles.brandButton}>
-                        <Image source={appIcon} style={styles.brandIcon} resizeMode="cover" />
+                        <Image source={appIcon} style={styles.brandIcon} resizeMode="cover"/>
                         <Text style={styles.brandLabel}>rectime</Text>
                     </Pressable>
                 </View>
@@ -172,23 +179,56 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderRadius: 24,
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-            backgroundColor: theme.colors.menuPanel,
         },
         footerActions: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 8,
+            borderRadius: 999,
+            paddingLeft: 6,
+            paddingRight: 7,
+            paddingVertical: 3,
+            backgroundColor: '#FFFFFF',
         },
-        footerButton: {
-            width: 44,
-            height: 44,
+        footerPreviewCluster: {
+            width: 40,
+            height: 40,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 18,
-            backgroundColor: theme.colors.surfacePrimary,
+        },
+        footerPreviewShell: {
+            width: 30,
+            height: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 20,
+            backgroundColor: '#EEF2F7',
+        },
+        footerPreviewFill: {
+            width: 22,
+            height: 22,
+            borderRadius: 20,
+        },
+        footerPreviewFillDefault: {
+            backgroundColor: '#C9D1DC',
+        },
+        footerPreviewFillBlue: {
+            backgroundColor: '#355CFF',
+        },
+        footerPreviewAccent: {
+            position: 'absolute',
+            right: 4,
+            bottom: 5,
+            width: 12,
+            height: 12,
+            borderRadius: 6,
+            borderWidth: 2,
+            borderColor: '#FFFFFF',
+        },
+        footerPreviewAccentDefault: {
+            backgroundColor: '#8E9AAF',
+        },
+        footerPreviewAccentBlue: {
+            backgroundColor: '#8DE1FF',
         },
         brandButton: {
             flexDirection: 'row',
@@ -196,13 +236,13 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             gap: 8,
         },
         brandIcon: {
-            width: 24,
-            height: 24,
+            width: 30,
+            height: 30,
             borderRadius: 6,
         },
         brandLabel: {
             color: theme.colors.textSecondary,
-            fontSize: 15,
+            fontSize: 18,
             fontWeight: '800',
         },
     });
