@@ -7,8 +7,7 @@ import PageLayout from '../../components/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-
-const places = ['センターコート', '受付', 'フードエリア', '休憩ゾーン'];
+import {mapCopy, mapPlaces} from './data';
 
 function MapScreen() {
     const {theme} = useTheme();
@@ -22,8 +21,8 @@ function MapScreen() {
             title="マップ">
             <View style={styles.mapPlaceholder}>
                 <View style={styles.blurLayer} />
-                <Text style={styles.placeholderTitle}>マップは後続実装</Text>
-                <Text style={styles.placeholderBody}>この画面では地図本体はまだ描かず、操作ボタンと場所一覧だけを配置しています。</Text>
+                <Text style={styles.placeholderTitle}>{mapCopy.title}</Text>
+                <Text style={styles.placeholderBody}>{mapCopy.body}</Text>
 
                 <View style={styles.floatingLeft}>
                     <FontAwesome5 color={theme.colors.textOnAccent} iconStyle="solid" name="bullseye" size={18} />
@@ -35,11 +34,11 @@ function MapScreen() {
 
             <View style={styles.placeCard}>
                 <View style={styles.placeHandle} />
-                <Text style={styles.placeTitle}>場所一覧</Text>
+                <Text style={styles.placeTitle}>{mapCopy.placeTitle}</Text>
                 <View style={styles.placeList}>
-                    {places.map(place => (
-                        <Pressable key={place} style={styles.placeRow}>
-                            <Text style={styles.placeName}>{place}</Text>
+                    {mapPlaces.map(place => (
+                        <Pressable key={place.id} style={styles.placeRow}>
+                            <Text style={styles.placeName}>{place.name}</Text>
                             <FontAwesome5 color={theme.colors.textMuted} iconStyle="solid" name="chevron-right" size={12} />
                         </Pressable>
                     ))}

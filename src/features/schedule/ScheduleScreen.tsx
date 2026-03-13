@@ -7,13 +7,7 @@ import PageLayout from '../../components/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-
-const entries = [
-    {time: '09:00', title: '開会式', range: '09:00 - 09:30', accent: 'blue' as const},
-    {time: '09:45', title: '100m走 予選', range: '09:45 - 10:30', accent: 'blue' as const},
-    {time: '11:00', title: '部活動対抗リレー', range: '11:00 - 11:30', accent: 'red' as const},
-    {time: '13:00', title: '綱引き 予選', range: '13:00 - 13:40', accent: 'orange' as const},
-];
+import {scheduleCopy, scheduleEntries} from './data';
 
 function ScheduleScreen() {
     const {theme, selectedThemeId} = useTheme();
@@ -26,7 +20,7 @@ function ScheduleScreen() {
             headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="タイムテーブル">
             <View style={styles.topRow}>
-                <Text style={styles.date}>3月9日</Text>
+                <Text style={styles.date}>{scheduleCopy.date}</Text>
                 <View style={styles.switcher}>
                     <View style={styles.switcherActive}>
                         <FontAwesome5
@@ -43,7 +37,7 @@ function ScheduleScreen() {
             </View>
 
             <View style={styles.timeline}>
-                {entries.map(entry => (
+                {scheduleEntries.map(entry => (
                     <View key={entry.time} style={styles.entryRow}>
                         <Text style={styles.axisLabel}>{entry.time}</Text>
                         <View style={styles.axisTrack} />
@@ -72,7 +66,7 @@ function ScheduleScreen() {
             </View>
 
             <View style={styles.noteCard}>
-                <Text style={styles.noteTitle}>表示テーマ</Text>
+                <Text style={styles.noteTitle}>{scheduleCopy.noteTitle}</Text>
                 <Text style={styles.noteBody}>現在の配色は {selectedThemeId} です。時間軸とカードはこのテーマに合わせて変化します。</Text>
             </View>
         </PageLayout>

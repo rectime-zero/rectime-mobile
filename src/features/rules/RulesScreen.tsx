@@ -4,17 +4,10 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import PageLayout from '../../components/PageLayout';
-import {type AppIconName} from '../../components/iconNames';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-
-const rules = [
-    {icon: 'clock' as AppIconName, title: '集合時間', body: '競技開始の5分前までに指定エリアへ集合してください。'},
-    {icon: 'camera' as AppIconName, title: '撮影ルール', body: '会場内の撮影は可能ですが、フラッシュの使用は禁止です。'},
-    {icon: 'clipboard-check' as AppIconName, title: 'ランキング反映', body: 'ランキング対象試合はスタッフ確認後に記録が反映されます。'},
-    {icon: 'users' as AppIconName, title: '混雑対応', body: '混雑時は一部エリアで入場規制がかかる場合があります。'},
-];
+import {ruleEntries, rulesHeroCopy} from './data';
 
 function RulesScreen() {
     const {theme} = useTheme();
@@ -27,11 +20,11 @@ function RulesScreen() {
             headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="ルール">
             <View style={styles.hero}>
-                <Text style={styles.heroTitle}>当日の基本ガイド</Text>
-                <Text style={styles.heroBody}>参加者が迷わず動けるよう、重要なルールだけを先にまとめています。</Text>
+                <Text style={styles.heroTitle}>{rulesHeroCopy.title}</Text>
+                <Text style={styles.heroBody}>{rulesHeroCopy.body}</Text>
             </View>
 
-            {rules.map(rule => (
+            {ruleEntries.map(rule => (
                 <View key={rule.title} style={styles.ruleCard}>
                     <View style={styles.iconBadge}>
                         <FontAwesome5 color={theme.colors.navigationActive} iconStyle="solid" name={rule.icon} size={16} />
