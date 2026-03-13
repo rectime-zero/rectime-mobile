@@ -1,11 +1,11 @@
 import React from 'react';
-import DetailScreen from '../features/detail/DetailScreen';
-import HomeScreen from '../features/home/HomeScreen';
-import MapScreen from '../features/map/MapScreen';
-import RankingScreen from '../features/ranking/RankingScreen';
-import RulesScreen from '../features/rules/RulesScreen';
-import SampleBottomSheet from '../features/sampleSheet/SampleBottomSheet';
-import ScheduleScreen from '../features/schedule/ScheduleScreen';
+import {DetailScreen} from '../features/detail';
+import {HomeScreen} from '../features/home';
+import {MapScreen} from '../features/map';
+import {RankingScreen} from '../features/ranking';
+import {RulesScreen} from '../features/rules';
+import {SampleBottomSheet} from '../features/sampleSheet';
+import {ScheduleScreen} from '../features/schedule';
 import {type AppRoute, type PushScreenName, type RootScreenName, type SheetScreenName} from './types';
 
 export function renderRootScreen(route: AppRoute<RootScreenName>) {
