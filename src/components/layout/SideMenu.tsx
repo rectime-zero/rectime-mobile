@@ -1,15 +1,15 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
-import {mockUserAvatarSource} from '../assets/mockUserAvatar';
-import UserAvatar from '../components/UserAvatar';
-import {sideNavigationTabs} from '../config/sideNavigationTabs';
-import {pushRoutes} from '../config/navigationRoutes';
-import {useTheme} from '../theme';
-import {getMenuRevealWidth} from './menuLayout';
-import {useNavigation} from './useNavigation';
+import {mockUserAvatarSource} from '../../assets/mockUserAvatar';
+import {sideNavigationTabs} from '../../config/sideNavigationTabs';
+import {pushRoutes} from '../../config/navigationRoutes';
+import {getMenuRevealWidth} from '../../navigation/menuLayout';
+import {useNavigation} from '../../navigation/useNavigation';
+import {useTheme} from '../../theme';
+import UserAvatar from '../UserAvatar';
 
-const appIcon = require('../assets/icons/app-icon.png');
+const appIcon = require('../../assets/icons/app-icon.png');
 
 function SideMenu() {
     const {theme, selectedThemeId, setSelectedThemeId} = useTheme();

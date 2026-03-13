@@ -2,9 +2,9 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {navigationTabs} from '../config/navigationTabs';
-import {useNavigation} from '../navigation/useNavigation';
-import {useTheme} from '../theme';
+import {navigationTabs} from '../../config/navigationTabs';
+import {useNavigation} from '../../navigation/useNavigation';
+import {useTheme} from '../../theme';
 
 function BottomNavigation() {
     const {theme} = useTheme();

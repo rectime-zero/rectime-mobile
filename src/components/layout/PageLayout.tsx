@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import BottomNavigation from './BottomNavigation';
-import {useTheme} from '../theme';
+import {useTheme} from '../../theme';
 
 type PageLayoutProps = {
     title: string;

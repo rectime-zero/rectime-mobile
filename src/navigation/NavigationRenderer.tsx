@@ -10,9 +10,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useTheme} from '../theme';
+import SideMenu from '../components/layout/SideMenu';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
-import SideMenu from './SideMenu';
 import {getMenuRevealWidth} from './menuLayout';
 import {renderRootScreen} from './renderRoute';
 import {useNavigation} from './useNavigation';

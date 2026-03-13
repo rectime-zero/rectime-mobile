@@ -2,7 +2,7 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
-import PageLayout from '../../components/PageLayout';
+import PageLayout from '../../components/layout/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
