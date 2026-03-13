@@ -13,7 +13,10 @@ export type AppIconName =
     | 'home'
     | 'list-ul'
     | 'map-marked-alt'
+    | 'moon'
+    | 'palette'
     | 'play-circle'
     | 'sticky-note'
+    | 'sun'
     | 'trophy'
     | 'users';

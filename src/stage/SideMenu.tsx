@@ -1,14 +1,18 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import {Platform, Pressable, StatusBar, Text, View} from 'react-native';
+import {Image, Platform, Pressable, StatusBar, Text, View} from 'react-native';
 import {sideNavigationTabs} from '../config/sideNavigationTabs';
+import {pushRoutes} from '../config/stageRoutes';
 import {useStage} from './useStage';
 import {useTheme} from '../theme';
 
+const appIcon = require('../assets/icons/app-icon.png');
+
 function SideMenu() {
-    const {theme} = useTheme();
-    const {rootRoute, setRootScreen, closeMenu} = useStage();
+    const {theme, selectedThemeId, setSelectedThemeId} = useTheme();
+    const {rootRoute, setRootRoute, closeMenu, pushRoute} = useStage();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
+    const isBlueTheme = selectedThemeId === 'blue-2024';
 
     return (
         <View
@@ -36,12 +40,12 @@ function SideMenu() {
 
             <View className="mt-8 gap-2">
                 {sideNavigationTabs.map(item => {
-                    const isActive = item.key === rootRoute.name;
+                    const isActive = item.route.name === rootRoute.name;
 
                     return (
                         <Pressable
-                            key={item.key}
-                            onPress={() => setRootScreen(item.key)}
+                            key={item.route.name}
+                            onPress={() => setRootRoute(item.route)}
                             className="flex-row items-center gap-4 rounded-2xl px-4 py-4"
                             style={{
                                 backgroundColor: isActive ? theme.colors.menuPanel : 'transparent',
@@ -66,16 +70,51 @@ function SideMenu() {
                 })}
             </View>
 
-            <View className="mt-auto gap-3 rounded-[28px] p-4" style={{backgroundColor: theme.colors.menuPanel}}>
-                <Text style={{color: theme.colors.textInverse, fontSize: 16, fontWeight: '700'}}>ヘルプセンター</Text>
-                <Text style={{color: theme.colors.textSecondary, fontSize: 14, lineHeight: 24}}>
-                    下部タブとメニューはそのままに、各画面の見た目だけを切り替える構成です。
-                </Text>
-                <Text
+            <View
+                className="mt-auto flex-row items-center justify-between rounded-[24px] px-4 py-3"
+                style={{backgroundColor: theme.colors.menuPanel}}>
+                <View className="flex-row items-center gap-2">
+                    <Pressable
+                        accessibilityRole="button"
+                        onPress={() => setSelectedThemeId(isBlueTheme ? 'default' : 'blue-2024')}
+                        className="h-11 w-11 items-center justify-center rounded-[18px]"
+                        style={{backgroundColor: theme.colors.surfacePrimary}}>
+                        <FontAwesome5
+                            color={theme.colors.navigationActive}
+                            iconStyle="solid"
+                            name="palette"
+                            size={15}
+                        />
+                    </Pressable>
+
+                    <Pressable
+                        accessibilityRole="button"
+                        onPress={() => pushRoute(pushRoutes.colorMode())}
+                        className="h-11 w-11 items-center justify-center rounded-[18px]"
+                        style={{backgroundColor: theme.colors.surfacePrimary}}>
+                        <FontAwesome5
+                            color={theme.colors.textSecondary}
+                            iconStyle="solid"
+                            name="moon"
+                            size={15}
+                        />
+                    </Pressable>
+                </View>
+
+                <Pressable
+                    accessibilityRole="button"
                     onPress={closeMenu}
-                    style={{color: theme.colors.textBrand, fontSize: 14, fontWeight: '700'}}>
-                    メニューを閉じる
-                </Text>
+                    className="flex-row items-center gap-2">
+                    <Image source={appIcon} className="h-6 w-6 rounded-[6px]" resizeMode="cover" />
+                    <Text
+                        style={{
+                            color: theme.colors.textSecondary,
+                            fontSize: 15,
+                            fontWeight: '800',
+                        }}>
+                        rectime
+                    </Text>
+                </Pressable>
             </View>
         </View>
     );

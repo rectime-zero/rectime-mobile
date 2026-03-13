@@ -5,6 +5,7 @@ import HeaderIconButton from '../components/HeaderIconButton';
 import MenuAvatarButton from '../components/MenuAvatarButton';
 import PageLayout from '../components/PageLayout';
 import {type AppIconName} from '../components/iconNames';
+import {pushRoutes, sheetRoutes} from '../config/stageRoutes';
 import {useStage} from '../stage/useStage';
 import {useTheme} from '../theme';
 
@@ -22,25 +23,20 @@ const highlights = [
 
 function HomeScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheet, push} = useStage();
+    const {openMenu, presentSheetRoute, pushRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="ホーム">
             <View style={styles.heroCard}>
                 <Text style={styles.heroEyebrow}>本日のメインイベント</Text>
                 <Text style={styles.heroTitle}>100m走 決勝</Text>
                 <Text style={styles.heroBody}>3年生ブロックが開始直前です。センターコート周辺はまもなく混雑します。</Text>
                 <Pressable
-                    onPress={() =>
-                        push('detail', {
-                            title: 'IA31 の対戦履歴',
-                            summary: '直近5試合の結果と総合得点を確認できます。',
-                        })
-                    }
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '直近5試合の結果と総合得点を確認できます。'))}
                     style={styles.heroAction}>
                     <Text style={styles.heroActionText}>詳細を見る</Text>
                     <FontAwesome5
@@ -58,14 +54,11 @@ function HomeScreen() {
                         key={action.label}
                         onPress={() => {
                             if (action.label === '次の試合') {
-                                push('detail', {
-                                    title: 'Aブロック 第2試合',
-                                    summary: '右から重なるカードとして試合詳細を確認できます。',
-                                });
+                                pushRoute(pushRoutes.detail('Aブロック 第2試合', '右から重なるカードとして試合詳細を確認できます。'));
                                 return;
                             }
 
-                            presentSheet('sample-sheet', undefined);
+                            presentSheetRoute(sheetRoutes.notifications);
                         }}
                         style={[
                             styles.actionCard,

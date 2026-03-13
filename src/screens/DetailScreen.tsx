@@ -3,6 +3,7 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../components/HeaderIconButton';
 import PageLayout from '../components/PageLayout';
+import {sheetRoutes} from '../config/stageRoutes';
 import {type StageRoute} from '../stage/types';
 import {useStage} from '../stage/useStage';
 import {useTheme} from '../theme';
@@ -19,13 +20,13 @@ const recentMatches = [
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {pop, presentSheet} = useStage();
+    const {pop, presentSheetRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
             headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={pop} />}
-            headerTrailing={<HeaderIconButton icon="ellipsis-h" label="その他" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            headerTrailing={<HeaderIconButton icon="ellipsis-h" label="その他" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title={route.params.title}>
             <View style={styles.scoreCard}>
                 <View>

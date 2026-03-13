@@ -4,6 +4,7 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../components/HeaderIconButton';
 import MenuAvatarButton from '../components/MenuAvatarButton';
 import PageLayout from '../components/PageLayout';
+import {pushRoutes, sheetRoutes} from '../config/stageRoutes';
 import {useStage} from '../stage/useStage';
 import {useTheme} from '../theme';
 
@@ -18,24 +19,19 @@ const ranking = [
 
 function RankingScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheet, push} = useStage();
+    const {openMenu, presentSheetRoute, pushRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="ランキング">
             <Text style={styles.sectionLabel}>総合順位</Text>
 
             <View style={styles.topGrid}>
                 <Pressable
-                    onPress={() =>
-                        push('detail', {
-                            title: 'IA31 の対戦履歴',
-                            summary: '最新の勝敗と得点推移を確認できます。',
-                        })
-                    }
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '最新の勝敗と得点推移を確認できます。'))}
                     style={[styles.topCard, styles.firstCard]}>
                     <View style={styles.badge}>
                         <Text style={styles.badgeText}>{ranking[0].medal}</Text>
@@ -52,12 +48,7 @@ function RankingScreen() {
                 </Pressable>
 
                 <Pressable
-                    onPress={() =>
-                        push('detail', {
-                            title: 'IH22 の対戦履歴',
-                            summary: '上位チームの勝敗サマリーです。',
-                        })
-                    }
+                    onPress={() => pushRoute(pushRoutes.matchHistory('IH22', '上位チームの勝敗サマリーです。'))}
                     style={[styles.topCard, styles.secondCard]}>
                     <View style={styles.badge}>
                         <Text style={styles.badgeText}>{ranking[1].medal}</Text>
@@ -68,12 +59,7 @@ function RankingScreen() {
             </View>
 
             <Pressable
-                onPress={() =>
-                    push('detail', {
-                        title: 'IS41 の対戦履歴',
-                        summary: '直近5試合の結果を一覧で確認できます。',
-                    })
-                }
+                onPress={() => pushRoute(pushRoutes.matchHistory('IS41', '直近5試合の結果を一覧で確認できます。'))}
                 style={styles.thirdRow}>
                 <View style={styles.thirdRank}>
                     <Text style={styles.thirdRankText}>3</Text>
@@ -86,12 +72,7 @@ function RankingScreen() {
                 {ranking.slice(3).map((item, index) => (
                     <Pressable
                         key={item.name}
-                        onPress={() =>
-                            push('detail', {
-                                title: `${item.name} の対戦履歴`,
-                                summary: '順位テーブルから選んだチームの履歴です。',
-                            })
-                        }
+                        onPress={() => pushRoute(pushRoutes.matchHistory(item.name, '順位テーブルから選んだチームの履歴です。'))}
                         style={[
                             styles.listRow,
                             index < ranking.slice(3).length - 1 ? styles.listRowBorder : null,

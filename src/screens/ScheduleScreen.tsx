@@ -4,6 +4,7 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../components/HeaderIconButton';
 import MenuAvatarButton from '../components/MenuAvatarButton';
 import PageLayout from '../components/PageLayout';
+import {sheetRoutes} from '../config/stageRoutes';
 import {useStage} from '../stage/useStage';
 import {useTheme} from '../theme';
 
@@ -16,13 +17,13 @@ const entries = [
 
 function ScheduleScreen() {
     const {theme, selectedThemeId} = useTheme();
-    const {openMenu, presentSheet} = useStage();
+    const {openMenu, presentSheetRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="タイムテーブル">
             <View style={styles.topRow}>
                 <Text style={styles.date}>3月9日</Text>

@@ -7,20 +7,20 @@ import {useTheme} from '../theme';
 
 function BottomNavigation() {
     const {theme} = useTheme();
-    const {rootRoute, setRootScreen} = useStage();
+    const {rootRoute, setRootRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <View pointerEvents="box-none" style={styles.wrapper}>
             <View style={styles.container}>
                 {navigationTabs.map(item => {
-                    const isActive = item.key === rootRoute.name;
+                    const isActive = item.route.name === rootRoute.name;
 
                     return (
                         <Pressable
-                            key={item.key}
+                            key={item.route.name}
                             accessibilityRole="button"
-                            onPress={() => setRootScreen(item.key)}
+                            onPress={() => setRootRoute(item.route)}
                             style={styles.tab}>
                             <FontAwesome5
                                 color={isActive ? theme.colors.navigationActive : theme.colors.navigationInactive}

@@ -29,6 +29,20 @@ export type StageRoute<TName extends RouteName = RouteName> = {
     params: StageRouteParamsMap[TName];
 };
 
+export type RootRouteTarget<TName extends RootScreenName = RootScreenName> = {
+    name: TName;
+};
+
+export type PushRouteTarget<TName extends PushScreenName = PushScreenName> = {
+    name: TName;
+    params: StageRouteParamsMap[TName];
+};
+
+export type SheetRouteTarget<TName extends SheetScreenName = SheetScreenName> = {
+    name: TName;
+    params: StageRouteParamsMap[TName];
+};
+
 export type StageState = {
     routeStack: StageRoute[];
     overlays: StageRoute[];

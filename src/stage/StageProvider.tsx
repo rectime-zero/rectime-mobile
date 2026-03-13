@@ -3,8 +3,11 @@ import {useSharedValue, withSpring, type SharedValue} from 'react-native-reanima
 import {
     type ActiveGesture,
     type PresentationMode,
+    type PushRouteTarget,
     type PushScreenName,
+    type RootRouteTarget,
     type RootScreenName,
+    type SheetRouteTarget,
     type SheetScreenName,
     type StageRoute,
     type StageRouteParamsMap,
@@ -22,16 +25,19 @@ type StageContextValue = {
     openMenu: () => void;
     closeMenu: () => void;
     setRootScreen: (screen: RootScreenName) => void;
+    setRootRoute: (route: RootRouteTarget) => void;
     push: <TName extends PushScreenName>(
         screen: TName,
         params: StageRouteParamsMap[TName],
     ) => void;
+    pushRoute: <TName extends PushScreenName>(route: PushRouteTarget<TName>) => void;
     pop: () => void;
     completePop: (key: string) => void;
     presentSheet: <TName extends SheetScreenName>(
         screen: TName,
         params: StageRouteParamsMap[TName],
     ) => void;
+    presentSheetRoute: <TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => void;
     dismissSheet: () => void;
     clearSheet: (key: string) => void;
     setActiveGesture: (gesture: ActiveGesture) => void;
@@ -104,12 +110,20 @@ function StageProvider({children}: StageProviderProps) {
         setActiveGesture('none');
     };
 
+    const setRootRoute = (route: RootRouteTarget) => {
+        setRootScreen(route.name);
+    };
+
     const push = <TName extends PushScreenName>(
         screen: TName,
         params: StageRouteParamsMap[TName],
     ) => {
         closeMenu();
         setPushStack(current => [...current, createRoute(screen, 'push', params)]);
+    };
+
+    const pushRoute = <TName extends PushScreenName>(route: PushRouteTarget<TName>) => {
+        push(route.name, route.params);
     };
 
     const pop = () => {
@@ -128,6 +142,10 @@ function StageProvider({children}: StageProviderProps) {
     ) => {
         setSheetRoute(createRoute(screen, 'bottom-sheet', params));
         setActiveGesture('none');
+    };
+
+    const presentSheetRoute = <TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => {
+        presentSheet(route.name, route.params);
     };
 
     const dismissSheet = () => {
@@ -161,10 +179,13 @@ function StageProvider({children}: StageProviderProps) {
             openMenu,
             closeMenu,
             setRootScreen,
+            setRootRoute,
             push,
+            pushRoute,
             pop,
             completePop,
             presentSheet,
+            presentSheetRoute,
             dismissSheet,
             clearSheet,
             setActiveGesture,
@@ -176,6 +197,9 @@ function StageProvider({children}: StageProviderProps) {
             pushStack,
             rootRoute,
             sheetRoute,
+            setRootRoute,
+            pushRoute,
+            presentSheetRoute,
         ],
     );
 

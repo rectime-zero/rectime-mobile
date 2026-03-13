@@ -5,6 +5,7 @@ import HeaderIconButton from '../components/HeaderIconButton';
 import MenuAvatarButton from '../components/MenuAvatarButton';
 import PageLayout from '../components/PageLayout';
 import {type AppIconName} from '../components/iconNames';
+import {sheetRoutes} from '../config/stageRoutes';
 import {useStage} from '../stage/useStage';
 import {useTheme} from '../theme';
 
@@ -17,13 +18,13 @@ const rules = [
 
 function RulesScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheet} = useStage();
+    const {openMenu, presentSheetRoute} = useStage();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
-            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheet('sample-sheet', undefined)} />}
+            headerTrailing={<HeaderIconButton icon="bell" label="通知" onPress={() => presentSheetRoute(sheetRoutes.notifications)} />}
             title="ルール">
             <View style={styles.hero}>
                 <Text style={styles.heroTitle}>当日の基本ガイド</Text>

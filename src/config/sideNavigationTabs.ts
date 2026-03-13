@@ -1,14 +1,13 @@
 import {type AppIconName} from '../components/iconNames';
-
-export type TabKey = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
+import {rootRoutes} from './stageRoutes';
 
 export type TabItem = {
-    key: TabKey;
+    route: (typeof rootRoutes)[keyof typeof rootRoutes];
     label: string;
     icon: AppIconName;
 };
 
 export const sideNavigationTabs: TabItem[] = [
-    {key: 'home', label: '対戦情報', icon: 'home'},
-    {key: 'schedule', label: '設定', icon: 'cog'},
+    {route: rootRoutes.home, label: '対戦情報', icon: 'home'},
+    {route: rootRoutes.schedule, label: '設定', icon: 'cog'},
 ];
