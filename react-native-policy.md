@@ -20,17 +20,225 @@ The application is organized into logical layers:
 
 Dependency direction must always move inward.
 
-- Presentation → Application / Domain
-- Application → Domain / Infrastructure
-- Infrastructure → Domain
-- Domain → must not depend on outer layers
+- Presentation -> Application / Domain
+- Application -> Domain / Infrastructure
+- Infrastructure -> Domain
+- Domain -> must not depend on outer layers
 
 Navigation acts as a presentation concern.
 It must not become a container for business logic.
 
 ---
 
-## 3. Module Boundaries & Import Rules
+## 3. Physical Directory Policy
+
+The project uses a feature-first structure.
+
+Top-level `src` directories are:
+
+```txt
+src/
+  assets/
+  components/
+  config/
+  features/
+  hooks/
+  navigation/
+  store/
+  theme/
+  utils/
+```
+
+Rules:
+
+- `features` is the primary application module boundary.
+- Top-level screens must not be created.
+- Top-level types must not be created by default.
+- Top-level app must not be created by default.
+- Shared modules must exist only when sharing is real and established.
+- Directory names must be responsibility-revealing.
+
+---
+
+## 4. Directory Responsibilities
+
+### `src/assets`
+
+Static resources used by the application.
+
+Examples:
+
+- images
+- icons
+- fonts
+- static animation files
+
+Do not place executable logic here.
+
+### `src/components`
+
+Reusable UI components shared across multiple features.
+
+Examples:
+
+- buttons
+- inputs
+- dialogs
+- generic layout primitives
+- shared visual wrappers
+
+Rules:
+
+- Components here must be feature-agnostic.
+- If a component is specific to one feature, it belongs inside that feature.
+- Shared UI must not contain feature business rules.
+
+### `src/config`
+
+Application-level configuration and stable system constants.
+
+Examples:
+
+- route names
+- storage keys
+- environment access
+- API base configuration
+- app-wide settings
+
+Rules:
+
+- Use `config` as the single top-level location for configuration-like values.
+- Do not split configuration values between `config` and a separate top-level `constants` directory.
+- Values here must be stable, explicit, and non-feature-owned.
+
+### `src/features`
+
+Primary feature modules.
+
+Each feature owns its screens, feature-specific components, local hooks, types, services, and domain-specific logic as appropriate.
+
+Example:
+
+```txt
+src/
+  features/
+    auth/
+      components/
+      hooks/
+      screens/
+      services/
+      types.ts
+      model.ts
+    profile/
+      components/
+      hooks/
+      screens/
+      services/
+      types.ts
+```
+
+Rules:
+
+- Feature code must be colocated with the feature that owns it.
+- Screens are feature-owned modules.
+- Feature-specific types must live inside the feature.
+- Feature-specific services must live inside the feature unless they are truly cross-feature.
+- A feature must expose a clear public surface when needed.
+
+### `src/hooks`
+
+Shared React hooks used across features.
+
+Examples:
+
+- app lifecycle hooks
+- keyboard hooks
+- shared async hooks
+- shared viewport or safe-area hooks
+
+Rules:
+
+- Hooks here must be cross-feature.
+- Feature-specific hooks belong inside the owning feature.
+- Hooks may orchestrate logic, but must not become a dumping ground for unrelated code.
+
+### `src/navigation`
+
+Navigation definitions and route composition.
+
+Examples:
+
+- root navigator
+- stack definitions
+- tab definitions
+- route binding configuration
+
+Rules:
+
+- Navigation must remain thin.
+- Navigation may reference feature-owned screens directly.
+- Navigation must not contain business rules, data shaping, or feature orchestration beyond routing concerns.
+- Navigation must not become a substitute feature layer.
+
+### `src/store`
+
+Global state for cross-screen or cross-feature concerns.
+
+Examples:
+
+- authenticated session state
+- app-wide UI state
+- global preference state
+- cross-feature coordination state
+
+Rules:
+
+- Only state with real cross-feature or cross-screen ownership belongs here.
+- Feature-local state must remain inside the feature.
+- Store modules must not become a hidden application layer containing unrelated logic.
+
+### `src/theme`
+
+Design system definitions.
+
+Examples:
+
+- colors
+- spacing
+- typography
+- radius
+- elevation
+- shared tokens
+- theme helpers
+
+Rules:
+
+- Theme defines presentation tokens, not feature behavior.
+- Theme values must be reusable and app-wide.
+- Feature-owned visual constants should stay inside the feature unless they become shared design tokens.
+
+### `src/utils`
+
+Shared pure utilities.
+
+Examples:
+
+- formatters
+- parsers
+- value transforms
+- pure helpers
+- generic validation helpers
+
+Rules:
+
+- Utilities here must be framework-independent when possible.
+- Utilities must be pure unless there is a strong reason otherwise.
+- React-dependent logic does not belong here.
+- Feature-specific utilities belong inside the owning feature.
+
+---
+
+## 5. Module Boundaries & Import Rules
 
 ### Allowed Imports
 
@@ -54,7 +262,37 @@ Avoid barrel exports for architectural enforcement.
 
 ---
 
-## 4. File Responsibility Principle
+## 6. Feature Structure Policy
+
+Features are the default unit of organization.
+
+A feature may contain:
+
+```txt
+feature-name/
+  components/
+  hooks/
+  screens/
+  services/
+  types.ts
+  model.ts
+  utils.ts
+  index.ts
+```
+
+Not every feature requires every subdirectory or file.
+Only create structure that is justified by actual complexity.
+
+Rules:
+
+- Organize by ownership first, not by file type first.
+- Keep related files physically close to the feature that owns them.
+- Prefer small, explicit modules over broad shared buckets.
+- Promote code to shared top-level directories only after reuse is established.
+
+---
+
+## 7. File Responsibility Principle
 
 Each file must represent a single cohesive responsibility.
 
@@ -69,7 +307,7 @@ Each file must represent a single cohesive responsibility.
 
 ---
 
-## 5. Screen, Component, and Hook Rules
+## 8. Screen, Component, and Hook Rules
 
 ### Screens
 
@@ -124,7 +362,30 @@ Hooks must not:
 
 ---
 
-## 6. Navigation Policy
+## 9. Screen Policy
+
+Screens are feature-owned modules.
+
+Rules:
+
+- Do not create a top-level `src/screens`.
+- Screen files must live inside their owning feature.
+- A screen may compose feature UI, call hooks, and bind navigation input/output.
+- A screen must not become a transport adapter or SDK boundary.
+
+Example:
+
+```txt
+src/
+  features/
+    auth/
+      screens/
+        LoginScreen.tsx
+```
+
+---
+
+## 10. Navigation Policy
 
 Navigation is a presentation concern.
 
@@ -138,34 +399,21 @@ Do not place business rules inside screen option factories, route guards, or nav
 
 ---
 
-## 7. Data, Storage, and Native Boundary Rules
+## 11. Type Policy
 
-All external data must be normalized at the boundary.
+Types are colocated with ownership.
 
-- API responses must be normalized in service or provider modules.
-- AsyncStorage, SecureStore, Keychain, SQLite, and filesystem access belong to infrastructure.
-- Native module payloads must be mapped into Domain types before leaving infrastructure.
-- Push notification payloads, deep link params, and device metadata are external data.
-- `snake_case` must not exist inside Domain types.
+Rules:
 
-Structural similarity is not a reason to bypass transformation.
-
----
-
-## 8. Native Modules and External SDKs
-
-External SDKs and device APIs must be wrapped by explicit contracts.
-
-- React Native platform APIs must not leak through the application unchecked.
-- Analytics, crash reporting, push, camera, location, and biometric APIs must be accessed through replaceable adapters.
-- SDK-specific models must not escape infrastructure boundaries.
-- Permission status values must be normalized before use in Application or Presentation layers.
-
-Direct SDK usage inside screens or components is prohibited.
+- Do not create a top-level `src/types` by default.
+- Feature-specific types must live inside the owning feature.
+- Shared types may be extracted only when they are stable, cross-feature, and meaningfully reused.
+- API response shapes must not be treated as app-wide truth by default.
+- Domain types should represent application meaning, not transport shape.
 
 ---
 
-## 9. State Ownership
+## 12. State Policy
 
 State must have a clear owner.
 
@@ -181,7 +429,48 @@ Global state is allowed only when ownership is truly cross-screen and cohesive.
 
 ---
 
-## 10. Error Handling Policy
+## 13. Data Boundary Policy
+
+All external data must be normalized at the boundary.
+
+- API responses must be normalized in service or provider modules.
+- AsyncStorage, SecureStore, Keychain, SQLite, and filesystem access belong to infrastructure.
+- Native module payloads must be mapped into Domain types before leaving infrastructure.
+- Push notification payloads, deep link params, and device metadata are external data.
+- `snake_case` must not exist inside Domain types.
+
+Structural similarity is not a reason to bypass transformation.
+
+---
+
+## 14. Hook and Utility Policy
+
+Hooks and utilities serve different purposes and must remain distinct.
+
+Rules:
+
+- `hooks` contains React-aware shared logic.
+- `utils` contains shared non-React helpers.
+- A hook must not be stored under `utils`.
+- A pure helper must not be stored under `hooks`.
+- This separation is mandatory.
+
+---
+
+## 15. Native Modules and External SDKs
+
+External SDKs and device APIs must be wrapped by explicit contracts.
+
+- React Native platform APIs must not leak through the application unchecked.
+- Analytics, crash reporting, push, camera, location, and biometric APIs must be accessed through replaceable adapters.
+- SDK-specific models must not escape infrastructure boundaries.
+- Permission status values must be normalized before use in Application or Presentation layers.
+
+Direct SDK usage inside screens or components is prohibited.
+
+---
+
+## 16. Error Handling Policy
 
 All infrastructure errors must be converted into `AppError`.
 
@@ -198,7 +487,62 @@ UI must not hardcode transport-specific or SDK-specific error handling branches.
 
 ---
 
-## 11. Testing Policy
+## 17. Shared Code Promotion Policy
+
+Code becomes shared only when real reuse exists.
+
+Rules:
+
+- Do not move code to top-level shared directories preemptively.
+- Duplication is temporarily acceptable when ownership is still feature-local.
+- Promote to shared only after reuse is proven and the abstraction is stable.
+- Shared code must remain generic and must not carry feature assumptions.
+
+---
+
+## 18. Naming Policy
+
+Directory and module names must reveal responsibility.
+
+Rules:
+
+- Avoid ambiguous names.
+- Avoid catch-all names that hide ownership.
+- Avoid broad buckets that collect unrelated code.
+- Prefer names that describe purpose directly.
+
+Examples of preferred names:
+
+- `navigation`
+- `theme`
+- `store`
+- `config`
+
+Examples to avoid unless strictly defined:
+
+- `common`
+- `helpers`
+- `misc`
+- `stage`
+
+If a concept cannot be named clearly, its responsibility is probably not yet clear enough.
+
+---
+
+## 19. Dependency Rules
+
+The following are mandatory:
+
+- A shared top-level module must not depend on a specific feature.
+- A feature may depend on shared modules.
+- A feature should not depend deeply on internal files of another feature unless an explicit boundary is defined.
+- Domain logic must not depend on presentation details.
+- Infrastructure concerns must not be imported directly into generic shared UI.
+- When cross-feature dependency is required, expose an explicit interface or public entrypoint.
+
+---
+
+## 20. Testing Policy
 
 - Domain: pure unit tests
 - Services / adapters: tests with mocked API, storage, or SDK boundaries
@@ -207,3 +551,17 @@ UI must not hardcode transport-specific or SDK-specific error handling branches.
 - Components: render and interaction tests
 - Native integrations: thin adapter tests only
 - Do not test implementation details; test observable behavior
+
+---
+
+## 21. Default Position
+
+When there is uncertainty:
+
+- prefer feature ownership
+- prefer colocation
+- prefer thinner top-level structure
+- prefer explicit boundaries
+- prefer shared extraction later, not earlier
+
+This is the default standard for the codebase.
