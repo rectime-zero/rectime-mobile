@@ -43,20 +43,20 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
         wrapper: {
             position: 'absolute',
-            left: 16,
-            right: 16,
-            bottom: 14,
+            left: 0,
+            right: 0,
+            bottom: 0,
         },
         container: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderRadius: 26,
-            borderWidth: 1,
-            borderColor: theme.colors.navigationBorder,
+            borderTopWidth: 1,
+            borderTopColor: theme.colors.navigationBorder,
             backgroundColor: theme.colors.navigationBackground,
             paddingHorizontal: 10,
-            paddingVertical: 10,
+            paddingTop: 10,
+            paddingBottom: 14,
         },
         tab: {
             flex: 1,

@@ -1,7 +1,7 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Platform, Pressable, StatusBar, Text, View} from 'react-native';
-import {navigationTabs} from '../config/navigationTabs';
+import {sideNavigationTabs} from '../config/sideNavigationTabs';
 import {useStage} from './useStage';
 import {useTheme} from '../theme';
 
@@ -35,7 +35,7 @@ function SideMenu() {
             </View>
 
             <View className="mt-8 gap-2">
-                {navigationTabs.map(item => {
+                {sideNavigationTabs.map(item => {
                     const isActive = item.key === rootRoute.name;
 
                     return (

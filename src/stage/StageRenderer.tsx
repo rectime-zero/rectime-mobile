@@ -97,7 +97,6 @@ function StageRenderer() {
         shadowOpacity: interpolate(menuProgress.value, [0, 1], [0, 0.18]),
         transform: [
             {translateX: interpolate(menuProgress.value, [0, 1], [0, MENU_REVEAL_WIDTH])},
-            {scale: interpolate(menuProgress.value, [0, 1], [1, 0.92])},
         ],
     }));
 
