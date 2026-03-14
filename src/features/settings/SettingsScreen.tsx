@@ -1,18 +1,20 @@
-import React from 'react';
+﻿import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
-import {availableThemes, useTheme} from '../../theme';
+import {useTheme} from '../../theme';
 
 type SettingsScreenProps = {
     route: AppRoute<'settings'>;
 };
 
 function SettingsScreen({route}: SettingsScreenProps) {
-    const {theme, selectedThemeId, setSelectedThemeId} = useTheme();
+    const {theme} = useTheme();
     const {closeMenuPage, pop} = useNavigation();
+    const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
+    const [hapticsEnabled, setHapticsEnabled] = React.useState(true);
     const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
@@ -21,35 +23,41 @@ function SettingsScreen({route}: SettingsScreenProps) {
             headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={handleBack} />}
             title="設定">
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>表示テーマ</Text>
-                <Text style={styles.sectionBody}>アプリ全体の配色を切り替えます。</Text>
+                <Text style={styles.sectionTitle}>アプリ設定</Text>
+                <Text style={styles.sectionBody}>通知や操作時のフィードバックをここで切り替えられます。</Text>
 
-                <View style={styles.themeList}>
-                    {availableThemes.map(item => {
-                        const isSelected = item.id === selectedThemeId;
+                <View style={styles.settingList}>
+                    <View style={styles.settingCard}>
+                        <View style={styles.settingCopy}>
+                            <Text style={styles.settingTitle}>通知</Text>
+                            <Text style={styles.settingBody}>試合開始や更新情報の通知を受け取ります。</Text>
+                        </View>
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={setNotificationsEnabled}
+                            trackColor={{
+                                false: theme.colors.surfaceMuted,
+                                true: theme.colors.buttonPrimary,
+                            }}
+                            thumbColor={theme.colors.buttonPrimaryText}
+                        />
+                    </View>
 
-                        return (
-                            <View key={item.id} style={[styles.themeCard, isSelected ? styles.themeCardSelected : null]}>
-                                <View>
-                                    <Text style={styles.themeTitle}>{item.label}</Text>
-                                    <Text style={styles.themeBody}>
-                                        {item.id === 'blue-2024'
-                                            ? 'コントラストを強めた配色です。'
-                                            : 'やわらかく見やすい標準配色です。'}
-                                    </Text>
-                                </View>
-                                <Switch
-                                    value={isSelected}
-                                    onValueChange={() => setSelectedThemeId(item.id)}
-                                    trackColor={{
-                                        false: theme.colors.surfaceMuted,
-                                        true: theme.colors.buttonPrimary,
-                                    }}
-                                    thumbColor={theme.colors.buttonPrimaryText}
-                                />
-                            </View>
-                        );
-                    })}
+                    <View style={styles.settingCard}>
+                        <View style={styles.settingCopy}>
+                            <Text style={styles.settingTitle}>触覚フィードバック</Text>
+                            <Text style={styles.settingBody}>操作時に軽い振動で反応を返します。</Text>
+                        </View>
+                        <Switch
+                            value={hapticsEnabled}
+                            onValueChange={setHapticsEnabled}
+                            trackColor={{
+                                false: theme.colors.surfaceMuted,
+                                true: theme.colors.buttonPrimary,
+                            }}
+                            thumbColor={theme.colors.buttonPrimaryText}
+                        />
+                    </View>
                 </View>
             </View>
         </PageLayout>
@@ -71,10 +79,10 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontSize: 14,
             lineHeight: 22,
         },
-        themeList: {
+        settingList: {
             gap: 12,
         },
-        themeCard: {
+        settingCard: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -85,15 +93,15 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
         },
-        themeCardSelected: {
-            borderColor: theme.colors.navigationActive,
+        settingCopy: {
+            flex: 1,
         },
-        themeTitle: {
+        settingTitle: {
             color: theme.colors.textPrimary,
             fontSize: 16,
             fontWeight: '700',
         },
-        themeBody: {
+        settingBody: {
             marginTop: 4,
             color: theme.colors.textSecondary,
             fontSize: 13,
