@@ -33,7 +33,9 @@ function NavigationRenderer() {
     const {
         rootRoute,
         menuPageRoute,
-        menuPagePhase,
+        menuPageVisibility,
+        menuPageTransitionMode,
+        menuPageSource,
         pushStack,
         sheetRoute,
         menuProgress,
@@ -45,7 +47,8 @@ function NavigationRenderer() {
     } = useNavigation();
 
     const rootCardPanStart = useSharedValue(0);
-    const canUseMenuGesture = pushStack.length === 0 && !menuPageRoute && !menuPagePhase && !sheetRoute;
+    const canUseMenuGesture =
+        pushStack.length === 0 && menuPageVisibility === 'hidden' && menuPageTransitionMode === 'idle' && !sheetRoute;
 
     const menuGesture = React.useMemo(
         () =>
@@ -102,7 +105,7 @@ function NavigationRenderer() {
     );
 
     useEffect(() => {
-        if (!menuPageRoute || menuPagePhase !== 'entering') {
+        if (!menuPageRoute || menuPageTransitionMode !== 'enter') {
             return;
         }
 
@@ -112,10 +115,10 @@ function NavigationRenderer() {
                 runOnJS(finishMenuPageEnter)();
             }
         });
-    }, [finishMenuPageEnter, menuPagePhase, menuPageRoute, menuPageTransitionProgress]);
+    }, [finishMenuPageEnter, menuPageRoute, menuPageTransitionMode, menuPageTransitionProgress]);
 
     useEffect(() => {
-        if (!menuPageRoute || menuPagePhase !== 'exiting') {
+        if (!menuPageRoute || menuPageTransitionMode !== 'exit') {
             return;
         }
 
@@ -125,12 +128,14 @@ function NavigationRenderer() {
                 runOnJS(clearMenuPage)(menuPageRoute.key);
             }
         });
-    }, [clearMenuPage, menuPagePhase, menuPageRoute, menuPageTransitionProgress, setActiveGesture]);
+    }, [clearMenuPage, menuPageRoute, menuPageTransitionMode, menuPageTransitionProgress, setActiveGesture]);
 
     const rootCardStyle = useAnimatedStyle(() => {
-        const baseProgress = menuPageRoute
-            ? 1 - menuPageTransitionProgress.value
-            : menuProgress.value;
+        let baseProgress = menuProgress.value;
+
+        if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
+            baseProgress = 1 - menuPageTransitionProgress.value;
+        }
 
         return {
             borderRadius: interpolate(baseProgress, [0, 1], [0, 32]),
@@ -140,22 +145,39 @@ function NavigationRenderer() {
     });
 
     const scrimStyle = useAnimatedStyle(() => {
-        const baseProgress = menuPageRoute
-            ? 1 - menuPageTransitionProgress.value
-            : menuProgress.value;
+        let baseProgress = menuProgress.value;
+
+        if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
+            baseProgress = 1 - menuPageTransitionProgress.value;
+        }
 
         return {
             opacity: interpolate(baseProgress, [0, 1], [0, 0.18]),
         };
     });
 
-    const menuPageStyle = useAnimatedStyle(() => ({
-        transform: [
-            {
-                translateX: interpolate(menuPageTransitionProgress.value, [0, 1], [menuRevealWidth, 0]),
-            },
-        ],
-    }));
+    const menuPageStyle = useAnimatedStyle(() => {
+        const enterStartX = menuPageSource === 'side-menu' ? menuRevealWidth : screenWidth;
+        const exitEndX = screenWidth;
+
+        if (menuPageTransitionMode === 'exit') {
+            return {
+                transform: [
+                    {
+                        translateX: interpolate(menuPageTransitionProgress.value, [0, 1], [exitEndX, 0]),
+                    },
+                ],
+            };
+        }
+
+        return {
+            transform: [
+                {
+                    translateX: interpolate(menuPageTransitionProgress.value, [0, 1], [enterStartX, 0]),
+                },
+            ],
+        };
+    });
 
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
@@ -176,7 +198,7 @@ function NavigationRenderer() {
                 </Animated.View>
             </GestureDetector>
 
-            {menuPageRoute ? (
+            {menuPageVisibility === 'visible' && menuPageRoute ? (
                 <Animated.View style={[styles.menuPageLayer, menuPageStyle]}>
                     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
                         {renderPushScreen(menuPageRoute)}

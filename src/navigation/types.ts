@@ -1,6 +1,8 @@
 export type PresentationMode = 'root' | 'push' | 'menu-page' | 'bottom-sheet' | 'modal';
 export type SheetLayoutMode = 'fit' | 'full';
-export type ForegroundRoutePhase = 'entering' | 'open' | 'exiting';
+export type MenuPageVisibility = 'hidden' | 'visible';
+export type MenuPageTransitionMode = 'idle' | 'enter' | 'exit';
+export type MenuPageSource = 'side-menu' | 'root';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
 export type PushScreenName = 'detail' | 'settings' | 'match-info';
