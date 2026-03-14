@@ -1,19 +1,24 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions, type ImageStyle} from 'react-native';
 import {mockUserAvatarSource} from '../../assets/mockUserAvatar';
 import {sheetRoutes} from '../../config/navigationRoutes';
-import {sideNavigationTabs} from '../../config/sideNavigationTabs';
+import {sideMenuItems} from '../../config/sideMenuItems';
 import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import UserAvatar from '../UserAvatar';
 
 const appIcon = require('../../assets/icons/app-icon.png');
+const brandIconStyle: ImageStyle = {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+};
 
 function SideMenu() {
     const {theme, selectedThemeId} = useTheme();
-    const {rootRoute, setRootRoute, closeMenu, presentSheetRoute} = useNavigation();
+    const {rootRoute, pushRoute, setRootRoute, closeMenu, presentSheetRoute} = useNavigation();
     const {width: screenWidth} = useWindowDimensions();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
     const revealWidth = getMenuRevealWidth(screenWidth);
@@ -23,6 +28,7 @@ function SideMenu() {
     return (
         <View style={styles.container}>
             <View style={styles.contentArea}>
+                {/* 名前カード */}
                 <View style={styles.profileRow}>
                     <UserAvatar
                         initials="RK"
@@ -40,14 +46,22 @@ function SideMenu() {
                     </View>
                 </View>
 
+                {/* サイドメニューリスト */}
                 <View style={styles.tabList}>
-                    {sideNavigationTabs.map(item => {
-                        const isActive = item.route.name === rootRoute.name;
+                    {sideMenuItems.map(item => {
+                        const isActive = item.kind === 'root' && item.route.name === rootRoute.name;
 
                         return (
                             <Pressable
-                                key={item.route.name}
-                                onPress={() => setRootRoute(item.route)}
+                                key={`${item.kind}-${item.route.name}-${item.label}`}
+                                onPress={() => {
+                                    if (item.kind === 'root') {
+                                        setRootRoute(item.route);
+                                        return;
+                                    }
+
+                                    pushRoute(item.route);
+                                }}
                                 style={[styles.tabButton, isActive ? styles.activeTab : null]}>
                                 <FontAwesome5
                                     color={isActive ? theme.colors.navigationActive : theme.colors.textSecondary}
@@ -67,6 +81,7 @@ function SideMenu() {
                     })}
                 </View>
 
+                {/* テーマ&カラー タイトル */}
                 <View style={styles.footerPanel}>
                     <Pressable
                         accessibilityRole="button"
@@ -102,7 +117,7 @@ function SideMenu() {
                     </Pressable>
 
                     <Pressable accessibilityRole="button" onPress={closeMenu} style={styles.brandButton}>
-                        <Image source={appIcon} style={styles.brandIcon} resizeMode="cover"/>
+                        <Image source={appIcon} style={brandIconStyle} resizeMode="cover" />
                         <Text style={styles.brandLabel}>rectime</Text>
                     </Pressable>
                 </View>
@@ -159,6 +174,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             borderRadius: 16,
             paddingHorizontal: 16,
             paddingVertical: 16,
+            alignSelf: 'flex-start',
         },
         activeTab: {
             backgroundColor: theme.colors.menuPanel,
@@ -234,11 +250,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             flexDirection: 'row',
             alignItems: 'center',
             gap: 8,
-        },
-        brandIcon: {
-            width: 30,
-            height: 30,
-            borderRadius: 6,
         },
         brandLabel: {
             color: theme.colors.textSecondary,
