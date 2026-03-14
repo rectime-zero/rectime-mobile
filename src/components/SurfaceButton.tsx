@@ -7,7 +7,8 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
-import Animated, {
+import {
+    createAnimatedComponent,
     useAnimatedStyle,
     useSharedValue,
     withTiming,
@@ -26,6 +27,8 @@ type SurfaceButtonProps = {
     chrome?: SurfaceButtonChrome;
     size?: SurfaceButtonSize;
 };
+
+const AnimatedPressable = createAnimatedComponent(Pressable);
 
 function SurfaceButton({
     accessibilityLabel,
@@ -77,23 +80,21 @@ function SurfaceButton({
               : null;
 
     return (
-        <Animated.View style={animatedStyle}>
-            <Pressable
-                accessibilityLabel={accessibilityLabel}
-                accessibilityRole="button"
-                onPress={onPress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                style={[styles.base, sizeStyle, chromeStyle, style]}>
-                {chrome === 'glass' && isIos ? (
-                    <>
-                        <View pointerEvents="none" style={styles.iosGlassHighlight} />
-                        <View pointerEvents="none" style={styles.iosGlassShade} />
-                    </>
-                ) : null}
-                <View style={[styles.content, contentStyle]}>{children}</View>
-            </Pressable>
-        </Animated.View>
+        <AnimatedPressable
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="button"
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            style={[styles.base, sizeStyle, chromeStyle, style, animatedStyle]}>
+            {chrome === 'glass' && isIos ? (
+                <>
+                    <View pointerEvents="none" style={styles.iosGlassHighlight} />
+                    <View pointerEvents="none" style={styles.iosGlassShade} />
+                </>
+            ) : null}
+            <View style={[styles.content, contentStyle]}>{children}</View>
+        </AnimatedPressable>
     );
 }
 

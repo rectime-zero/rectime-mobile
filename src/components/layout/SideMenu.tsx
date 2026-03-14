@@ -15,6 +15,7 @@ import {sideMenuItems} from '../../config/sideMenuItems';
 import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
+import {resolveTheme} from '../../theme/themes';
 import AppIcon from '../AppIcon';
 import SurfaceButton from '../SurfaceButton';
 import UserAvatar from '../UserAvatar';
@@ -27,13 +28,15 @@ const brandIconStyle: ImageStyle = {
 };
 
 function SideMenu() {
-    const {theme, selectedThemeId} = useTheme();
+    const {theme, resolvedMode, selectedThemeId} = useTheme();
     const {openMenuPageRoute, closeMenu, presentSheetRoute} = useNavigation();
     const {width: screenWidth} = useWindowDimensions();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
     const revealWidth = getMenuRevealWidth(screenWidth);
-    const isBlueTheme = selectedThemeId === 'blue-2024';
     const styles = React.useMemo(() => createStyles(theme, topInset, revealWidth), [theme, topInset, revealWidth]);
+    const defaultPreviewTheme = React.useMemo(() => resolveTheme('default', resolvedMode), [resolvedMode]);
+    const bluePreviewTheme = React.useMemo(() => resolveTheme('blue-2024', resolvedMode), [resolvedMode]);
+    const activePreviewTheme = selectedThemeId === 'blue-2024' ? bluePreviewTheme : defaultPreviewTheme;
 
     return (
         <View style={styles.container}>
@@ -76,7 +79,7 @@ function SideMenu() {
 
                 <View style={styles.footerPanel}>
                     <SurfaceButton
-                        accessibilityLabel="button"
+                        accessibilityLabel="テーマを開く"
                         chrome="none"
                         onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
                         style={styles.footerActions}
@@ -84,31 +87,38 @@ function SideMenu() {
                         <View style={styles.footerPreviewCluster}>
                             <AppIcon
                                 color={theme.colors.textSecondary}
-                                icon={{kind: 'font-awesome', name: 'moon'}}
+                                icon={{kind: 'font-awesome', name: resolvedMode === 'dark' ? 'moon' : 'sun'}}
                                 size={17}
                             />
                         </View>
 
                         <View style={styles.footerPreviewCluster}>
-                            <View style={styles.footerPreviewShell}>
+                            <View
+                                style={[
+                                    styles.footerPreviewShell,
+                                    {backgroundColor: activePreviewTheme.colors.surfaceMuted},
+                                ]}>
                                 <View
                                     style={[
                                         styles.footerPreviewFill,
-                                        isBlueTheme ? styles.footerPreviewFillBlue : styles.footerPreviewFillDefault,
+                                        {backgroundColor: activePreviewTheme.colors.surfaceAccentStrong},
                                     ]}
                                 />
                             </View>
                             <View
                                 style={[
                                     styles.footerPreviewAccent,
-                                    isBlueTheme ? styles.footerPreviewAccentBlue : styles.footerPreviewAccentDefault,
+                                    {
+                                        backgroundColor: activePreviewTheme.colors.navigationActive,
+                                        borderColor: activePreviewTheme.colors.surfacePrimary,
+                                    },
                                 ]}
                             />
                         </View>
                     </SurfaceButton>
 
                     <SurfaceButton
-                        accessibilityLabel="button"
+                        accessibilityLabel="メニューを閉じる"
                         chrome="none"
                         onPress={closeMenu}
                         style={styles.brandButton}
@@ -193,7 +203,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             paddingLeft: 6,
             paddingRight: 7,
             paddingVertical: 3,
-            backgroundColor: '#FFFFFF',
+            backgroundColor: theme.colors.surfacePrimary,
         },
         footerActionsContent: {
             flexDirection: 'row',
@@ -211,18 +221,11 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 20,
-            backgroundColor: '#EEF2F7',
         },
         footerPreviewFill: {
             width: 22,
             height: 22,
             borderRadius: 20,
-        },
-        footerPreviewFillDefault: {
-            backgroundColor: '#C9D1DC',
-        },
-        footerPreviewFillBlue: {
-            backgroundColor: '#355CFF',
         },
         footerPreviewAccent: {
             position: 'absolute',
@@ -232,13 +235,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             height: 12,
             borderRadius: 6,
             borderWidth: 2,
-            borderColor: '#FFFFFF',
-        },
-        footerPreviewAccentDefault: {
-            backgroundColor: '#8E9AAF',
-        },
-        footerPreviewAccentBlue: {
-            backgroundColor: '#8DE1FF',
         },
         brandButton: {},
         brandButtonContent: {
