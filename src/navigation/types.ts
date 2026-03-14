@@ -1,8 +1,10 @@
-export type PresentationMode = 'root' | 'push' | 'bottom-sheet' | 'modal';
+export type PresentationMode = 'root' | 'push' | 'menu-page' | 'bottom-sheet' | 'modal';
 export type SheetLayoutMode = 'fit' | 'full';
+export type ForegroundRoutePhase = 'entering' | 'open' | 'exiting';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
-export type PushScreenName = 'detail';
+export type PushScreenName = 'detail' | 'settings' | 'match-info';
+export type MenuPageScreenName = PushScreenName;
 export type SheetScreenName = 'sample-sheet' | 'theme-sheet';
 export type AppScreenName = RootScreenName | PushScreenName | SheetScreenName;
 
@@ -16,6 +18,11 @@ export type RouteParamsMap = {
     rules: undefined;
     detail: {
         title: string;
+        summary: string;
+    };
+    settings: undefined;
+    'match-info': {
+        teamName: string;
         summary: string;
     };
     'sample-sheet': undefined;

@@ -29,7 +29,7 @@ function RankingScreen() {
 
             <View style={styles.topGrid}>
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '最新の試合結果と順位推移を確認できます。'))}
+                    onPress={() => pushRoute(pushRoutes.matchInfo('IA31', '最新の試合結果と順位推移を確認できます。'))}
                     style={styles.firstCard}>
                     <View style={styles.topBadge}>
                         <Text style={styles.topBadgeText}>{rankingEntries[0].medal}</Text>
@@ -46,7 +46,7 @@ function RankingScreen() {
                 </Pressable>
 
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IH22', '上位チームの試合サマリーを確認できます。'))}
+                    onPress={() => pushRoute(pushRoutes.matchInfo('IH22', '上位チームの試合サマリーを確認できます。'))}
                     style={styles.secondCard}>
                     <View style={styles.topBadge}>
                         <Text style={styles.topBadgeText}>{rankingEntries[1].medal}</Text>
@@ -57,7 +57,7 @@ function RankingScreen() {
             </View>
 
             <Pressable
-                onPress={() => pushRoute(pushRoutes.matchHistory('IS41', '決勝までの試合内容を一覧で確認できます。'))}
+                onPress={() => pushRoute(pushRoutes.matchInfo('IS41', '決勝までの試合内容を一覧で確認できます。'))}
                 style={styles.thirdRow}>
                 <View style={styles.thirdRank}>
                     <Text style={styles.thirdRankText}>3</Text>
@@ -70,7 +70,7 @@ function RankingScreen() {
                 {rankingEntries.slice(3).map((item, index) => (
                     <Pressable
                         key={item.name}
-                        onPress={() => pushRoute(pushRoutes.matchHistory(item.name, 'チーム別の試合結果と得点履歴を確認できます。'))}
+                        onPress={() => pushRoute(pushRoutes.matchInfo(item.name, 'チーム別の試合結果と得点履歴を確認できます。'))}
                         style={[styles.listRow, index < rankingEntries.slice(3).length - 1 ? styles.listRowBorder : null]}>
                         <Text style={styles.listRank}>{index + 4}</Text>
                         <Text style={styles.listName}>{item.name}</Text>

@@ -15,23 +15,24 @@ type DetailScreenProps = {
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {pop, presentSheetRoute} = useNavigation();
+    const {closeMenuPage, pop, presentSheetRoute} = useNavigation();
+    const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
-            headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={pop} />}
+            headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={handleBack} />}
             headerTrailing={
                 <HeaderIconButton
                     icon="ellipsis-h"
-                    label="その他"
+                    label="補足メニュー"
                     onPress={() => presentSheetRoute(sheetRoutes.notifications)}
                 />
             }
             title={route.params.title}>
             <View style={styles.scoreCard}>
                 <View>
-                    <Text style={styles.scoreLabel}>現在の総合得点</Text>
+                    <Text style={styles.scoreLabel}>現在の総合スコア</Text>
                     <Text style={styles.scoreValue}>
                         450 <Text style={styles.scoreUnit}>pts</Text>
                     </Text>
@@ -41,7 +42,7 @@ function DetailScreen({route}: DetailScreenProps) {
                 </View>
             </View>
 
-            <Text style={styles.sectionTitle}>対戦結果（直近5試合）</Text>
+            <Text style={styles.sectionTitle}>対戦サマリー</Text>
 
             <View style={styles.matchList}>
                 {recentMatches.map(match => (

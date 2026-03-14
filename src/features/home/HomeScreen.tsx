@@ -32,7 +32,7 @@ function HomeScreen() {
                     3年生ブロックが開始直前です。センターコート周辺はまもなく混雑します。
                 </Text>
                 <Pressable
-                    onPress={() => pushRoute(pushRoutes.matchHistory('IA31', '予選から決勝までの勝ち上がりを確認できます。'))}
+                    onPress={() => pushRoute(pushRoutes.matchInfo('IA31', '予選から決勝までの勝ち上がりを確認できます。'))}
                     style={styles.heroAction}>
                     <Text style={styles.heroActionText}>詳細を見る</Text>
                     <FontAwesome5

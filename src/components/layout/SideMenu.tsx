@@ -18,7 +18,7 @@ const brandIconStyle: ImageStyle = {
 
 function SideMenu() {
     const {theme, selectedThemeId} = useTheme();
-    const {rootRoute, pushRoute, setRootRoute, closeMenu, presentSheetRoute} = useNavigation();
+    const {openMenuPageRoute, closeMenu, presentSheetRoute} = useNavigation();
     const {width: screenWidth} = useWindowDimensions();
     const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
     const revealWidth = getMenuRevealWidth(screenWidth);
@@ -49,33 +49,18 @@ function SideMenu() {
                 {/* サイドメニューリスト */}
                 <View style={styles.tabList}>
                     {sideMenuItems.map(item => {
-                        const isActive = item.kind === 'root' && item.route.name === rootRoute.name;
-
                         return (
                             <Pressable
                                 key={`${item.kind}-${item.route.name}-${item.label}`}
-                                onPress={() => {
-                                    if (item.kind === 'root') {
-                                        setRootRoute(item.route);
-                                        return;
-                                    }
-
-                                    pushRoute(item.route);
-                                }}
-                                style={[styles.tabButton, isActive ? styles.activeTab : null]}>
+                                onPress={() => openMenuPageRoute(item.route)}
+                                style={styles.tabButton}>
                                 <FontAwesome5
-                                    color={isActive ? theme.colors.navigationActive : theme.colors.textSecondary}
+                                    color={theme.colors.textSecondary}
                                     iconStyle="solid"
                                     name={item.icon}
                                     size={18}
                                 />
-                                <Text
-                                    style={[
-                                        styles.tabLabel,
-                                        isActive ? styles.activeTabLabel : styles.inactiveTabLabel,
-                                    ]}>
-                                    {item.label}
-                                </Text>
+                                <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
                             </Pressable>
                         );
                     })}

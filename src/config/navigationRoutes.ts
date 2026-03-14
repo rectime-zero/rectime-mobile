@@ -22,17 +22,14 @@ export const pushRoutes = {
         name: 'detail',
         params: {title, summary},
     }),
-    colorMode: (): PushRouteTarget<'detail'> => ({
-        name: 'detail',
-        params: {
-            title: 'カラーモード',
-            summary: 'ライト、ダーク、端末設定に関する表示設定ページです。',
-        },
+    settings: (): PushRouteTarget<'settings'> => ({
+        name: 'settings',
+        params: undefined,
     }),
-    matchHistory: (teamName: string, summary: string): PushRouteTarget<'detail'> => ({
-        name: 'detail',
+    matchInfo: (teamName: string, summary: string): PushRouteTarget<'match-info'> => ({
+        name: 'match-info',
         params: {
-            title: `${teamName} の対戦履歴`,
+            teamName,
             summary,
         },
     }),

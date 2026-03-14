@@ -2,10 +2,12 @@ import React from 'react';
 import {DetailScreen} from '../features/detail';
 import {HomeScreen} from '../features/home';
 import {MapScreen} from '../features/map';
+import {MatchInfoScreen} from '../features/matchInfo';
 import {RankingScreen} from '../features/ranking';
 import {RulesScreen} from '../features/rules';
 import {SampleBottomSheet} from '../features/sampleSheet';
 import {ScheduleScreen} from '../features/schedule';
+import {SettingsScreen} from '../features/settings';
 import {ThemeSheet} from '../features/themeSheet';
 import {
     type AppRoute,
@@ -33,9 +35,13 @@ export function renderRootScreen(route: AppRoute<RootScreenName>) {
 
 export function renderPushScreen(route: AppRoute<PushScreenName>) {
     switch (route.name) {
+        case 'settings':
+            return <SettingsScreen route={route as AppRoute<'settings'>} />;
+        case 'match-info':
+            return <MatchInfoScreen route={route as AppRoute<'match-info'>} />;
         case 'detail':
         default:
-            return <DetailScreen route={route} />;
+            return <DetailScreen route={route as AppRoute<'detail'>} />;
     }
 }
 
