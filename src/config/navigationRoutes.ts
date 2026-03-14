@@ -1,4 +1,5 @@
 import {
+    type MenuPageRouteTarget,
     type PushRouteTarget,
     type RootRouteTarget,
     type SheetRouteTarget,
@@ -22,11 +23,21 @@ export const pushRoutes = {
         name: 'detail',
         params: {title, summary},
     }),
-    settings: (): PushRouteTarget<'settings'> => ({
+    matchInfo: (teamName: string, summary: string): PushRouteTarget<'match-info'> => ({
+        name: 'match-info',
+        params: {
+            teamName,
+            summary,
+        },
+    }),
+} as const;
+
+export const menuPageRoutes = {
+    settings: (): MenuPageRouteTarget<'settings'> => ({
         name: 'settings',
         params: undefined,
     }),
-    matchInfo: (teamName: string, summary: string): PushRouteTarget<'match-info'> => ({
+    matchInfo: (teamName: string, summary: string): MenuPageRouteTarget<'match-info'> => ({
         name: 'match-info',
         params: {
             teamName,

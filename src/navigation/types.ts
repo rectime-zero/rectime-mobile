@@ -5,7 +5,7 @@ export type MenuPageSource = 'side-menu' | 'root';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
 export type PushScreenName = 'detail' | 'settings' | 'match-info';
-export type MenuPageScreenName = PushScreenName;
+export type MenuPageScreenName = Exclude<PushScreenName, 'detail'>;
 export type SheetScreenName = 'sample-sheet' | 'theme-sheet';
 export type AppScreenName = RootScreenName | PushScreenName | SheetScreenName;
 
@@ -53,14 +53,12 @@ export type PushRouteTarget<TName extends PushScreenName = PushScreenName> = {
     params: RouteParamsMap[TName];
 };
 
-export type SheetRouteTarget<TName extends SheetScreenName = SheetScreenName> = {
+export type MenuPageRouteTarget<TName extends MenuPageScreenName = MenuPageScreenName> = {
     name: TName;
     params: RouteParamsMap[TName];
 };
 
-export type NavigationState = {
-    routeStack: AppRoute[];
-    overlays: AppRoute[];
-    menuProgress: number;
-    activeGesture: ActiveGesture;
+export type SheetRouteTarget<TName extends SheetScreenName = SheetScreenName> = {
+    name: TName;
+    params: RouteParamsMap[TName];
 };

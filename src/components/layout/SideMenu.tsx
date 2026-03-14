@@ -1,6 +1,16 @@
 import React from 'react';
-import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions, type ImageStyle} from 'react-native';
-import {mockUserAvatarSource} from '../../assets/mockUserAvatar';
+import {
+    Image,
+    Platform,
+    Pressable,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View,
+    useWindowDimensions,
+    type ImageStyle,
+} from 'react-native';
+import {mockUserAvatarSource} from '../../assets/mock/avatar';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {sideMenuItems} from '../../config/sideMenuItems';
 import {getMenuRevealWidth} from '../../navigation/menuLayout';
@@ -28,7 +38,6 @@ function SideMenu() {
     return (
         <View style={styles.container}>
             <View style={styles.contentArea}>
-                {/* 名前カード */}
                 <View style={styles.profileRow}>
                     <UserAvatar
                         initials="RK"
@@ -46,35 +55,34 @@ function SideMenu() {
                     </View>
                 </View>
 
-                {/* サイドメニューリスト */}
                 <View style={styles.tabList}>
-                    {sideMenuItems.map(item => {
-                        return (
-                            <Pressable
-                                key={`${item.kind}-${item.route.name}-${item.label}`}
-                                onPress={() => openMenuPageRoute(item.route)}
-                                style={styles.tabButton}>
-                                <AppIcon
-                                    color={theme.colors.textSecondary}
-                                    icon={item.icon}
-                                    size={18}
-                                />
-                                <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
-                            </Pressable>
-                        );
-                    })}
+                    {sideMenuItems.map(item => (
+                        <Pressable
+                            key={`${item.kind}-${item.route.name}-${item.label}`}
+                            onPress={() => openMenuPageRoute(item.route)}
+                            style={styles.tabButton}>
+                            <AppIcon
+                                color={theme.colors.textSecondary}
+                                icon={item.icon}
+                                size={18}
+                            />
+                            <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
+                        </Pressable>
+                    ))}
                 </View>
 
-                {/* テーマ&カラー タイトル */}
                 <View style={styles.footerPanel}>
                     <Pressable
                         accessibilityRole="button"
                         accessibilityLabel="テーマを開く"
                         onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
                         style={styles.footerActions}>
-
                         <View style={styles.footerPreviewCluster}>
-                            <AppIcon color={theme.colors.textSecondary} icon={{kind: 'font-awesome', name: 'moon'}} size={17} />
+                            <AppIcon
+                                color={theme.colors.textSecondary}
+                                icon={{kind: 'font-awesome', name: 'moon'}}
+                                size={17}
+                            />
                         </View>
 
                         <View style={styles.footerPreviewCluster}>
@@ -155,16 +163,10 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             paddingVertical: 16,
             alignSelf: 'flex-start',
         },
-        activeTab: {
-            backgroundColor: theme.colors.menuPanel,
-        },
         tabLabel: {
             flex: 1,
             fontSize: 17,
             fontWeight: '700',
-        },
-        activeTabLabel: {
-            color: theme.colors.textInverse,
         },
         inactiveTabLabel: {
             color: theme.colors.textSecondary,

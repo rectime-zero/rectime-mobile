@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, type ImageSourcePropType} from 'react-native';
-import {mockUserAvatarSource} from '../assets/mockUserAvatar';
+import {mockUserAvatarSource} from '../assets/mock/avatar';
 import {useTheme} from '../theme';
 import UserAvatar from './UserAvatar';
 

@@ -1,13 +1,11 @@
 import React, {ReactNode} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import BottomNavigation from './BottomNavigation';
 import {useTheme} from '../../theme';
 
 type PageLayoutProps = {
     title: string;
     headerLeading?: ReactNode;
     headerTrailing?: ReactNode;
-    showBottomNavigation?: boolean;
     children: ReactNode;
 };
 
@@ -15,7 +13,6 @@ function PageLayout({
     title,
     headerLeading,
     headerTrailing,
-    showBottomNavigation = true,
     children,
 }: PageLayoutProps) {
     const {theme} = useTheme();
@@ -32,15 +29,10 @@ function PageLayout({
             </View>
 
             <ScrollView
-                contentContainerStyle={[
-                    styles.content,
-                    showBottomNavigation ? styles.contentWithBottomNavigation : null,
-                ]}
+                contentContainerStyle={[styles.content, styles.contentWithBottomNavigation]}
                 showsVerticalScrollIndicator={false}>
                 {children}
             </ScrollView>
-
-            {showBottomNavigation ? <BottomNavigation /> : null}
         </View>
     );
 }
