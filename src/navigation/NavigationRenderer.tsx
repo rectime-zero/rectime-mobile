@@ -10,6 +10,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import BottomNavigation from '../components/layout/BottomNavigation';
 import SideMenu from '../components/layout/SideMenu';
 import {useTheme} from '../theme';
 import NavigationCard from './NavigationCard';
@@ -33,7 +34,6 @@ function NavigationRenderer() {
     const {
         rootRoute,
         menuPageRoute,
-        menuPageVisibility,
         menuPageTransitionMode,
         menuPageSource,
         pushStack,
@@ -49,7 +49,7 @@ function NavigationRenderer() {
 
     const rootCardPanStart = useSharedValue(0);
     const canUseMenuGesture =
-        pushStack.length === 0 && menuPageVisibility === 'hidden' && menuPageTransitionMode === 'idle' && !sheetRoute;
+        pushStack.length === 0 && !menuPageRoute && menuPageTransitionMode === 'idle' && !sheetRoute;
 
     const menuGesture = React.useMemo(
         () =>
@@ -131,10 +131,10 @@ function NavigationRenderer() {
         });
     }, [clearMenuPage, menuPageRoute, menuPageTransitionMode, menuPageTransitionProgress, setActiveGesture]);
 
-    const rootCardStyle = useAnimatedStyle(() => {
+    const rootShellStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
+        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
             baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
         }
 
@@ -148,7 +148,7 @@ function NavigationRenderer() {
     const scrimStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
+        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
             baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
         }
 
@@ -180,6 +180,34 @@ function NavigationRenderer() {
         };
     });
 
+    const bottomNavigationLayerStyle = useAnimatedStyle(() => {
+        let baseProgress = menuProgress.value;
+
+        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
+            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        }
+
+        return {
+            borderRadius: interpolate(baseProgress, [0, 1], [0, 32]),
+            transform: [{translateX: interpolate(baseProgress, [0, 1], [0, menuRevealWidth])}],
+        };
+    });
+
+    const bottomNavigationClipStyle = useAnimatedStyle(() => {
+        let baseProgress = menuProgress.value;
+
+        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
+            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        }
+
+        const radius = interpolate(baseProgress, [0, 1], [0, 32]);
+
+        return {
+            borderBottomLeftRadius: radius,
+            borderBottomRightRadius: radius,
+        };
+    });
+
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
@@ -187,7 +215,7 @@ function NavigationRenderer() {
             <SideMenu />
 
             <GestureDetector gesture={menuGesture}>
-                <Animated.View style={[styles.rootCardLayer, rootCardStyle]}>
+                <Animated.View style={[styles.rootShellLayer, rootShellStyle]}>
                     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
                         {renderRootScreen(rootRoute)}
                     </SafeAreaView>
@@ -199,13 +227,19 @@ function NavigationRenderer() {
                 </Animated.View>
             </GestureDetector>
 
-            {menuPageVisibility === 'visible' && menuPageRoute ? (
+            {menuPageRoute ? (
                 <Animated.View style={[styles.menuPageLayer, menuPageStyle]}>
                     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
                         {renderPushScreen(menuPageRoute)}
                     </SafeAreaView>
                 </Animated.View>
             ) : null}
+
+            <Animated.View pointerEvents="box-none" style={[styles.navigationLayer, bottomNavigationLayerStyle]}>
+                <Animated.View pointerEvents="box-none" style={[styles.navigationClip, bottomNavigationClipStyle]}>
+                    <BottomNavigation />
+                </Animated.View>
+            </Animated.View>
 
             {pushStack.map((route, index) => (
                 <NavigationCard
@@ -226,7 +260,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             flex: 1,
             backgroundColor: theme.colors.navigationBackdrop,
         },
-        rootCardLayer: {
+        rootShellLayer: {
             ...StyleSheet.absoluteFillObject,
             backgroundColor: theme.colors.navigationSurface,
             overflow: 'hidden',
@@ -244,6 +278,14 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         menuPageLayer: {
             ...StyleSheet.absoluteFillObject,
             backgroundColor: theme.colors.navigationSurface,
+        },
+        navigationLayer: {
+            ...StyleSheet.absoluteFillObject,
+            zIndex: 20,
+        },
+        navigationClip: {
+            ...StyleSheet.absoluteFillObject,
+            overflow: 'hidden',
         },
     });
 }

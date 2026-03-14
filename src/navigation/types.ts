@@ -1,6 +1,5 @@
 export type PresentationMode = 'root' | 'push' | 'menu-page' | 'bottom-sheet' | 'modal';
 export type SheetLayoutMode = 'fit' | 'full';
-export type MenuPageVisibility = 'hidden' | 'visible';
 export type MenuPageTransitionMode = 'idle' | 'enter' | 'exit';
 export type MenuPageSource = 'side-menu' | 'root';
 

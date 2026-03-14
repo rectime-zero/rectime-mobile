@@ -6,7 +6,6 @@ import {
     type AppScreenName,
     type MenuPageSource,
     type MenuPageTransitionMode,
-    type MenuPageVisibility,
     type NavigationState,
     type PresentationMode,
     type PushRouteTarget,
@@ -21,7 +20,6 @@ import {
 type NavigationContextValue = {
     rootRoute: AppRoute<RootScreenName>;
     menuPageRoute: AppRoute<PushScreenName> | null;
-    menuPageVisibility: MenuPageVisibility;
     menuPageTransitionMode: MenuPageTransitionMode;
     menuPageSource: MenuPageSource | null;
     pushStack: AppRoute<PushScreenName>[];
@@ -93,7 +91,6 @@ type NavigationProviderProps = {
 function NavigationProvider({children}: NavigationProviderProps) {
     const [rootScreen, setRootScreenState] = useState<RootScreenName>('home');
     const [menuPageRoute, setMenuPageRoute] = useState<AppRoute<PushScreenName> | null>(null);
-    const [menuPageVisibility, setMenuPageVisibility] = useState<MenuPageVisibility>('hidden');
     const [menuPageTransitionMode, setMenuPageTransitionMode] = useState<MenuPageTransitionMode>('idle');
     const [menuPageSource, setMenuPageSource] = useState<MenuPageSource | null>(null);
     const [pushStack, setPushStack] = useState<AppRoute<PushScreenName>[]>([]);
@@ -123,7 +120,6 @@ function NavigationProvider({children}: NavigationProviderProps) {
 
     const resetMenuPageState = useCallback(() => {
         setMenuPageRoute(null);
-        setMenuPageVisibility('hidden');
         setMenuPageTransitionMode('idle');
         setMenuPageSource(null);
         menuPageTransitionProgress.value = 0;
@@ -131,12 +127,12 @@ function NavigationProvider({children}: NavigationProviderProps) {
     }, [menuPageSourceProgress, menuPageTransitionProgress]);
 
     const openMenu = useCallback(() => {
-        if (pushStack.length > 0 || menuPageVisibility === 'visible' || menuPageTransitionMode !== 'idle' || sheetRoute) {
+        if (pushStack.length > 0 || menuPageRoute || menuPageTransitionMode !== 'idle' || sheetRoute) {
             return;
         }
 
         animateMenu(1);
-    }, [animateMenu, menuPageTransitionMode, menuPageVisibility, pushStack.length, sheetRoute]);
+    }, [animateMenu, menuPageRoute, menuPageTransitionMode, pushStack.length, sheetRoute]);
 
     const setRootScreen = useCallback((screen: RootScreenName) => {
         setRootScreenState(screen);
@@ -172,7 +168,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
         params: RouteParamsMap[TName],
         source: MenuPageSource = 'side-menu',
     ) => {
-        if (pushStack.length > 0 || sheetRoute || menuPageVisibility === 'visible' || menuPageTransitionMode !== 'idle') {
+        if (pushStack.length > 0 || sheetRoute || menuPageRoute || menuPageTransitionMode !== 'idle') {
             return;
         }
 
@@ -181,7 +177,6 @@ function NavigationProvider({children}: NavigationProviderProps) {
         menuPageTransitionProgress.value = 0;
         setMenuPageRoute(createRoute(screen, 'menu-page', params));
         setMenuPageSource(source);
-        setMenuPageVisibility('visible');
         setMenuPageTransitionMode('enter');
         setPushStack([]);
         setSheetRoute(null);
@@ -189,7 +184,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
         menuPageTransitionMode,
         menuPageSourceProgress,
         menuPageTransitionProgress,
-        menuPageVisibility,
+        menuPageRoute,
         menuProgress,
         pushStack.length,
         setActiveGesture,
@@ -204,13 +199,14 @@ function NavigationProvider({children}: NavigationProviderProps) {
     }, [openMenuPage]);
 
     const closeMenuPage = useCallback(() => {
-        if (!menuPageRoute || menuPageVisibility !== 'visible' || menuPageTransitionMode !== 'idle') {
+        if (!menuPageRoute || menuPageTransitionMode !== 'idle') {
+            // TODO: support reversing an in-flight enter transition.
             return;
         }
 
         setMenuPageTransitionMode('exit');
         setActiveGesture('none');
-    }, [menuPageRoute, menuPageTransitionMode, menuPageVisibility, setActiveGesture]);
+    }, [menuPageRoute, menuPageTransitionMode, setActiveGesture]);
 
     const finishMenuPageEnter = useCallback(() => {
         menuProgress.value = 0;
@@ -220,7 +216,6 @@ function NavigationProvider({children}: NavigationProviderProps) {
 
     const clearMenuPage = useCallback((key: string) => {
         setMenuPageRoute(current => (current?.key === key ? null : current));
-        setMenuPageVisibility('hidden');
         setMenuPageTransitionMode('idle');
         setMenuPageSource(null);
         menuPageTransitionProgress.value = 0;
@@ -278,7 +273,6 @@ function NavigationProvider({children}: NavigationProviderProps) {
         () => ({
             rootRoute,
             menuPageRoute,
-            menuPageVisibility,
             menuPageTransitionMode,
             menuPageSource,
             pushStack,
@@ -322,7 +316,6 @@ function NavigationProvider({children}: NavigationProviderProps) {
             menuPageTransitionMode,
             menuPageTransitionProgress,
             menuPageSourceProgress,
-            menuPageVisibility,
             menuProgress,
             navigationState,
             openMenu,
