@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import HeaderIconButton from '../../components/HeaderIconButton';

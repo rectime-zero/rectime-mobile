@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
@@ -25,7 +25,7 @@ function DetailScreen({route}: DetailScreenProps) {
             headerTrailing={
                 <HeaderIconButton
                     icon="ellipsis-h"
-                    label="補足メニュー"
+                    label="メニュー"
                     onPress={() => presentSheetRoute(sheetRoutes.notifications)}
                 />
             }

@@ -76,7 +76,7 @@ function SideMenu() {
 
                 <View style={styles.footerPanel}>
                     <SurfaceButton
-                        accessibilityLabel="�e�[�}���J��"
+                        accessibilityLabel="button"
                         chrome="none"
                         onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
                         style={styles.footerActions}
@@ -108,7 +108,7 @@ function SideMenu() {
                     </SurfaceButton>
 
                     <SurfaceButton
-                        accessibilityLabel="���j���[�����"
+                        accessibilityLabel="button"
                         chrome="none"
                         onPress={closeMenu}
                         style={styles.brandButton}

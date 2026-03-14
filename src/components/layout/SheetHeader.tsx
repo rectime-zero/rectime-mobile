@@ -54,7 +54,7 @@ function HeaderActionButton({
 
     return (
         <SurfaceButton
-            accessibilityLabel={action === 'back' ? '–ß‚é' : '•Â‚¶‚é'}
+            accessibilityLabel={action === 'back' ? 'æˆ»ã‚‹' : 'é–‰ã˜ã‚‹'}
             chrome="solid"
             onPress={onPress ?? (() => {})}
             style={styles.actionButton}>

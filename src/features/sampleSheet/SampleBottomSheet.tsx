@@ -27,6 +27,7 @@ function SampleBottomSheet() {
             </View>
 
             <ActionButton label="閉じる" onPress={dismissSheet} />
+            <ActionButton label="閉じる" onPress={dismissSheet} />
         </View>
     );
 }

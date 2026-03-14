@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+﻿import React, {ReactNode} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useTheme} from '../../theme';
 
@@ -76,3 +76,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
 }
 
 export default PageLayout;
+
