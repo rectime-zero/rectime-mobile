@@ -1,4 +1,5 @@
 export type PresentationMode = 'root' | 'push' | 'bottom-sheet' | 'modal';
+export type SheetLayoutMode = 'fit' | 'full';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
 export type PushScreenName = 'detail';
@@ -28,6 +29,11 @@ export type AppRoute<TName extends RouteName = RouteName> = {
     name: TName;
     presentation: PresentationMode;
     params: RouteParamsMap[TName];
+};
+
+export type SheetScreenOptions = {
+    layoutMode?: SheetLayoutMode;
+    showHandle?: boolean;
 };
 
 export type RootRouteTarget<TName extends RootScreenName = RootScreenName> = {

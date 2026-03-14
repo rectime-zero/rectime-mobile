@@ -7,7 +7,13 @@ import {RulesScreen} from '../features/rules';
 import {SampleBottomSheet} from '../features/sampleSheet';
 import {ScheduleScreen} from '../features/schedule';
 import {ThemeSheet} from '../features/themeSheet';
-import {type AppRoute, type PushScreenName, type RootScreenName, type SheetScreenName} from './types';
+import {
+    type AppRoute,
+    type PushScreenName,
+    type RootScreenName,
+    type SheetScreenName,
+    type SheetScreenOptions,
+} from './types';
 
 export function renderRootScreen(route: AppRoute<RootScreenName>) {
     switch (route.name) {
@@ -40,5 +46,21 @@ export function renderSheetScreen(route: AppRoute<SheetScreenName>) {
         case 'sample-sheet':
         default:
             return <SampleBottomSheet />;
+    }
+}
+
+export function getSheetScreenOptions(route: AppRoute<SheetScreenName>): SheetScreenOptions {
+    switch (route.name) {
+        case 'theme-sheet':
+            return {
+                layoutMode: 'full',
+                showHandle: false,
+            };
+        case 'sample-sheet':
+        default:
+            return {
+                layoutMode: 'fit',
+                showHandle: true,
+            };
     }
 }

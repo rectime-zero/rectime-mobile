@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Dimensions, Pressable, StyleSheet, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -9,7 +9,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {renderSheetScreen} from './renderRoute';
+import {getSheetScreenOptions, renderSheetScreen} from './renderRoute';
 import {type AppRoute, type SheetScreenName} from './types';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
@@ -28,18 +28,22 @@ type NavigationSheetProps = {
 function NavigationSheet({route}: NavigationSheetProps) {
     const {theme} = useTheme();
     const insets = useSafeAreaInsets();
+    const sheetOptions = React.useMemo(() => getSheetScreenOptions(route), [route]);
+    const topInset = insets.top + 12;
+    const maxSheetHeight = SCREEN_HEIGHT - topInset;
     const bottomInset = Math.max(insets.bottom, 18);
-    const {activeGestureValue, clearSheet, setActiveGesture} = useNavigation();
+    const {activeGestureValue, clearSheet, setActiveGesture, sheetDismissRequest} = useNavigation();
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const backdropOpacity = useSharedValue(0);
     const dragStart = useSharedValue(0);
+    const handledDismissRequestRef = useRef(sheetDismissRequest);
 
     useEffect(() => {
         translateY.value = withSpring(0, SPRING_CONFIG);
         backdropOpacity.value = withTiming(1, {duration: 180});
     }, [backdropOpacity, translateY]);
 
-    const dismissSheet = React.useCallback(() => {
+    const animateDismissSheet = React.useCallback(() => {
         setActiveGesture('none');
         backdropOpacity.value = withTiming(0, {duration: 140});
         translateY.value = withTiming(SCREEN_HEIGHT, {duration: 180}, finished => {
@@ -48,6 +52,15 @@ function NavigationSheet({route}: NavigationSheetProps) {
             }
         });
     }, [backdropOpacity, clearSheet, route.key, setActiveGesture, translateY]);
+
+    useEffect(() => {
+        if (sheetDismissRequest === 0 || sheetDismissRequest === handledDismissRequestRef.current) {
+            return;
+        }
+
+        handledDismissRequestRef.current = sheetDismissRequest;
+        animateDismissSheet();
+    }, [animateDismissSheet, sheetDismissRequest]);
 
     const sheetGesture = React.useMemo(
         () =>
@@ -117,12 +130,18 @@ function NavigationSheet({route}: NavigationSheetProps) {
     return (
         <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
             <Animated.View style={[StyleSheet.absoluteFill, styles.backdrop, backdropStyle]}>
-                <Pressable style={StyleSheet.absoluteFill} onPress={dismissSheet} />
+                <Pressable style={StyleSheet.absoluteFill} onPress={animateDismissSheet} />
             </Animated.View>
 
             <GestureDetector gesture={sheetGesture}>
-                <Animated.View style={[styles.sheet, {paddingBottom: bottomInset}, sheetStyle]}>
-                    <View style={styles.handle} />
+                <Animated.View
+                    style={[
+                        styles.sheet,
+                        {paddingBottom: bottomInset, maxHeight: maxSheetHeight},
+                        sheetOptions.layoutMode === 'full' ? {height: maxSheetHeight} : null,
+                        sheetStyle,
+                    ]}>
+                    {sheetOptions.showHandle === false ? null : <View style={styles.handle} />}
                     {renderSheetScreen(route)}
                 </Animated.View>
             </GestureDetector>

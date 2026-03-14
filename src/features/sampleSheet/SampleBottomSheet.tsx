@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import ActionButton from '../../components/ActionButton';
+import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
@@ -11,17 +12,17 @@ function SampleBottomSheet() {
 
     return (
         <View style={styles.container}>
+            <SheetHeader onRightPress={dismissSheet} rightAction="close" title="ボトムシート" />
             <Text style={styles.eyebrow}>Bottom Sheet</Text>
             <Text style={styles.title}>下から現れるカード型 UI</Text>
             <Text style={styles.body}>
-                drag dismiss に対応したサンプルです。タップだけでなく gesture を含む挙動確認を navigation
-                層で一元管理できます。
+                drag dismiss に対応したサンプルです。タップだけでなく、下方向のジェスチャーでも閉じられます。
             </Text>
 
             <View style={styles.panel}>
                 <Text style={styles.panelTitle}>使いどころ</Text>
                 <Text style={styles.body}>
-                    popup menu、確認 UI、フィルター、追加フォームなどを navigation presentation で扱えます。
+                    popup menu、設定 UI、フィルター、補足フォームなどを navigation presentation として扱えます。
                 </Text>
             </View>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import ActionButton from '../../components/ActionButton';
+import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {availableThemes, useTheme} from '../../theme';
 
@@ -12,14 +12,11 @@ function ThemeSheet() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>テーマ</Text>
-                <Pressable accessibilityRole="button" accessibilityLabel="閉じる" onPress={dismissSheet} style={styles.closeButton}>
-                    <FontAwesome5 color={theme.colors.textPrimary} iconStyle="solid" name="times" size={14} />
-                </Pressable>
-            </View>
+            <SheetHeader onRightPress={dismissSheet} rightAction="close" title="テーマ" />
 
-            <Text style={styles.body}>アプリ全体の見た目を切り替えます。選択したテーマはすぐに反映されます。</Text>
+            <Text style={styles.body}>
+                アプリ全体の見た目を選べます。テーマを変更すると、画面全体にすぐ反映されます。
+            </Text>
 
             <View style={styles.optionList}>
                 {availableThemes.map(item => {
@@ -48,7 +45,9 @@ function ThemeSheet() {
                             <View style={styles.optionCopy}>
                                 <Text style={styles.optionTitle}>{item.label}</Text>
                                 <Text style={styles.optionBody}>
-                                    {item.id === 'blue-2024' ? 'コントラストを強めたクールな配色です。' : '標準のやわらかい配色です。'}
+                                    {item.id === 'blue-2024'
+                                        ? 'コントラストを強めたクールな配色です。'
+                                        : 'やわらかく見やすい標準配色です。'}
                                 </Text>
                             </View>
                             {isSelected ? (
@@ -72,25 +71,8 @@ function ThemeSheet() {
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
         container: {
+            flex: 1,
             gap: 16,
-        },
-        header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-        },
-        title: {
-            color: theme.colors.textPrimary,
-            fontSize: 24,
-            fontWeight: '800',
-        },
-        closeButton: {
-            width: 40,
-            height: 40,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 20,
-            backgroundColor: theme.colors.surfaceMuted,
         },
         body: {
             color: theme.colors.textSecondary,
