@@ -1,6 +1,7 @@
-import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+﻿import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import SurfaceButton from '../../components/SurfaceButton';
 import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {availableThemes, useTheme} from '../../theme';
@@ -23,11 +24,13 @@ function ThemeSheet() {
                     const isSelected = item.id === selectedThemeId;
 
                     return (
-                        <Pressable
+                        <SurfaceButton
                             key={item.id}
-                            accessibilityRole="button"
+                            accessibilityLabel={item.label}
+                            chrome="solid"
                             onPress={() => setSelectedThemeId(item.id)}
-                            style={[styles.optionCard, isSelected ? styles.optionCardSelected : null]}>
+                            style={[styles.optionCard, isSelected ? styles.optionCardSelected : null]}
+                            contentStyle={styles.optionCardContent}>
                             <View style={styles.optionPreview}>
                                 <View
                                     style={[
@@ -38,7 +41,9 @@ function ThemeSheet() {
                                 <View
                                     style={[
                                         styles.previewAccent,
-                                        item.id === 'blue-2024' ? styles.previewAccentBlue : styles.previewAccentDefault,
+                                        item.id === 'blue-2024'
+                                            ? styles.previewAccentBlue
+                                            : styles.previewAccentDefault,
                                     ]}
                                 />
                             </View>
@@ -60,7 +65,7 @@ function ThemeSheet() {
                                     />
                                 </View>
                             ) : null}
-                        </Pressable>
+                        </SurfaceButton>
                     );
                 })}
             </View>
@@ -83,18 +88,19 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             gap: 12,
         },
         optionCard: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 14,
             borderRadius: 24,
             padding: 16,
             backgroundColor: theme.colors.surfacePrimary,
-            borderWidth: 1,
             borderColor: theme.colors.borderSubtle,
         },
         optionCardSelected: {
             borderColor: theme.colors.navigationActive,
             backgroundColor: theme.colors.surfaceMuted,
+        },
+        optionCardContent: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 14,
         },
         optionPreview: {
             width: 52,

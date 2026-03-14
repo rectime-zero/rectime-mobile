@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Image,
     Platform,
-    Pressable,
     StatusBar,
     StyleSheet,
     Text,
@@ -17,6 +16,7 @@ import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import AppIcon from '../AppIcon';
+import SurfaceButton from '../SurfaceButton';
 import UserAvatar from '../UserAvatar';
 
 const appIcon = require('../../assets/icons/app-icon.png');
@@ -57,26 +57,30 @@ function SideMenu() {
 
                 <View style={styles.tabList}>
                     {sideMenuItems.map(item => (
-                        <Pressable
+                        <SurfaceButton
                             key={`${item.kind}-${item.route.name}-${item.label}`}
+                            accessibilityLabel={item.label}
+                            chrome="none"
                             onPress={() => openMenuPageRoute(item.route)}
-                            style={styles.tabButton}>
+                            style={styles.tabButton}
+                            contentStyle={styles.tabButtonContent}>
                             <AppIcon
                                 color={theme.colors.textSecondary}
                                 icon={item.icon}
                                 size={18}
                             />
                             <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
-                        </Pressable>
+                        </SurfaceButton>
                     ))}
                 </View>
 
                 <View style={styles.footerPanel}>
-                    <Pressable
-                        accessibilityRole="button"
-                        accessibilityLabel="テーマを開く"
+                    <SurfaceButton
+                        accessibilityLabel="�e�[�}���J��"
+                        chrome="none"
                         onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
-                        style={styles.footerActions}>
+                        style={styles.footerActions}
+                        contentStyle={styles.footerActionsContent}>
                         <View style={styles.footerPreviewCluster}>
                             <AppIcon
                                 color={theme.colors.textSecondary}
@@ -101,12 +105,17 @@ function SideMenu() {
                                 ]}
                             />
                         </View>
-                    </Pressable>
+                    </SurfaceButton>
 
-                    <Pressable accessibilityRole="button" onPress={closeMenu} style={styles.brandButton}>
+                    <SurfaceButton
+                        accessibilityLabel="���j���[�����"
+                        chrome="none"
+                        onPress={closeMenu}
+                        style={styles.brandButton}
+                        contentStyle={styles.brandButtonContent}>
                         <Image source={appIcon} style={brandIconStyle} resizeMode="cover" />
                         <Text style={styles.brandLabel}>rectime</Text>
-                    </Pressable>
+                    </SurfaceButton>
                 </View>
             </View>
         </View>
@@ -155,13 +164,15 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             gap: 8,
         },
         tabButton: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 16,
+            alignSelf: 'flex-start',
             borderRadius: 16,
             paddingHorizontal: 16,
             paddingVertical: 16,
-            alignSelf: 'flex-start',
+        },
+        tabButtonContent: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 16,
         },
         tabLabel: {
             flex: 1,
@@ -178,13 +189,15 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             justifyContent: 'space-between',
         },
         footerActions: {
-            flexDirection: 'row',
-            alignItems: 'center',
             borderRadius: 999,
             paddingLeft: 6,
             paddingRight: 7,
             paddingVertical: 3,
             backgroundColor: '#FFFFFF',
+        },
+        footerActionsContent: {
+            flexDirection: 'row',
+            alignItems: 'center',
         },
         footerPreviewCluster: {
             width: 40,
@@ -227,7 +240,8 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
         footerPreviewAccentBlue: {
             backgroundColor: '#8DE1FF',
         },
-        brandButton: {
+        brandButton: {},
+        brandButtonContent: {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 8,

@@ -1,7 +1,8 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AppIcon from '../AppIcon';
+import SurfaceButton from '../SurfaceButton';
 import {navigationTabs} from '../../config/navigationTabs';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -19,11 +20,13 @@ function BottomNavigation() {
                     const isActive = item.route.name === rootRoute.name;
 
                     return (
-                        <Pressable
+                        <SurfaceButton
                             key={item.route.name}
-                            accessibilityRole="button"
+                            accessibilityLabel={item.label}
+                            chrome="none"
                             onPress={() => setRootRoute(item.route)}
-                            style={styles.tab}>
+                            style={styles.tab}
+                            contentStyle={styles.tabContent}>
                             <AppIcon
                                 color={isActive ? theme.colors.navigationActive : theme.colors.navigationInactive}
                                 icon={item.icon}
@@ -32,7 +35,7 @@ function BottomNavigation() {
                             <Text style={[styles.label, isActive ? styles.activeLabel : styles.inactiveLabel]}>
                                 {item.label}
                             </Text>
-                        </Pressable>
+                        </SurfaceButton>
                     );
                 })}
             </View>
@@ -61,10 +64,10 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], bottomInset: 
         },
         tab: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 6,
             minHeight: 54,
+        },
+        tabContent: {
+            gap: 6,
         },
         label: {
             fontSize: 11,

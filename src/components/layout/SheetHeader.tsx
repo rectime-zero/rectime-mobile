@@ -1,6 +1,7 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import AppIcon from '../AppIcon';
+import SurfaceButton from '../SurfaceButton';
 import {useTheme} from '../../theme';
 
 type HeaderAction = 'none' | 'back' | 'close';
@@ -52,13 +53,13 @@ function HeaderActionButton({
     }
 
     return (
-        <Pressable
-            accessibilityLabel={action === 'back' ? 'æˆ»ã‚‹' : 'é–‰ã˜ã‚‹'}
-            accessibilityRole="button"
-            onPress={onPress}
+        <SurfaceButton
+            accessibilityLabel={action === 'back' ? '–ß‚é' : '•Â‚¶‚é'}
+            chrome="solid"
+            onPress={onPress ?? (() => {})}
             style={styles.actionButton}>
             <AppIcon color={iconColor} icon={{kind: 'font-awesome', name: action === 'back' ? 'chevron-left' : 'times'}} size={14} />
-        </Pressable>
+        </SurfaceButton>
     );
 }
 
@@ -79,10 +80,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         actionButton: {
             width: ACTION_SIZE,
             height: ACTION_SIZE,
-            alignItems: 'center',
-            justifyContent: 'center',
             borderRadius: ACTION_SIZE / 2,
             backgroundColor: theme.colors.surfaceMuted,
+            borderColor: 'transparent',
         },
         actionSpacer: {
             width: ACTION_SIZE,

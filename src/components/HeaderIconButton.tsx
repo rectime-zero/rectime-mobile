@@ -1,8 +1,9 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import AppIcon from './AppIcon';
 import {type AppIconName} from './iconNames';
 import {useTheme} from '../theme';
+import SurfaceButton from './SurfaceButton';
 
 type HeaderIconButtonProps = {
     icon: AppIconName;
@@ -12,30 +13,18 @@ type HeaderIconButtonProps = {
 
 function HeaderIconButton({icon, onPress, label}: HeaderIconButtonProps) {
     const {theme} = useTheme();
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const styles = React.useMemo(() => createStyles(), []);
 
     return (
-        <Pressable
-            accessibilityLabel={label}
-            accessibilityRole="button"
-            onPress={onPress}
-            style={styles.button}>
+        <SurfaceButton accessibilityLabel={label} onPress={onPress}>
             <AppIcon color={theme.colors.headerActionForeground} icon={{kind: 'font-awesome', name: icon}} size={16} />
             <Text style={styles.label}>{label}</Text>
-        </Pressable>
+        </SurfaceButton>
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+function createStyles() {
     return StyleSheet.create({
-        button: {
-            width: 44,
-            height: 44,
-            borderRadius: 14,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: theme.colors.headerActionBackground,
-        },
         label: {
             position: 'absolute',
             opacity: 0,

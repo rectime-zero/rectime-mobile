@@ -1,5 +1,6 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
+import SurfaceButton from './SurfaceButton';
 import {useTheme} from '../theme';
 
 type ActionButtonTone = 'primary' | 'secondary' | 'ghost';
@@ -39,40 +40,33 @@ function ActionButton({
     };
 
     return (
-        <Pressable onPress={onPress} style={[styles.buttonBase, buttonSizeStyles[size], buttonToneStyles[tone]]}>
+        <SurfaceButton
+            accessibilityLabel={label}
+            chrome="solid"
+            onPress={onPress}
+            size={size}
+            style={[buttonSizeStyles[size], buttonToneStyles[tone]]}>
             <Text style={[styles.label, textToneStyles[tone]]}>{label}</Text>
-        </Pressable>
+        </SurfaceButton>
     );
 }
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
-        buttonBase: {
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
         regularButton: {
-            minHeight: 48,
-            borderRadius: 16,
-            paddingHorizontal: 16,
-            paddingVertical: 12,
+            backgroundColor: theme.colors.buttonPrimary,
         },
-        compactButton: {
-            minHeight: 40,
-            borderRadius: 12,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-        },
+        compactButton: {},
         primaryButton: {
             backgroundColor: theme.colors.buttonPrimary,
         },
         secondaryButton: {
             backgroundColor: theme.colors.buttonSecondary,
-            borderWidth: 1,
             borderColor: theme.colors.buttonSecondaryBorder,
         },
         ghostButton: {
             backgroundColor: theme.colors.buttonGhost,
+            borderColor: 'transparent',
         },
         label: {
             fontSize: 14,
