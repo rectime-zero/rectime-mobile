@@ -1,5 +1,4 @@
 import React from 'react';
-import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Image, Platform, Pressable, StatusBar, StyleSheet, Text, View, useWindowDimensions, type ImageStyle} from 'react-native';
 import {mockUserAvatarSource} from '../../assets/mockUserAvatar';
 import {sheetRoutes} from '../../config/navigationRoutes';
@@ -7,6 +6,7 @@ import {sideMenuItems} from '../../config/sideMenuItems';
 import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
+import AppIcon from '../AppIcon';
 import UserAvatar from '../UserAvatar';
 
 const appIcon = require('../../assets/icons/app-icon.png');
@@ -54,10 +54,9 @@ function SideMenu() {
                                 key={`${item.kind}-${item.route.name}-${item.label}`}
                                 onPress={() => openMenuPageRoute(item.route)}
                                 style={styles.tabButton}>
-                                <FontAwesome5
+                                <AppIcon
                                     color={theme.colors.textSecondary}
-                                    iconStyle="solid"
-                                    name={item.icon}
+                                    icon={item.icon}
                                     size={18}
                                 />
                                 <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
@@ -75,12 +74,7 @@ function SideMenu() {
                         style={styles.footerActions}>
 
                         <View style={styles.footerPreviewCluster}>
-                            <FontAwesome5
-                                color={theme.colors.textSecondary}
-                                iconStyle="solid"
-                                name="moon"
-                                size={17}
-                            />
+                            <AppIcon color={theme.colors.textSecondary} icon={{kind: 'font-awesome', name: 'moon'}} size={17} />
                         </View>
 
                         <View style={styles.footerPreviewCluster}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
-import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import AppIcon from './AppIcon';
 import {type AppIconName} from './iconNames';
 import {useTheme} from '../theme';
 
@@ -20,12 +20,7 @@ function HeaderIconButton({icon, onPress, label}: HeaderIconButtonProps) {
             accessibilityRole="button"
             onPress={onPress}
             style={styles.button}>
-            <FontAwesome5
-                color={theme.colors.headerActionForeground}
-                iconStyle="solid"
-                name={icon}
-                size={16}
-            />
+            <AppIcon color={theme.colors.headerActionForeground} icon={{kind: 'font-awesome', name: icon}} size={16} />
             <Text style={styles.label}>{label}</Text>
         </Pressable>
     );

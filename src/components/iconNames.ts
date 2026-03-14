@@ -18,5 +18,6 @@ export type AppIconName =
     | 'play-circle'
     | 'sticky-note'
     | 'sun'
+    | 'times'
     | 'trophy'
     | 'users';

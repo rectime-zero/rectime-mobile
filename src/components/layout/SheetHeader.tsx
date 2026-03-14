@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import AppIcon from '../AppIcon';
 import {useTheme} from '../../theme';
 
 type HeaderAction = 'none' | 'back' | 'close';
@@ -57,12 +57,7 @@ function HeaderActionButton({
             accessibilityRole="button"
             onPress={onPress}
             style={styles.actionButton}>
-            <FontAwesome5
-                color={iconColor}
-                iconStyle="solid"
-                name={action === 'back' ? 'chevron-left' : 'times'}
-                size={14}
-            />
+            <AppIcon color={iconColor} icon={{kind: 'font-awesome', name: action === 'back' ? 'chevron-left' : 'times'}} size={14} />
         </Pressable>
     );
 }
