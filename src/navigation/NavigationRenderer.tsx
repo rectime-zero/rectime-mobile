@@ -40,6 +40,7 @@ function NavigationRenderer() {
         sheetRoute,
         menuProgress,
         menuPageTransitionProgress,
+        menuPageSourceProgress,
         activeGestureValue,
         clearMenuPage,
         finishMenuPageEnter,
@@ -134,7 +135,7 @@ function NavigationRenderer() {
         let baseProgress = menuProgress.value;
 
         if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
-            baseProgress = 1 - menuPageTransitionProgress.value;
+            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
         }
 
         return {
@@ -148,7 +149,7 @@ function NavigationRenderer() {
         let baseProgress = menuProgress.value;
 
         if (menuPageSource === 'side-menu' && menuPageVisibility === 'visible' && menuPageTransitionMode === 'enter') {
-            baseProgress = 1 - menuPageTransitionProgress.value;
+            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
         }
 
         return {

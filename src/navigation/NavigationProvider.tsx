@@ -28,6 +28,7 @@ type NavigationContextValue = {
     sheetRoute: AppRoute<SheetScreenName> | null;
     menuProgress: SharedValue<number>;
     menuPageTransitionProgress: SharedValue<number>;
+    menuPageSourceProgress: SharedValue<number>;
     activeGestureValue: SharedValue<ActiveGesture>;
     navigationState: NavigationState;
     openMenu: () => void;
@@ -102,6 +103,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
 
     const menuProgress = useSharedValue(0);
     const menuPageTransitionProgress = useSharedValue(0);
+    const menuPageSourceProgress = useSharedValue(0);
     const activeGestureValue = useSharedValue<ActiveGesture>('none');
 
     const rootRoute = useMemo(() => createRoute(rootScreen, 'root', undefined), [rootScreen]);
@@ -125,7 +127,8 @@ function NavigationProvider({children}: NavigationProviderProps) {
         setMenuPageTransitionMode('idle');
         setMenuPageSource(null);
         menuPageTransitionProgress.value = 0;
-    }, [menuPageTransitionProgress]);
+        menuPageSourceProgress.value = 0;
+    }, [menuPageSourceProgress, menuPageTransitionProgress]);
 
     const openMenu = useCallback(() => {
         if (pushStack.length > 0 || menuPageVisibility === 'visible' || menuPageTransitionMode !== 'idle' || sheetRoute) {
@@ -174,7 +177,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
         }
 
         setActiveGesture('none');
-        menuProgress.value = 0;
+        menuPageSourceProgress.value = menuProgress.value;
         menuPageTransitionProgress.value = 0;
         setMenuPageRoute(createRoute(screen, 'menu-page', params));
         setMenuPageSource(source);
@@ -184,6 +187,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
         setSheetRoute(null);
     }, [
         menuPageTransitionMode,
+        menuPageSourceProgress,
         menuPageTransitionProgress,
         menuPageVisibility,
         menuProgress,
@@ -209,8 +213,10 @@ function NavigationProvider({children}: NavigationProviderProps) {
     }, [menuPageRoute, menuPageTransitionMode, menuPageVisibility, setActiveGesture]);
 
     const finishMenuPageEnter = useCallback(() => {
+        menuProgress.value = 0;
+        menuPageSourceProgress.value = 0;
         setMenuPageTransitionMode(current => (current === 'enter' ? 'idle' : current));
-    }, []);
+    }, [menuPageSourceProgress, menuProgress]);
 
     const clearMenuPage = useCallback((key: string) => {
         setMenuPageRoute(current => (current?.key === key ? null : current));
@@ -218,8 +224,9 @@ function NavigationProvider({children}: NavigationProviderProps) {
         setMenuPageTransitionMode('idle');
         setMenuPageSource(null);
         menuPageTransitionProgress.value = 0;
+        menuPageSourceProgress.value = 0;
         setActiveGesture('none');
-    }, [menuPageTransitionProgress, setActiveGesture]);
+    }, [menuPageSourceProgress, menuPageTransitionProgress, setActiveGesture]);
 
     const pop = useCallback(() => {
         setPushStack(current => current.slice(0, -1));
@@ -278,6 +285,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
             sheetRoute,
             menuProgress,
             menuPageTransitionProgress,
+            menuPageSourceProgress,
             activeGestureValue,
             navigationState,
             openMenu,
@@ -313,6 +321,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
             menuPageSource,
             menuPageTransitionMode,
             menuPageTransitionProgress,
+            menuPageSourceProgress,
             menuPageVisibility,
             menuProgress,
             navigationState,
