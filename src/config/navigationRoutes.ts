@@ -19,9 +19,9 @@ export const sheetRoutes = {
 } as const satisfies Record<string, SheetRouteTarget>;
 
 export const pushRoutes = {
-    detail: (title: string, summary: string): PushRouteTarget<'detail'> => ({
+    detail: (title: string, summary: string, eventId?: number): PushRouteTarget<'detail'> => ({
         name: 'detail',
-        params: {title, summary},
+        params: {title, summary, eventId},
     }),
     matchInfo: (teamName: string, summary: string): PushRouteTarget<'match-info'> => ({
         name: 'match-info',

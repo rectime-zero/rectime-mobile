@@ -49,6 +49,13 @@ export type ThemeTokens = {
         buttonGhostText: string;
         timelinePill: string;
         timelinePillText: string;
+        timetableGridLine: string;
+        timetableTimeLine: string;
+        timetableCardBackground: string;
+        timetableCardParticipant: string;
+        timetableCardTextDark: string;
+        timetableLabelAccent: string;
+        timetablePastOverlay: string;
         rankBadge: string;
         rankBadgeText: string;
         mapZone: string;

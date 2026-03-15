@@ -20,6 +20,7 @@ export type RouteParamsMap = {
     detail: {
         title: string;
         summary: string;
+        eventId?: number;
     };
     settings: undefined;
     'match-info': {

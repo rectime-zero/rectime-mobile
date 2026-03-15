@@ -1,18 +1,59 @@
 import React from 'react';
-import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import {StyleSheet, Text, View} from 'react-native';
+import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
 import HeaderIconButton from '../../components/HeaderIconButton';
 import PageLayout from '../../components/layout/PageLayout';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
-import {sheetRoutes} from '../../config/navigationRoutes';
+import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-import {scheduleCopy, scheduleEntries} from './data';
+import {TIMETABLE_CONFIG} from './config';
+import EventCard from './EventCard';
+import OverflowEventIndicator from './OverflowEventIndicator';
+import {
+    scheduleGridHeight,
+    scheduleHourSlots,
+    scheduleLayoutEvents,
+    scheduleStartMinutes,
+    TIMETABLE_INTERVAL_MINUTES,
+    TIMETABLE_SLOT_HEIGHT,
+} from './timetable';
+
+const TIME_LABEL_WIDTH = 52;
+const CURRENT_TIME_BADGE_WIDTH = 48;
 
 function ScheduleScreen() {
-    const {theme, selectedThemeId} = useTheme();
-    const {openMenu, presentSheetRoute} = useNavigation();
+    const {theme} = useTheme();
+    const {openMenu, presentSheetRoute, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const [now, setNow] = React.useState(() => new Date());
+    const [gridWidth, setGridWidth] = React.useState(0);
+
+    React.useEffect(() => {
+        const timer = setInterval(() => {
+            setNow(new Date());
+        }, 60_000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const isCurrentTimeVisible =
+        currentMinutes >= scheduleStartMinutes && currentMinutes <= TIMETABLE_CONFIG.DISPLAY_END_HOUR * 60;
+    const currentTimeTop = isCurrentTimeVisible
+        ? ((currentMinutes - scheduleStartMinutes) / TIMETABLE_INTERVAL_MINUTES) * TIMETABLE_SLOT_HEIGHT
+        : 0;
+    const currentTimeLabel = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    const handleGridLayout = React.useCallback((event: LayoutChangeEvent) => {
+        setGridWidth(event.nativeEvent.layout.width);
+    }, []);
+
+    const handleEventPress = React.useCallback(
+        (event: (typeof scheduleLayoutEvents)[number]) => {
+            pushRoute(pushRoutes.detail(event.title, event.rangeLabel, event.eventId));
+        },
+        [pushRoute],
+    );
 
     return (
         <PageLayout
@@ -25,57 +66,65 @@ function ScheduleScreen() {
                 />
             }
             title="タイムテーブル">
-            <View style={styles.topRow}>
-                <Text style={styles.date}>{scheduleCopy.date}</Text>
-                <View style={styles.switcher}>
-                    <View style={styles.switcherActive}>
-                        <FontAwesome5
-                            color={theme.colors.navigationActive}
-                            iconStyle="regular"
-                            name="calendar-alt"
-                            size={16}
+            <View style={styles.timelineFrame}>
+                <View style={styles.labelsColumn}>
+                    {scheduleHourSlots.map(slot => {
+                        const top = ((slot.value - scheduleStartMinutes) / TIMETABLE_INTERVAL_MINUTES) * TIMETABLE_SLOT_HEIGHT;
+
+                        return (
+                            <Text key={slot.value} style={[styles.axisLabel, {top: top - 8}]}>
+                                {slot.label}
+                            </Text>
+                        );
+                    })}
+                </View>
+
+                <View onLayout={handleGridLayout} style={styles.gridColumn}>
+                    {scheduleHourSlots.slice(0, -1).map(slot => (
+                        <View
+                            key={slot.value}
+                            style={[
+                                styles.gridRow,
+                                {
+                                    top:
+                                        ((slot.value - scheduleStartMinutes) / TIMETABLE_INTERVAL_MINUTES) *
+                                        TIMETABLE_SLOT_HEIGHT,
+                                },
+                                styles.gridRowHour,
+                            ]}
                         />
-                    </View>
-                    <View style={styles.switcherInactive}>
-                        <FontAwesome5 color={theme.colors.textMuted} iconStyle="regular" name="clock" size={16} />
+                    ))}
+
+                    {isCurrentTimeVisible && currentTimeTop > 0 ? (
+                        <View style={[styles.pastOverlay, {height: currentTimeTop}]} />
+                    ) : null}
+
+                    {isCurrentTimeVisible ? (
+                        <View style={[styles.currentTimeLayer, {top: currentTimeTop}]}>
+                            <View style={styles.currentTimeBadge}>
+                                <Text style={styles.currentTimeLabel}>{currentTimeLabel}</Text>
+                            </View>
+                            <View style={styles.currentTimeLine} />
+                        </View>
+                    ) : null}
+
+                    <View style={styles.eventsLayer}>
+                        {scheduleLayoutEvents.map(event => (
+                            event.positionIndex === TIMETABLE_CONFIG.MAX_VISIBLE_EVENTS - 1 &&
+                            event.actualColumns > TIMETABLE_CONFIG.MAX_VISIBLE_EVENTS ? (
+                                <OverflowEventIndicator
+                                    key={`${event.id}-more`}
+                                    event={event}
+                                    gridWidth={gridWidth}
+                                    hiddenCount={event.actualColumns - TIMETABLE_CONFIG.MAX_VISIBLE_EVENTS}
+                                    onPress={handleEventPress}
+                                />
+                            ) : (
+                                <EventCard key={event.id} event={event} gridWidth={gridWidth} onPress={handleEventPress} />
+                            )
+                        ))}
                     </View>
                 </View>
-            </View>
-
-            <View style={styles.timeline}>
-                {scheduleEntries.map(entry => (
-                    <View key={entry.time} style={styles.entryRow}>
-                        <Text style={styles.axisLabel}>{entry.time}</Text>
-                        <View style={styles.axisTrack} />
-                        <View
-                            style={[
-                                styles.entryCard,
-                                entry.accent === 'blue' ? styles.entryCardBlue : null,
-                                entry.accent === 'red' ? styles.entryCardRed : null,
-                                entry.accent === 'orange' ? styles.entryCardOrange : null,
-                            ]}>
-                            <View
-                                style={[
-                                    styles.entryAccent,
-                                    entry.accent === 'blue' ? styles.entryAccentBlue : null,
-                                    entry.accent === 'red' ? styles.entryAccentRed : null,
-                                    entry.accent === 'orange' ? styles.entryAccentOrange : null,
-                                ]}
-                            />
-                            <View style={styles.entryContent}>
-                                <Text style={styles.entryTitle}>{entry.title}</Text>
-                                <Text style={styles.entryRange}>{entry.range}</Text>
-                            </View>
-                        </View>
-                    </View>
-                ))}
-            </View>
-
-            <View style={styles.noteCard}>
-                <Text style={styles.noteTitle}>{scheduleCopy.noteTitle}</Text>
-                <Text style={styles.noteBody}>
-                    現在の配色は {selectedThemeId} です。時間軸とカードはこのテーマに合わせて変化します。
-                </Text>
             </View>
         </PageLayout>
     );
@@ -83,123 +132,78 @@ function ScheduleScreen() {
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
-        topRow: {
+        timelineFrame: {
             flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-        },
-        date: {
-            color: theme.colors.textPrimary,
-            fontSize: 20,
-            fontWeight: '800',
-        },
-        switcher: {
-            flexDirection: 'row',
-            gap: 6,
-            borderRadius: 16,
-            padding: 6,
-            backgroundColor: theme.colors.surfaceMuted,
-        },
-        switcherActive: {
-            width: 42,
-            height: 36,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 12,
             backgroundColor: theme.colors.surfacePrimary,
+            minHeight: scheduleGridHeight,
         },
-        switcherInactive: {
-            width: 42,
-            height: 36,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 12,
-        },
-        timeline: {
-            marginTop: 12,
-            gap: 10,
-        },
-        entryRow: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
+        labelsColumn: {
+            width: TIME_LABEL_WIDTH,
+            position: 'relative',
         },
         axisLabel: {
-            width: 44,
-            color: theme.colors.textMuted,
-            fontSize: 13,
+            position: 'absolute',
+            left: 0,
+            color: theme.colors.timetableGridLine,
+            fontSize: 11,
             fontWeight: '700',
         },
-        axisTrack: {
-            width: 1,
-            alignSelf: 'stretch',
-            marginVertical: 6,
-            backgroundColor: theme.colors.borderSubtle,
-        },
-        entryCard: {
+        gridColumn: {
             flex: 1,
+            height: scheduleGridHeight,
+            position: 'relative',
+        },
+        gridRow: {
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            height: 1,
+            backgroundColor: theme.colors.timetableGridLine,
+        },
+        gridRowHour: {
+            backgroundColor: theme.colors.timetableGridLine,
+        },
+        currentTimeLayer: {
+            position: 'absolute',
+            left: -TIME_LABEL_WIDTH + 2,
+            right: 0,
+            zIndex: 40,
             flexDirection: 'row',
-            minHeight: 74,
-            overflow: 'hidden',
-            borderRadius: 18,
-            backgroundColor: theme.colors.surfaceMuted,
+            alignItems: 'center',
         },
-        entryCardBlue: {
-            backgroundColor: theme.colors.surfaceAccent,
-        },
-        entryCardRed: {
-            backgroundColor: theme.colors.surfaceDanger,
-        },
-        entryCardOrange: {
-            backgroundColor: theme.colors.surfaceWarning,
-        },
-        entryAccent: {
-            width: 4,
-        },
-        entryAccentBlue: {
-            backgroundColor: theme.colors.navigationActive,
-        },
-        entryAccentRed: {
-            backgroundColor: theme.colors.textDanger,
-        },
-        entryAccentOrange: {
-            backgroundColor: theme.colors.textWarning,
-        },
-        entryContent: {
-            flex: 1,
+        currentTimeBadge: {
+            width: CURRENT_TIME_BADGE_WIDTH,
+            height: 22,
+            borderRadius: 4,
+            backgroundColor: theme.colors.timetableTimeLine,
+            alignItems: 'center',
             justifyContent: 'center',
-            gap: 4,
-            paddingHorizontal: 14,
-            paddingVertical: 12,
+            marginRight: 6,
         },
-        entryTitle: {
-            color: theme.colors.textPrimary,
-            fontSize: 16,
+        currentTimeLabel: {
+            color: theme.colors.surfacePrimary,
+            fontSize: 10,
             fontWeight: '800',
         },
-        entryRange: {
-            color: theme.colors.textSecondary,
-            fontSize: 13,
-            fontWeight: '600',
+        currentTimeLine: {
+            flex: 1,
+            height: 3,
+            backgroundColor: theme.colors.timetableTimeLine,
         },
-        noteCard: {
-            marginTop: 12,
-            gap: 8,
-            borderRadius: 22,
-            padding: 16,
-            backgroundColor: theme.colors.surfacePrimary,
-            borderWidth: 1,
-            borderColor: theme.colors.borderSubtle,
+        pastOverlay: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            left: 0,
+            backgroundColor: theme.colors.timetablePastOverlay,
+            zIndex: 5,
         },
-        noteTitle: {
-            color: theme.colors.textPrimary,
-            fontSize: 16,
-            fontWeight: '700',
-        },
-        noteBody: {
-            color: theme.colors.textSecondary,
-            fontSize: 13,
-            lineHeight: 20,
+        eventsLayer: {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
         },
     });
 }
