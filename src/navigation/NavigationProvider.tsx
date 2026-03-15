@@ -56,6 +56,7 @@ type NavigationContextValue = {
     clearSheet: (key: string) => void;
     clearMenuPage: (key: string) => void;
     sheetDismissRequest: number;
+    pushDismissRequest: number;
     setActiveGesture: (gesture: ActiveGesture) => void;
 };
 
@@ -92,6 +93,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
     const [pushStack, setPushStack] = useState<AppRoute<PushScreenName>[]>([]);
     const [sheetRoute, setSheetRoute] = useState<AppRoute<SheetScreenName> | null>(null);
     const [sheetDismissRequest, setSheetDismissRequest] = useState(0);
+    const [pushDismissRequest, setPushDismissRequest] = useState(0);
     const activeGestureValue = useSharedValue<ActiveGesture>('none');
 
     const menuProgress = useSharedValue(0);
@@ -215,9 +217,13 @@ function NavigationProvider({children}: NavigationProviderProps) {
     }, [menuPageSourceProgress, menuPageTransitionProgress, setActiveGesture]);
 
     const pop = useCallback(() => {
-        setPushStack(current => current.slice(0, -1));
+        if (pushStack.length === 0) {
+            return;
+        }
+
+        setPushDismissRequest(current => current + 1);
         setActiveGesture('none');
-    }, [setActiveGesture]);
+    }, [pushStack.length, setActiveGesture]);
 
     const completePop = useCallback((key: string) => {
         setPushStack(current => current.filter(route => route.key !== key));
@@ -280,6 +286,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
             clearMenuPage,
             clearSheet,
             sheetDismissRequest,
+            pushDismissRequest,
             setActiveGesture,
         }),
         [
@@ -304,6 +311,7 @@ function NavigationProvider({children}: NavigationProviderProps) {
             presentSheet,
             presentSheetRoute,
             push,
+            pushDismissRequest,
             pushRoute,
             pushStack,
             rootRoute,
