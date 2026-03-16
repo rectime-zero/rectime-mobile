@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android:emulator": "node scripts/tasks/start-emulator.js --cold-boot",
+    "android:no-packager": "react-native run-android --no-packager",
+    "android:stop-tools": "node scripts/tasks/stop-android-tools.js",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

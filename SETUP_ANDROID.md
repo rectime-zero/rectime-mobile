@@ -2,7 +2,7 @@
 
 ## 前提
 
-Windows 環境を前提にしています。
+Windows / macOS の両方を対象にしています。
 
 必要なもの:
 
@@ -35,14 +35,34 @@ npm install
 
 共有 Run Configuration:
 
+- `Android Emulator`
+- `Android Kill Tasks`
 - `Metro`
-- `Android No Packager`
+- `Android Rebuild`
 
 これらは `.idea/runConfigurations` にあります。
 
-## 手動起動に使うスクリプト
+- Windows / macOS ともに `Android Emulator` / `Android Kill Tasks` / `Metro` / `Android Rebuild` を使います
+- JetBrains の `npm` Run Configuration として共有しています
+- エミュレーター起動は `Android Emulator` ボタンでも Android Studio の Device Manager でもできます
+- IntelliJ の `npm` ツールウィンドウから `start` と `android:no-packager` を実行しても同じです
 
-- `scripts/Start-Metro.ps1`
-- `scripts/Run-Android.ps1`
+## 手動起動
 
-これらのスクリプトは Android Studio / SDK の標準的な配置を自動検出します。
+Metro:
+
+```sh
+npm start
+```
+
+Android Emulator:
+
+```sh
+npm run android:emulator
+```
+
+Android:
+
+```sh
+npm run android:no-packager
+```

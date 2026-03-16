@@ -23,4 +23,13 @@ rectime の React Native モバイルアプリです。
 
 - Android セットアップ: `SETUP_ANDROID.md`
 - Android 起動手順: `STARTUP_ANDROID.md`
+- iOS 起動手順: `STARTUP_IOS.md`
 - 実装ポリシー: `react-native-policy.md`
+
+## 開発コマンド
+
+- `npm run android:emulator`: Android Emulator を起動
+- `npm start`: Metro を起動
+- `npm run android:no-packager`: Metro を別で起動している前提で Android アプリを起動
+- `npm run android:stop-tools`: Android emulator / adb を停止
+- `npm run ios`: iOS アプリを起動

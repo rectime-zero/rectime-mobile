@@ -2,21 +2,30 @@
 
 ## 起動順
 
-1. エミュレーターを起動する
+1. `Android Emulator` を実行する
 2. `Metro` を実行する
-3. `Android No Packager` を実行する
+3. `Android Rebuild` を実行する
 
 ## それぞれ何をするか
 
+### `Android Emulator`
+
+- 共有 CLI としては `npm run android:emulator` を実行する
+- JetBrains の共有 Run Configuration は `package.json` の `android:emulator` script を実行する
+- 既定では `Medium_Phone_API_36.1` を cold boot で起動する
+- Android Studio の Device Manager を使って起動してもよい
+
 ### `Metro`
 
-- `scripts/Start-Metro.ps1` を実行する
+- 共有 CLI としては `npm start` を実行する
+- JetBrains の共有 Run Configuration は `package.json` の `start` script を実行する
 - Metro dev server を起動して待機する
 - 常駐プロセスなので開いたままにする
 
-### `Android No Packager`
+### `Android Rebuild`
 
-- `scripts/Run-Android.ps1` を実行する
+- 共有 CLI としては `npm run android:no-packager` を実行する
+- JetBrains の共有 Run Configuration は `package.json` の `android:no-packager` script を実行する
 - Android アプリを build / install / launch する
 - 正常終了するのが正しい動作
 
@@ -30,7 +39,7 @@
 - `src/navigation/*.tsx`
 - `src/stage/*.tsx`
 
-次の変更は `Android No Packager` の再実行が必要です。
+次の変更は `Android Rebuild` の再実行が必要です。
 
 - `android/` 配下
 - ネイティブ依存の追加や変更
@@ -64,14 +73,20 @@
 
 Metro:
 
-```powershell
+```sh
 npm start
+```
+
+Android Emulator:
+
+```sh
+npm run android:emulator
 ```
 
 Android:
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Run-Android.ps1
+```sh
+npm run android:no-packager
 ```
 
 ## 反映されないとき
@@ -79,5 +94,5 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Run-Android.ps
 1. `Metro` が起動しているか確認する
 2. エミュレーターでアプリが開いているか確認する
 3. Metro 側で `r` を押す
-4. それでもだめなら `Android No Packager` を再実行する
+4. それでもだめなら `Android Rebuild` を再実行する
 5. `adb devices` が `offline` ならエミュレーターを再起動する
