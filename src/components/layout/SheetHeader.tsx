@@ -55,7 +55,7 @@ function HeaderActionButton({
     return (
         <SurfaceButton
             accessibilityLabel={action === 'back' ? '戻る' : '閉じる'}
-            chrome="solid"
+            chrome="glass"
             onPress={onPress ?? (() => {})}
             style={styles.actionButton}>
             <AppIcon color={iconColor} icon={{kind: 'font-awesome', name: action === 'back' ? 'chevron-left' : 'times'}} size={14} />
@@ -81,7 +81,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             width: ACTION_SIZE,
             height: ACTION_SIZE,
             borderRadius: ACTION_SIZE / 2,
-            backgroundColor: theme.colors.surfaceMuted,
             borderColor: 'transparent',
         },
         actionSpacer: {

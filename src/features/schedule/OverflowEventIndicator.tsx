@@ -1,5 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
+import type {DimensionValue} from 'react-native';
 import {useTheme} from '../../theme';
 import {TIMETABLE_CONFIG} from './config';
 import type {ScheduleLayoutEvent} from './types';
@@ -14,11 +15,12 @@ type OverflowEventIndicatorProps = {
 function OverflowEventIndicator({event, hiddenCount, gridWidth, onPress}: OverflowEventIndicatorProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
-    const resolvedWidth =
+    const resolvedWidth: DimensionValue =
         gridWidth > 0
             ? Math.max((gridWidth * event.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
             : `${event.widthPercent}%`;
-    const resolvedLeft = gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
+    const resolvedLeft: DimensionValue =
+        gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
 
     return (
         <Pressable

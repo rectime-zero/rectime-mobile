@@ -16,7 +16,7 @@ function HeaderIconButton({icon, onPress, label}: HeaderIconButtonProps) {
     const styles = React.useMemo(() => createStyles(), []);
 
     return (
-        <SurfaceButton accessibilityLabel={label} onPress={onPress}>
+        <SurfaceButton accessibilityLabel={label} chrome="glass" onPress={onPress} size="header">
             <AppIcon color={theme.colors.headerActionForeground} icon={{kind: 'font-awesome', name: icon}} size={16} />
             <Text style={styles.label}>{label}</Text>
         </SurfaceButton>

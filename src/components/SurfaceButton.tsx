@@ -14,6 +14,7 @@ import {
     withTiming,
 } from 'react-native-reanimated';
 import {useTheme} from '../theme';
+import NativeLiquidGlassView, {supportsNativeLiquidGlassView} from './NativeLiquidGlassView';
 
 type SurfaceButtonChrome = 'glass' | 'solid' | 'none';
 type SurfaceButtonSize = 'header' | 'regular' | 'compact' | 'none';
@@ -43,9 +44,10 @@ function SurfaceButton({
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     const isIos = Platform.OS === 'ios';
+    const supportsNativeLiquidGlass = supportsNativeLiquidGlassView;
     const scale = useSharedValue(1);
     const opacity = useSharedValue(1);
-    const pressedOpacity = isIos ? 0.84 : 0.94;
+    const pressedOpacity = supportsNativeLiquidGlass ? 1 : isIos ? 0.84 : 0.94;
     const pressedScale = isIos ? 0.98 : 1.15;
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -74,10 +76,22 @@ function SurfaceButton({
 
     const chromeStyle =
         chrome === 'glass'
-            ? styles.glassBase
+            ? supportsNativeLiquidGlass
+              ? styles.nativeGlassBase
+              : styles.glassFallbackSolidBase
             : chrome === 'solid'
               ? styles.solidBase
               : null;
+    const radiusStyle = StyleSheet.flatten([sizeStyle, style]) as ViewStyle | undefined;
+    const glassFillStyle = [
+        styles.glassFill,
+        radiusStyle?.borderRadius != null ? {borderRadius: radiusStyle.borderRadius} : null,
+        radiusStyle?.borderTopLeftRadius != null ? {borderTopLeftRadius: radiusStyle.borderTopLeftRadius} : null,
+        radiusStyle?.borderTopRightRadius != null ? {borderTopRightRadius: radiusStyle.borderTopRightRadius} : null,
+        radiusStyle?.borderBottomLeftRadius != null ? {borderBottomLeftRadius: radiusStyle.borderBottomLeftRadius} : null,
+        radiusStyle?.borderBottomRightRadius != null ? {borderBottomRightRadius: radiusStyle.borderBottomRightRadius} : null,
+    ];
+    const shouldClipContents = chrome !== 'glass' || !supportsNativeLiquidGlass;
 
     return (
         <AnimatedPressable
@@ -86,12 +100,9 @@ function SurfaceButton({
             onPress={onPress}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
-            style={[styles.base, sizeStyle, chromeStyle, style, animatedStyle]}>
-            {chrome === 'glass' && isIos ? (
-                <>
-                    <View pointerEvents="none" style={styles.iosGlassHighlight} />
-                    <View pointerEvents="none" style={styles.iosGlassShade} />
-                </>
+            style={[styles.base, shouldClipContents ? styles.clippedBase : null, sizeStyle, chromeStyle, style, animatedStyle]}>
+            {chrome === 'glass' && supportsNativeLiquidGlass ? (
+                <NativeLiquidGlassView effectStyle="regular" interactive style={glassFillStyle} />
             ) : null}
             <View style={[styles.content, contentStyle]}>{children}</View>
         </AnimatedPressable>
@@ -101,9 +112,12 @@ function SurfaceButton({
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
         base: {
-            overflow: 'hidden',
+            position: 'relative',
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        clippedBase: {
+            overflow: 'hidden',
         },
         headerSize: {
             width: 44,
@@ -126,46 +140,30 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             borderWidth: StyleSheet.hairlineWidth,
             borderColor: 'rgba(255,255,255,0.12)',
         },
-        glassBase: {
+        nativeGlassBase: {
+            backgroundColor: 'transparent',
+            shadowColor: '#08111F',
+            shadowOffset: {width: 0, height: 8},
+            shadowOpacity: 0.12,
+            shadowRadius: 18,
+        },
+        glassFallbackSolidBase: {
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: isIosBorderColor(isIosPlatform()),
+            borderColor: 'rgba(255,255,255,0.12)',
             shadowColor: '#08111F',
             shadowOffset: {width: 0, height: 8},
             shadowOpacity: 0.12,
             shadowRadius: 18,
             backgroundColor: theme.colors.headerActionBackground,
         },
-        iosGlassHighlight: {
-            position: 'absolute',
-            top: 0,
-            left: 1,
-            right: 1,
-            height: '58%',
-            borderTopLeftRadius: 14,
-            borderTopRightRadius: 14,
-            backgroundColor: 'rgba(255,255,255,0.14)',
-        },
-        iosGlassShade: {
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: '62%',
-            backgroundColor: 'rgba(255,255,255,0.04)',
+        glassFill: {
+            ...StyleSheet.absoluteFillObject,
         },
         content: {
             alignItems: 'center',
             justifyContent: 'center',
         },
     });
-}
-
-function isIosPlatform() {
-    return Platform.OS === 'ios';
-}
-
-function isIosBorderColor(isIos: boolean) {
-    return isIos ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.12)';
 }
 
 export default SurfaceButton;

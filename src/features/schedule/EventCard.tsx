@@ -1,5 +1,6 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
+import type {DimensionValue} from 'react-native';
 import {useTheme} from '../../theme';
 import {TIMETABLE_CONFIG} from './config';
 import type {ScheduleLayoutEvent} from './types';
@@ -21,11 +22,12 @@ function EventCard({event, gridWidth, onPress}: EventCardProps) {
     const isUltraNarrow = event.actualColumns >= 5;
     const backgroundColor = isParticipant ? theme.colors.timetableCardParticipant : theme.colors.timetableCardBackground;
     const textColor = isParticipant ? theme.colors.timetableCardTextDark : theme.colors.surfacePrimary;
-    const resolvedWidth =
+    const resolvedWidth: DimensionValue =
         gridWidth > 0
             ? Math.max((gridWidth * event.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
             : `${event.widthPercent}%`;
-    const resolvedLeft = gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
+    const resolvedLeft: DimensionValue =
+        gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
 
     return (
         <Pressable
