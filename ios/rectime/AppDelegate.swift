@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
+    preloadLiquidGlassComponentViewClass()
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
@@ -30,6 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     )
 
     return true
+  }
+
+  private func preloadLiquidGlassComponentViewClass() {
+    _ = NSClassFromString("RCTLiquidGlassViewComponentView")
   }
 }
 

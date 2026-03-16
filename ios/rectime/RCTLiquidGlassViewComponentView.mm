@@ -28,11 +28,6 @@ static UIGlassEffectStyle RCTLiquidGlassEffectStyleFromProps(RCTLiquidGlassViewE
   UIVisualEffectView *_effectView;
 }
 
-+ (void)load
-{
-  [[RCTComponentViewFactory currentComponentViewFactory] registerComponentViewClass:self];
-}
-
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
   return concreteComponentDescriptorProvider<RCTLiquidGlassViewComponentDescriptor>();
@@ -46,8 +41,12 @@ static UIGlassEffectStyle RCTLiquidGlassEffectStyleFromProps(RCTLiquidGlassViewE
 
     self.userInteractionEnabled = NO;
     self.backgroundColor = UIColor.clearColor;
+    self.clipsToBounds = YES;
+    self.layer.cornerCurve = kCACornerCurveContinuous;
 
     _effectView = [[UIVisualEffectView alloc] initWithEffect:nil];
+    _effectView.frame = self.bounds;
+    _effectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _effectView.userInteractionEnabled = NO;
     _effectView.backgroundColor = UIColor.clearColor;
     _effectView.clipsToBounds = YES;
@@ -64,6 +63,8 @@ static UIGlassEffectStyle RCTLiquidGlassEffectStyleFromProps(RCTLiquidGlassViewE
 {
   [super layoutSubviews];
 
+  _effectView.frame = self.bounds;
+  self.layer.cornerCurve = kCACornerCurveContinuous;
   _effectView.layer.cornerRadius = self.layer.cornerRadius;
   _effectView.layer.cornerCurve = kCACornerCurveContinuous;
 }

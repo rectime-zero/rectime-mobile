@@ -50,8 +50,10 @@
     "type": "components",
     "jsSrcsDir": "./src/specs",
     "ios": {
-      "componentProvider": {
-        "RCTLiquidGlassView": "RCTLiquidGlassViewComponentView"
+      "components": {
+        "RCTLiquidGlassView": {
+          "className": "RCTLiquidGlassViewComponentView"
+        }
       }
     }
   }
