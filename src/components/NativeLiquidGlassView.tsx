@@ -10,14 +10,18 @@ type NativeLiquidGlassViewProps = ViewProps & {
     interactive?: boolean;
 };
 
-export const supportsNativeLiquidGlassView = Platform.OS === 'ios' && getIosMajorVersion() >= 26;
+const NATIVE_COMPONENT_NAME = 'RCTLiquidGlassView';
+
+export function isNativeLiquidGlassAvailable() {
+    return Platform.OS === 'ios' && getIosMajorVersion() >= 26;
+}
 
 function NativeLiquidGlassView({
     style,
     effectStyle = 'regular',
     interactive = false,
 }: NativeLiquidGlassViewProps) {
-    if (!supportsNativeLiquidGlassView) {
+    if (!isNativeLiquidGlassAvailable()) {
         return <View pointerEvents="none" style={style} />;
     }
 
@@ -26,6 +30,7 @@ function NativeLiquidGlassView({
             effectStyle={effectStyle}
             interactive={interactive}
             pointerEvents="none"
+            nativeID={NATIVE_COMPONENT_NAME}
             style={style}
         />
     );

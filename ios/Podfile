@@ -9,17 +9,14 @@ platform :ios, min_ios_version_supported
 prepare_react_native_project!
 inhibit_all_warnings!
 
+ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
 project 'rectime', {
   'Debug' => :debug,
   'Release' => :release,
   'Preview' => :release,
 }
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
 
 target 'rectime' do
   config = use_native_modules!

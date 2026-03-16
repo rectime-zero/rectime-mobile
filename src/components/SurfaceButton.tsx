@@ -14,7 +14,7 @@ import {
     withTiming,
 } from 'react-native-reanimated';
 import {useTheme} from '../theme';
-import NativeLiquidGlassView, {supportsNativeLiquidGlassView} from './NativeLiquidGlassView';
+import NativeLiquidGlassView, {isNativeLiquidGlassAvailable} from './NativeLiquidGlassView';
 
 type SurfaceButtonChrome = 'glass' | 'solid' | 'none';
 type SurfaceButtonSize = 'header' | 'regular' | 'compact' | 'none';
@@ -44,7 +44,7 @@ function SurfaceButton({
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     const isIos = Platform.OS === 'ios';
-    const supportsNativeLiquidGlass = supportsNativeLiquidGlassView;
+    const supportsNativeLiquidGlass = isNativeLiquidGlassAvailable();
     const scale = useSharedValue(1);
     const opacity = useSharedValue(1);
     const pressedOpacity = supportsNativeLiquidGlass ? 1 : isIos ? 0.84 : 0.94;
@@ -92,6 +92,7 @@ function SurfaceButton({
         radiusStyle?.borderBottomRightRadius != null ? {borderBottomRightRadius: radiusStyle.borderBottomRightRadius} : null,
     ];
     const shouldClipContents = chrome !== 'glass' || !supportsNativeLiquidGlass;
+    const showsGlassFallback = chrome === 'glass' && !supportsNativeLiquidGlass;
 
     return (
         <AnimatedPressable
@@ -103,6 +104,13 @@ function SurfaceButton({
             style={[styles.base, shouldClipContents ? styles.clippedBase : null, sizeStyle, chromeStyle, style, animatedStyle]}>
             {chrome === 'glass' && supportsNativeLiquidGlass ? (
                 <NativeLiquidGlassView effectStyle="regular" interactive style={glassFillStyle} />
+            ) : null}
+            {showsGlassFallback ? (
+                <>
+                    <View pointerEvents="none" style={[glassFillStyle, styles.glassFallbackFill]} />
+                    <View pointerEvents="none" style={[glassFillStyle, styles.glassFallbackHighlight]} />
+                    <View pointerEvents="none" style={[glassFillStyle, styles.glassFallbackEdge]} />
+                </>
             ) : null}
             <View style={[styles.content, contentStyle]}>{children}</View>
         </AnimatedPressable>
@@ -149,15 +157,29 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         glassFallbackSolidBase: {
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: 'rgba(255,255,255,0.12)',
+            borderColor: 'rgba(255,255,255,0.18)',
             shadowColor: '#08111F',
             shadowOffset: {width: 0, height: 8},
-            shadowOpacity: 0.12,
-            shadowRadius: 18,
-            backgroundColor: theme.colors.headerActionBackground,
+            shadowOpacity: 0.18,
+            shadowRadius: 20,
+            backgroundColor: 'rgba(222, 236, 255, 0.12)',
         },
         glassFill: {
             ...StyleSheet.absoluteFillObject,
+        },
+        glassFallbackFill: {
+            backgroundColor: 'rgba(196, 220, 255, 0.14)',
+        },
+        glassFallbackHighlight: {
+            top: 1,
+            left: 1,
+            right: 1,
+            bottom: '48%',
+            backgroundColor: 'rgba(255,255,255,0.18)',
+        },
+        glassFallbackEdge: {
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.22)',
         },
         content: {
             alignItems: 'center',

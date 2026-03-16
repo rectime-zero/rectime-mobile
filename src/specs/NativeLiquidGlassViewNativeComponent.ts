@@ -1,6 +1,6 @@
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type {WithDefault} from 'react-native/Libraries/Types/CodegenTypes';
+import {codegenNativeComponent} from 'react-native';
 import type {HostComponent, ViewProps} from 'react-native';
+import type {WithDefault} from 'react-native/Libraries/Types/CodegenTypes';
 
 export interface NativeProps extends ViewProps {
     effectStyle?: WithDefault<'regular' | 'clear', 'regular'>;

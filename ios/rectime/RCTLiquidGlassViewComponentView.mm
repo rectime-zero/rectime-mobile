@@ -95,7 +95,7 @@ static UIGlassEffectStyle RCTLiquidGlassEffectStyleFromProps(RCTLiquidGlassViewE
 
 @end
 
-Class<RCTComponentViewProtocol> RCTLiquidGlassViewCls(void)
+extern "C" Class<RCTComponentViewProtocol> RCTLiquidGlassViewCls(void)
 {
   return RCTLiquidGlassViewComponentView.class;
 }
