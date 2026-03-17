@@ -1,9 +1,7 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {pushRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -15,16 +13,7 @@ function HomeScreen() {
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <RootScreenLayout
-            headerLeading={<OpenMenuButton />}
-            headerTrailing={
-                <AccessoryButton
-                    accessibilityLabel="通知"
-                    icon="bell"
-                    onPress={() => pushRoute(pushRoutes.notifications())}
-                />
-            }
-            title="ホーム">
+        <RootScreenLayout>
             <View style={styles.heroCard}>
                 <Text style={styles.heroEyebrow}>本日のメインイベント</Text>
                 <Text style={styles.heroTitle}>100m走 決勝</Text>

@@ -1,9 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 type NotificationsScreenProps = {
@@ -28,15 +26,12 @@ const notificationItems = [
     },
 ];
 
-function NotificationsScreen({route: _route}: NotificationsScreenProps) {
+function NotificationsScreen({route}: NotificationsScreenProps) {
     const {theme} = useTheme();
-    const {pop} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PushScreenLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
-            title="通知">
+        <PushScreenLayout route={route}>
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>新着</Text>
                 <Text style={styles.sectionBody}>試合開始や順位更新、当日の案内をまとめて確認できます。</Text>

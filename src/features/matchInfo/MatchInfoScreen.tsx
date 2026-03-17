@@ -1,10 +1,8 @@
 ﻿import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 type MatchInfoScreenProps = {
@@ -19,13 +17,10 @@ const recentResults = [
 
 function MatchInfoScreen({route}: MatchInfoScreenProps) {
     const {theme} = useTheme();
-    const {pop} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PushScreenLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
-            title="対戦情報">
+        <PushScreenLayout route={route}>
             <View style={styles.heroCard}>
                 <View>
                     <Text style={styles.teamLabel}>{route.params.teamName}</Text>

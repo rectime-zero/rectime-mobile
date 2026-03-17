@@ -1,5 +1,7 @@
 import {
+    type AppRoute,
     type PushRouteTarget,
+    type PushScreenName,
     type RootRouteTarget,
     type SheetRouteTarget,
     type SideMenuPushRouteTarget,
@@ -12,6 +14,33 @@ export const rootRoutes = {
     map: {name: 'map'},
     rules: {name: 'rules'},
 } as const satisfies Record<string, RootRouteTarget>;
+
+const rootRouteTitles = {
+    home: 'ホーム',
+    schedule: 'タイムテーブル',
+    ranking: 'ランキング',
+    map: 'マップ',
+    rules: 'ルール',
+} as const;
+
+export function getRootRouteTitle(name: keyof typeof rootRouteTitles) {
+    return rootRouteTitles[name];
+}
+
+const pushRouteTitles = {
+    settings: '設定',
+    'match-info': '対戦情報',
+    development: '開発メニュー',
+    notifications: '通知',
+} as const;
+
+export function getPushRouteTitle(route: AppRoute<PushScreenName>) {
+    if (route.name === 'detail') {
+        return (route as AppRoute<'detail'>).params.title;
+    }
+
+    return pushRouteTitles[route.name as keyof typeof pushRouteTitles];
+}
 
 export const sheetRoutes = {
     themePicker: {name: 'theme-sheet', params: undefined},

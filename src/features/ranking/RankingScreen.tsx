@@ -1,9 +1,7 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {pushRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -15,16 +13,7 @@ function RankingScreen() {
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <RootScreenLayout
-            headerLeading={<OpenMenuButton />}
-            headerTrailing={
-                <AccessoryButton
-                    accessibilityLabel="通知"
-                    icon="bell"
-                    onPress={() => pushRoute(pushRoutes.notifications())}
-                />
-            }
-            title="ランキング">
+        <RootScreenLayout>
             <Text style={styles.sectionLabel}>総合順位</Text>
 
             <View style={styles.topGrid}>

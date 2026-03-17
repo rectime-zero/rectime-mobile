@@ -1,20 +1,17 @@
 import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
 import {useFeedback} from '../../feedback';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 type SettingsScreenProps = {
     route: AppRoute<'settings'>;
 };
 
-function SettingsScreen({route: _route}: SettingsScreenProps) {
+function SettingsScreen({route}: SettingsScreenProps) {
     const {theme} = useTheme();
     const {hapticsEnabled, setHapticsEnabled, triggerHaptic} = useFeedback();
-    const {pop} = useNavigation();
     const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
@@ -30,9 +27,7 @@ function SettingsScreen({route: _route}: SettingsScreenProps) {
     );
 
     return (
-        <PushScreenLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
-            title="設定">
+        <PushScreenLayout route={route}>
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>アプリ設定</Text>
                 <Text style={styles.sectionBody}>通知や操作時のフィードバックをここで切り替えられます。</Text>

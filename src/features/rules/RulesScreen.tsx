@@ -1,30 +1,16 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import OpenMenuButton from '../../navigation/components/OpenMenuButton';
-import {pushRoutes} from '../../config/navigationRoutes';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import {ruleEntries, rulesHeroCopy} from './data';
 
 function RulesScreen() {
     const {theme} = useTheme();
-    const {pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <RootScreenLayout
-            headerLeading={<OpenMenuButton />}
-            headerTrailing={
-                <AccessoryButton
-                    accessibilityLabel="通知"
-                    icon="bell"
-                    onPress={() => pushRoute(pushRoutes.notifications())}
-                />
-            }
-            title="ルール">
+        <RootScreenLayout>
             <View style={styles.hero}>
                 <Text style={styles.heroTitle}>{rulesHeroCopy.title}</Text>
                 <Text style={styles.heroBody}>{rulesHeroCopy.body}</Text>

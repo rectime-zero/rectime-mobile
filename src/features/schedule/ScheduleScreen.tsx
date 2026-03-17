@@ -1,8 +1,6 @@
 import React from 'react';
 import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {pushRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -56,16 +54,7 @@ function ScheduleScreen() {
     );
 
     return (
-        <RootScreenLayout
-            headerLeading={<OpenMenuButton />}
-            headerTrailing={
-                <AccessoryButton
-                    accessibilityLabel="通知"
-                    icon="bell"
-                    onPress={() => pushRoute(pushRoutes.notifications())}
-                />
-            }
-            title="タイムテーブル">
+        <RootScreenLayout>
             <View style={styles.timelineFrame}>
                 <View style={styles.labelsColumn}>
                     {scheduleHourSlots.map(slot => {

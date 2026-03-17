@@ -15,12 +15,11 @@ type DetailScreenProps = {
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {pop, pushRoute} = useNavigation();
+    const {pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PushScreenLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
             headerTrailing={
                 <AccessoryButton
                     accessibilityLabel="メニュー"
@@ -28,7 +27,7 @@ function DetailScreen({route}: DetailScreenProps) {
                     onPress={() => pushRoute(pushRoutes.notifications())}
                 />
             }
-            title={route.params.title}>
+            route={route}>
             <View style={styles.scoreCard}>
                 <View>
                     <Text style={styles.scoreLabel}>現在の総合スコア</Text>

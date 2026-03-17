@@ -1,30 +1,16 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import OpenMenuButton from '../../navigation/components/OpenMenuButton';
-import {pushRoutes} from '../../config/navigationRoutes';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import {mapCopy, mapPlaces} from './data';
 
 function MapScreen() {
     const {theme} = useTheme();
-    const {pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <RootScreenLayout
-            headerLeading={<OpenMenuButton />}
-            headerTrailing={
-                <AccessoryButton
-                    accessibilityLabel="通知"
-                    icon="bell"
-                    onPress={() => pushRoute(pushRoutes.notifications())}
-                />
-            }
-            title="マップ">
+        <RootScreenLayout>
             <View style={styles.mapPlaceholder}>
                 <View style={styles.blurLayer} />
                 <Text style={styles.placeholderTitle}>{mapCopy.title}</Text>

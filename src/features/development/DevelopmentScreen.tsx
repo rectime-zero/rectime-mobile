@@ -1,24 +1,19 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
-import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 type DevelopmentScreenProps = {
     route: AppRoute<'development'>;
 };
 
-function DevelopmentScreen({route: _route}: DevelopmentScreenProps) {
+function DevelopmentScreen({route}: DevelopmentScreenProps) {
     const {theme} = useTheme();
-    const {pop} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PushScreenLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
-            title="開発メニュー">
+        <PushScreenLayout route={route}>
             <View style={styles.card}>
                 <Text style={styles.label}>開発</Text>
             </View>
