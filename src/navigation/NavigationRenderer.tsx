@@ -13,6 +13,7 @@ import Animated, {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BottomNavigation from '../components/layout/navigation/BottomNavigation';
 import SideMenu from '../components/layout/navigation/SideMenu';
+import {getLargestCornerRadius, useDisplayCorners} from '../hooks/useDisplayCorners';
 import {useTheme} from '../theme';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
@@ -28,8 +29,10 @@ const SPRING_CONFIG = {
 const PUSH_ENTER_TRANSITION_MS = 240;
 function NavigationRenderer() {
     const {theme} = useTheme();
+    const {corners} = useDisplayCorners();
     const {width: screenWidth} = useWindowDimensions();
     const menuRevealWidth = getMenuRevealWidth(screenWidth);
+    const shellCornerRadius = getLargestCornerRadius(corners);
     const {
         rootRoute,
         pushStack,
@@ -163,11 +166,11 @@ function NavigationRenderer() {
         }
 
         return {
-            borderRadius: interpolate(baseProgress, [0, 1], [0, 32]),
+            borderRadius: shellCornerRadius,
             shadowOpacity: interpolate(baseProgress, [0, 1], [0, 0.18]),
             transform: [{translateX: interpolate(baseProgress, [0, 1], [0, menuRevealWidth])}],
         };
-    });
+    }, [corners, menuRevealWidth, menuProgress, pushTransitionMode, pushTransitionProgress, pushTransitionRouteKey, pushTransitionSourceProgress, shellCornerRadius, topPushRoute]);
 
     const scrimStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
@@ -199,30 +202,17 @@ function NavigationRenderer() {
         }
 
         return {
-            borderRadius: interpolate(baseProgress, [0, 1], [0, 32]),
+            borderRadius: shellCornerRadius,
             transform: [{translateX: interpolate(baseProgress, [0, 1], [0, menuRevealWidth])}],
         };
-    });
+    }, [menuRevealWidth, menuProgress, pushTransitionMode, pushTransitionProgress, pushTransitionRouteKey, pushTransitionSourceProgress, shellCornerRadius, topPushRoute]);
 
     const bottomNavigationClipStyle = useAnimatedStyle(() => {
-        let baseProgress = menuProgress.value;
-
-        if (
-            topPushRoute
-            && topPushRoute.transitionSource === 'side-menu'
-            && pushTransitionMode === 'enter'
-            && pushTransitionRouteKey === topPushRoute.key
-        ) {
-            baseProgress = interpolate(pushTransitionProgress.value, [0, 1], [pushTransitionSourceProgress.value, 0]);
-        }
-
-        const radius = interpolate(baseProgress, [0, 1], [0, 32]);
-
         return {
-            borderBottomLeftRadius: radius,
-            borderBottomRightRadius: radius,
+            borderBottomLeftRadius: shellCornerRadius,
+            borderBottomRightRadius: shellCornerRadius,
         };
-    });
+    }, [shellCornerRadius]);
 
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 

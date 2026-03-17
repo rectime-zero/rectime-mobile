@@ -9,10 +9,12 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {getTopCornerRadius, useDisplayCorners} from '../hooks/useDisplayCorners';
 import {getSheetScreenOptions, renderSheetScreen} from './renderRoute';
 import {type AppRoute, type SheetScreenName} from './types';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
+import {sheetLayout, size} from '../tokens/layout';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const SPRING_CONFIG = {
@@ -27,11 +29,13 @@ type NavigationSheetProps = {
 
 function NavigationSheet({route}: NavigationSheetProps) {
     const {theme} = useTheme();
+    const {corners} = useDisplayCorners();
     const insets = useSafeAreaInsets();
     const sheetOptions = React.useMemo(() => getSheetScreenOptions(route), [route]);
-    const topInset = insets.top + 12;
+    const sheetCornerRadius = getTopCornerRadius(corners);
+    const topInset = insets.top + sheetLayout.topInsetOffset;
     const maxSheetHeight = SCREEN_HEIGHT - topInset;
-    const bottomInset = Math.max(insets.bottom, 18);
+    const bottomInset = Math.max(insets.bottom, sheetLayout.minBottomInset);
     const {activeGestureValue, clearSheet, setActiveGesture, sheetDismissRequest} = useNavigation();
     const translateY = useSharedValue(SCREEN_HEIGHT);
     const backdropOpacity = useSharedValue(0);
@@ -125,7 +129,7 @@ function NavigationSheet({route}: NavigationSheetProps) {
     const sheetStyle = useAnimatedStyle(() => ({
         transform: [{translateY: translateY.value}],
     }));
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const styles = React.useMemo(() => createStyles(theme, sheetCornerRadius), [sheetCornerRadius, theme]);
 
     return (
         <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
@@ -149,7 +153,7 @@ function NavigationSheet({route}: NavigationSheetProps) {
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], sheetCornerRadius: number) {
     return StyleSheet.create({
         backdrop: {
             backgroundColor: theme.colors.overlayBackdrop,
@@ -159,11 +163,11 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             left: 0,
             right: 0,
             bottom: 0,
-            borderTopLeftRadius: 32,
-            borderTopRightRadius: 32,
+            borderTopLeftRadius: sheetCornerRadius,
+            borderTopRightRadius: sheetCornerRadius,
             backgroundColor: theme.colors.sheetBackground,
-            paddingHorizontal: 20,
-            paddingTop: 12,
+            paddingHorizontal: sheetLayout.horizontalPadding,
+            paddingTop: sheetLayout.paddingTop,
             shadowColor: theme.colors.navigationShadow,
             shadowOffset: {width: 0, height: -10},
             shadowOpacity: 0.18,
@@ -172,9 +176,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         handle: {
             alignSelf: 'center',
-            marginBottom: 16,
-            width: 56,
-            height: 8,
+            marginBottom: sheetLayout.handleMarginBottom,
+            width: size.sheetHandleWidth,
+            height: size.sheetHandleHeight,
             borderRadius: 999,
             backgroundColor: theme.colors.sheetHandle,
         },
