@@ -13,6 +13,7 @@ import {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
+import {useFeedback, type AppHapticType} from '../../feedback';
 import NativeLiquidGlassView, {isNativeLiquidGlassAvailable} from './NativeLiquidGlassView';
 
 type PressSurfaceChrome = 'glass' | 'solid' | 'none';
@@ -26,6 +27,7 @@ type PressSurfaceProps = {
     contentStyle?: StyleProp<ViewStyle>;
     chrome?: PressSurfaceChrome;
     size?: PressSurfaceSize;
+    haptic?: AppHapticType | 'none';
 };
 
 const AnimatedPressable = createAnimatedComponent(Pressable);
@@ -38,9 +40,11 @@ function PressSurface({
     contentStyle,
     chrome = 'solid',
     size = 'none',
+    haptic = 'tap',
 }: PressSurfaceProps) {
     const isIos = Platform.OS === 'ios';
     const supportsNativeLiquidGlass = isNativeLiquidGlassAvailable();
+    const {triggerHaptic} = useFeedback();
     const scale = useSharedValue(1);
     const opacity = useSharedValue(1);
     const pressedOpacity = supportsNativeLiquidGlass ? 1 : isIos ? 0.84 : 0.94;
@@ -60,6 +64,14 @@ function PressSurface({
         scale.value = withTiming(1, {duration: 180});
         opacity.value = withTiming(1, {duration: 180});
     }, [opacity, scale]);
+
+    const handlePress = React.useCallback(() => {
+        if (haptic !== 'none') {
+            triggerHaptic(haptic);
+        }
+
+        onPress();
+    }, [haptic, onPress, triggerHaptic]);
 
     const sizeStyle =
         size === 'header'
@@ -94,7 +106,7 @@ function PressSurface({
         <AnimatedPressable
             accessibilityLabel={accessibilityLabel}
             accessibilityRole="button"
-            onPress={onPress}
+            onPress={handlePress}
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             style={[styles.base, shouldClipContents ? styles.clippedBase : null, sizeStyle, chromeStyle, style, animatedStyle]}>

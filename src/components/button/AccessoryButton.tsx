@@ -16,6 +16,7 @@ import {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
+import {useFeedback, type AppHapticType} from '../../feedback';
 import AppIcon from '../icon/AppIcon';
 import {type AppIconName} from '../icon/iconNames';
 import NativeLiquidGlassView, {isNativeLiquidGlassAvailable} from '../surface/NativeLiquidGlassView';
@@ -36,6 +37,7 @@ type AccessoryButtonProps = {
     color?: string;
     style?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
+    haptic?: AppHapticType | 'none';
 };
 
 const AnimatedPressable = createAnimatedComponent(Pressable);
@@ -52,8 +54,10 @@ function AccessoryButton({
     color,
     style,
     contentStyle,
+    haptic = 'tap',
 }: AccessoryButtonProps) {
     const {theme} = useTheme();
+    const {triggerHaptic} = useFeedback();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
     const isIos = Platform.OS === 'ios';
     const supportsNativeLiquidGlass = isNativeLiquidGlassAvailable();
@@ -260,6 +264,14 @@ function AccessoryButton({
     const content =
         children ?? (icon ? <AppIcon color={resolvedIconColor} icon={{kind: 'font-awesome', name: icon}} size={iconSizes[size]} /> : null);
 
+    const handlePress = React.useCallback(() => {
+        if (haptic !== 'none') {
+            triggerHaptic(haptic);
+        }
+
+        onPress();
+    }, [haptic, onPress, triggerHaptic]);
+
     return (
         <AnimatedPressable
             accessibilityLabel={accessibilityLabel}
@@ -267,7 +279,7 @@ function AccessoryButton({
             onLayout={handleLayout}
             onHoverIn={handleHoverIn}
             onHoverOut={handleHoverOut}
-            onPress={onPress}
+            onPress={handlePress}
             onTouchCancel={handleTouchEnd}
             onTouchEnd={handleTouchEnd}
             onTouchMove={handleTouchMove}

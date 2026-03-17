@@ -1,5 +1,6 @@
-﻿import React from 'react';
+import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
+import {useFeedback} from '../../feedback';
 import AccessoryButton from '../../components/button/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {type AppRoute} from '../../navigation/types';
@@ -12,11 +13,22 @@ type SettingsScreenProps = {
 
 function SettingsScreen({route}: SettingsScreenProps) {
     const {theme} = useTheme();
+    const {hapticsEnabled, setHapticsEnabled, triggerHaptic} = useFeedback();
     const {closeMenuPage, pop} = useNavigation();
     const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-    const [hapticsEnabled, setHapticsEnabled] = React.useState(true);
     const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
     const styles = React.useMemo(() => createStyles(theme), [theme]);
+
+    const handleHapticsValueChange = React.useCallback(
+        (enabled: boolean) => {
+            setHapticsEnabled(enabled);
+
+            if (enabled) {
+                triggerHaptic('selection');
+            }
+        },
+        [setHapticsEnabled, triggerHaptic],
+    );
 
     return (
         <PageLayout
@@ -50,7 +62,7 @@ function SettingsScreen({route}: SettingsScreenProps) {
                         </View>
                         <Switch
                             value={hapticsEnabled}
-                            onValueChange={setHapticsEnabled}
+                            onValueChange={handleHapticsValueChange}
                             trackColor={{
                                 false: theme.colors.surfaceMuted,
                                 true: theme.colors.buttonPrimary,

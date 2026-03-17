@@ -2,6 +2,7 @@ import React from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {FeedbackProvider} from '../feedback';
 import NavigationProvider from './NavigationProvider';
 import NavigationRenderer from './NavigationRenderer';
 import {ThemeProvider, useTheme} from '../theme';
@@ -28,9 +29,11 @@ function App() {
     return (
         <GestureHandlerRootView style={styles.root}>
             <SafeAreaProvider>
-                <ThemeProvider>
-                    <AppContent />
-                </ThemeProvider>
+                <FeedbackProvider>
+                    <ThemeProvider>
+                        <AppContent />
+                    </ThemeProvider>
+                </FeedbackProvider>
             </SafeAreaProvider>
         </GestureHandlerRootView>
     );
