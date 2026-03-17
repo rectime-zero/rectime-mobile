@@ -1,4 +1,5 @@
 import React from 'react';
+import {DevelopmentScreen} from '../features/development';
 import {DetailScreen} from '../features/detail';
 import {HomeScreen} from '../features/home';
 import {MapScreen} from '../features/map';
@@ -35,6 +36,8 @@ export function renderRootScreen(route: AppRoute<RootScreenName>) {
 
 export function renderPushScreen(route: AppRoute<PushScreenName>) {
     switch (route.name) {
+        case 'development':
+            return <DevelopmentScreen route={route as AppRoute<'development'>} />;
         case 'settings':
             return <SettingsScreen route={route as AppRoute<'settings'>} />;
         case 'match-info':

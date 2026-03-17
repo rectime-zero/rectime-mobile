@@ -37,6 +37,10 @@ export const menuPageRoutes = {
         name: 'settings',
         params: undefined,
     }),
+    development: (): MenuPageRouteTarget<'development'> => ({
+        name: 'development',
+        params: undefined,
+    }),
     matchInfo: (teamName: string, summary: string): MenuPageRouteTarget<'match-info'> => ({
         name: 'match-info',
         params: {

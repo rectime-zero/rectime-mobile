@@ -147,9 +147,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             width: revealWidth,
             flex: 1,
             paddingTop: topInset + 18,
-            paddingRight: 20,
-            paddingBottom: 18,
-            paddingLeft: 20,
+            paddingRight: 30,
+            paddingBottom: 33,
+            paddingLeft: 30,
         },
         profileRow: {
             flexDirection: 'row',
@@ -191,7 +191,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             fontWeight: '700',
         },
         inactiveTabLabel: {
-            color: theme.colors.textSecondary,
         },
         footerPanel: {
             marginTop: 'auto',

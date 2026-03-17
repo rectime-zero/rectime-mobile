@@ -59,7 +59,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], bottomInset: 
             borderTopColor: theme.colors.navigationBorder,
             backgroundColor: theme.colors.navigationBackground,
             paddingHorizontal: 10,
-            paddingTop: 10,
+            paddingTop: 3,
             paddingBottom: bottomInset,
         },
         tab: {
