@@ -4,6 +4,7 @@ import ScreenLayoutBase, {type ScreenLayoutProps} from '../base/ScreenLayoutBase
 import {getRootRouteTitle} from '../../../config/navigationRoutes';
 import {useNavigation} from '../../../navigation/useNavigation';
 import OpenMenuButton from '../../../navigation/components/OpenMenuButton';
+import {screenLayout} from '../../../tokens/layout';
 
 type RootScreenLayoutProps = Omit<ScreenLayoutProps, 'title' | 'headerLeading' | 'headerTrailing'>;
 
@@ -29,7 +30,7 @@ function RootScreenLayout(props: RootScreenLayoutProps) {
 
 const styles = {
     contentWithBottomNavigation: {
-        paddingBottom: 112,
+        paddingBottom: screenLayout.rootBottomNavigationInset,
     },
 } as const;
 

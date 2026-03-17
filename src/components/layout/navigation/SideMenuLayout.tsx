@@ -1,7 +1,9 @@
 import React, {ReactNode} from 'react';
-import {Platform, StatusBar, StyleSheet, useWindowDimensions} from 'react-native';
+import {StyleSheet, useWindowDimensions} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {getMenuRevealWidth} from '../../../navigation/menuLayout';
 import PanelLayoutBase from '../base/PanelLayoutBase';
+import {screenLayout, sideMenuLayout} from '../../../tokens/layout';
 
 type SideMenuLayoutProps = {
     children: ReactNode;
@@ -9,9 +11,9 @@ type SideMenuLayoutProps = {
 
 function SideMenuLayout({children}: SideMenuLayoutProps) {
     const {width: screenWidth} = useWindowDimensions();
-    const topInset = Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
+    const insets = useSafeAreaInsets();
     const revealWidth = getMenuRevealWidth(screenWidth);
-    const styles = React.useMemo(() => createStyles(topInset, revealWidth), [topInset, revealWidth]);
+    const styles = React.useMemo(() => createStyles(insets.top, revealWidth), [insets.top, revealWidth]);
 
     return (
         <PanelLayoutBase contentStyle={styles.contentArea}>
@@ -25,10 +27,10 @@ function createStyles(topInset: number, revealWidth: number) {
         contentArea: {
             width: revealWidth,
             flex: 1,
-            paddingTop: topInset + 18,
-            paddingRight: 30,
-            paddingBottom: 33,
-            paddingLeft: 30,
+            paddingTop: topInset + screenLayout.headerPaddingTop,
+            paddingRight: sideMenuLayout.horizontalPadding,
+            paddingBottom: sideMenuLayout.paddingBottom,
+            paddingLeft: sideMenuLayout.horizontalPadding,
         },
     });
 }

@@ -6,12 +6,16 @@ import PressSurface from '../../surface/PressSurface';
 import {navigationTabs} from '../../../config/navigationTabs';
 import {useNavigation} from '../../../navigation/useNavigation';
 import {useTheme} from '../../../theme';
+import {bottomNavigationLayout, size} from '../../../tokens/layout';
 
 function BottomNavigation() {
     const {theme} = useTheme();
     const insets = useSafeAreaInsets();
     const {rootRoute, setRootRoute} = useNavigation();
-    const styles = React.useMemo(() => createStyles(theme, Math.max(insets.bottom, 14)), [insets.bottom, theme]);
+    const styles = React.useMemo(
+        () => createStyles(theme, Math.max(insets.bottom, bottomNavigationLayout.minBottomInset)),
+        [insets.bottom, theme],
+    );
 
     return (
         <View pointerEvents="box-none" style={styles.wrapper}>
@@ -58,16 +62,16 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], bottomInset: 
             borderTopWidth: 1,
             borderTopColor: theme.colors.navigationBorder,
             backgroundColor: theme.colors.navigationBackground,
-            paddingHorizontal: 10,
-            paddingTop: 3,
+            paddingHorizontal: bottomNavigationLayout.horizontalPadding,
+            paddingTop: bottomNavigationLayout.paddingTop,
             paddingBottom: bottomInset,
         },
         tab: {
             flex: 1,
-            minHeight: 54,
+            minHeight: size.bottomTabMinHeight,
         },
         tabContent: {
-            gap: 6,
+            gap: bottomNavigationLayout.labelGap,
         },
         label: {
             fontSize: 11,

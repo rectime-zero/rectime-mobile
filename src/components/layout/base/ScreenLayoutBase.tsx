@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react';
 import {ScrollView, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {useTheme} from '../../../theme';
+import {screenLayout, size} from '../../../tokens/layout';
 
 export type ScreenLayoutProps = {
     title: string;
@@ -47,17 +48,17 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         header: {
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 12,
-            paddingHorizontal: 18,
-            paddingTop: 16,
-            paddingBottom: 12,
+            gap: screenLayout.headerGap,
+            paddingHorizontal: screenLayout.horizontalPadding,
+            paddingTop: screenLayout.headerPaddingTop,
+            paddingBottom: screenLayout.headerPaddingBottom,
         },
         leading: {
-            width: 44,
+            width: size.headerAction,
             alignItems: 'flex-start',
         },
         trailing: {
-            width: 44,
+            width: size.headerAction,
             alignItems: 'flex-end',
         },
         title: {
@@ -67,9 +68,9 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontWeight: '800',
         },
         content: {
-            paddingHorizontal: 18,
-            paddingBottom: 28,
-            gap: 14,
+            paddingHorizontal: screenLayout.horizontalPadding,
+            paddingBottom: screenLayout.contentPaddingBottom,
+            gap: screenLayout.contentGap,
         },
     });
 }
