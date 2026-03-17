@@ -23,4 +23,10 @@ export const sideMenuItems: SideMenuItem[] = [
         label: '設定',
         icon: 'settings',
     },
+    {
+        kind: 'menu-page',
+        route: menuPageRoutes.development(),
+        label: '開発メニュー',
+        icon: 'development',
+    },
 ];
