@@ -16,7 +16,6 @@ import {type AppRoute, type PushScreenName} from './types';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
-const EDGE_WIDTH = 56;
 const SPRING_CONFIG = {
     damping: 24,
     stiffness: 220,
@@ -64,8 +63,8 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
                 .enabled(isTopCard && !sheetRoute)
                 .activeOffsetX([-10, 10])
                 .failOffsetY([-12, 12])
-                .onStart(event => {
-                    if (!isTopCard || activeGestureValue.value !== 'none' || event.absoluteX > EDGE_WIDTH) {
+                .onStart(() => {
+                    if (!isTopCard || activeGestureValue.value !== 'none') {
                         return;
                     }
 
@@ -85,7 +84,9 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
                         return;
                     }
 
-                    const shouldPop = translateX.value > screenWidth * 0.22 || event.velocityX > 650;
+                    const gestureProgress = translateX.value / screenWidth;
+                    const shouldPop =
+                        event.velocityX > 700 || (event.velocityX > -700 && gestureProgress > 0.45);
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
 
