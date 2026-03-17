@@ -1,9 +1,9 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/AccessoryButton';
+import AccessoryButton from '../../components/button/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
-import MenuAvatarButton from '../../components/MenuAvatarButton';
+import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -11,12 +11,12 @@ import {mapCopy, mapPlaces} from './data';
 
 function MapScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheetRoute} = useNavigation();
+    const {presentSheetRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
         <PageLayout
-            headerLeading={<MenuAvatarButton onPress={openMenu} />}
+            headerLeading={<OpenMenuButton />}
             headerTrailing={
                 <AccessoryButton
                     accessibilityLabel="通知"

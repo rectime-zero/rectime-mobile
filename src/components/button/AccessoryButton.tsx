@@ -1,9 +1,9 @@
 import React, {ReactNode} from 'react';
 import {Platform, StyleProp, StyleSheet, ViewStyle} from 'react-native';
-import AppIcon from './AppIcon';
-import {type AppIconName} from './iconNames';
-import PressSurface from './PressSurface';
-import {useTheme} from '../theme';
+import AppIcon from '../icon/AppIcon';
+import {type AppIconName} from '../icon/iconNames';
+import PressSurface from '../surface/PressSurface';
+import {useTheme} from '../../theme';
 
 type AccessoryButtonSize = 'small' | 'medium' | 'large';
 type AccessoryButtonTone = 'default' | 'accent';

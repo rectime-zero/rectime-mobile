@@ -1,4 +1,4 @@
-import {type AppIconKey} from '../components/AppIcon';
+import {type AppIconKey} from '../components/icon/AppIcon';
 import {rootRoutes} from './navigationRoutes';
 
 export type TabItem = {

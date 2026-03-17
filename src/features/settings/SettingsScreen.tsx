@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
-import AccessoryButton from '../../components/AccessoryButton';
+import AccessoryButton from '../../components/button/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';

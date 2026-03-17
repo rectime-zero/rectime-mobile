@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/AccessoryButton';
+import AccessoryButton from '../../components/button/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';

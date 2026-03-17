@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import AppIcon from '../AppIcon';
-import PressSurface from '../PressSurface';
+import AppIcon from '../icon/AppIcon';
+import PressSurface from '../surface/PressSurface';
 import {navigationTabs} from '../../config/navigationTabs';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';

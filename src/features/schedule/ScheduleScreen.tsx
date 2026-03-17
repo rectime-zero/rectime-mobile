@@ -1,8 +1,8 @@
 import React from 'react';
 import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../../components/AccessoryButton';
+import AccessoryButton from '../../components/button/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
-import MenuAvatarButton from '../../components/MenuAvatarButton';
+import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -23,7 +23,7 @@ const CURRENT_TIME_BADGE_WIDTH = 48;
 
 function ScheduleScreen() {
     const {theme} = useTheme();
-    const {openMenu, presentSheetRoute, pushRoute} = useNavigation();
+    const {presentSheetRoute, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
     const [now, setNow] = React.useState(() => new Date());
     const [gridWidth, setGridWidth] = React.useState(0);
@@ -57,7 +57,7 @@ function ScheduleScreen() {
 
     return (
         <PageLayout
-            headerLeading={<MenuAvatarButton onPress={openMenu} />}
+            headerLeading={<OpenMenuButton />}
             headerTrailing={
                 <AccessoryButton
                     accessibilityLabel="通知"

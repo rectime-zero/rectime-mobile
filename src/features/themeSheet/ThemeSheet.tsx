@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import AppIcon from '../../components/AppIcon';
-import PressSurface from '../../components/PressSurface';
+import AppIcon from '../../components/icon/AppIcon';
+import PressSurface from '../../components/surface/PressSurface';
 import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';

@@ -1,4 +1,4 @@
-import {type AppIconName} from '../../components/iconNames';
+import {type AppIconName} from '../../components/icon/iconNames';
 
 export type RuleEntry = {
     icon: AppIconName;

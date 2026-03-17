@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import CommandButton from '../../components/CommandButton';
+import CommandButton from '../../components/button/CommandButton';
 import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';

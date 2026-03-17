@@ -16,10 +16,10 @@ import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import {resolveTheme} from '../../theme/themes';
-import AccessoryButton from '../AccessoryButton';
-import AppIcon from '../AppIcon';
-import PressSurface from '../PressSurface';
-import UserAvatar from '../UserAvatar';
+import UserAvatar from '../avatar/UserAvatar';
+import AccessoryButton from '../button/AccessoryButton';
+import AppIcon from '../icon/AppIcon';
+import PressSurface from '../surface/PressSurface';
 
 const appIcon = require('../../assets/icons/app-icon.png');
 const brandIconStyle: ImageStyle = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
-import PressSurface from './PressSurface';
-import {useTheme} from '../theme';
+import PressSurface from '../surface/PressSurface';
+import {useTheme} from '../../theme';
 
 type CommandButtonTone = 'primary' | 'secondary' | 'ghost';
 type CommandButtonSize = 'regular' | 'compact';
