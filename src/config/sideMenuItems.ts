@@ -24,4 +24,9 @@ export const sideMenuItems: SideMenuItem[] = [
         label: '開発メニュー',
         icon: 'development',
     },
+    {
+        route: sideMenuRoutes.helpCenter(),
+        label: 'ヘルプセンター',
+        icon: 'help-center',
+    },
 ];

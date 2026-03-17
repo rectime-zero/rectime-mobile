@@ -32,6 +32,7 @@ const pushRouteTitles = {
     'match-info': '対戦情報',
     development: '開発メニュー',
     notifications: '通知',
+    'help-center': 'ヘルプセンター',
 } as const;
 
 export function getPushRouteTitle(route: AppRoute<PushScreenName>) {
@@ -71,6 +72,10 @@ export const sideMenuRoutes = {
     }),
     development: (): SideMenuPushRouteTarget<'development'> => ({
         name: 'development',
+        params: undefined,
+    }),
+    helpCenter: (): SideMenuPushRouteTarget<'help-center'> => ({
+        name: 'help-center',
         params: undefined,
     }),
     matchInfo: (teamName: string, summary: string): SideMenuPushRouteTarget<'match-info'> => ({

@@ -1,6 +1,7 @@
 import React from 'react';
 import {DevelopmentScreen} from '../features/development';
 import {DetailScreen} from '../features/detail';
+import {HelpCenterScreen} from '../features/helpCenter';
 import {HomeScreen} from '../features/home';
 import {MapScreen} from '../features/map';
 import {MatchInfoScreen} from '../features/matchInfo';
@@ -43,6 +44,8 @@ export function renderPushScreen(route: AppRoute<PushScreenName>) {
             return <DevelopmentScreen route={route as AppRoute<'development'>} />;
         case 'settings':
             return <SettingsScreen route={route as AppRoute<'settings'>} />;
+        case 'help-center':
+            return <HelpCenterScreen route={route as AppRoute<'help-center'>} />;
         case 'match-info':
             return <MatchInfoScreen route={route as AppRoute<'match-info'>} />;
         case 'detail':
