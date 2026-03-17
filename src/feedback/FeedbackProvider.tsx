@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import {type AppHapticType, triggerNativeHaptic} from './haptics';
 
@@ -14,6 +13,32 @@ type FeedbackContextValue = {
 };
 
 const STORAGE_KEY = '@rectime/preferences/haptics-enabled';
+let inMemoryHapticsEnabled = true;
+
+type StorageLike = {
+    getItem: (key: string) => Promise<string | null>;
+    setItem: (key: string, value: string) => Promise<void>;
+};
+
+function getStorage(): StorageLike {
+    try {
+        const asyncStorageModule = require('@react-native-async-storage/async-storage');
+        const storage = asyncStorageModule?.default ?? asyncStorageModule;
+
+        if (storage?.getItem && storage?.setItem) {
+            return storage as StorageLike;
+        }
+    } catch {
+        // Fall back to in-memory state when the native module is unavailable.
+    }
+
+    return {
+        getItem: async () => String(inMemoryHapticsEnabled),
+        setItem: async (_key: string, value: string) => {
+            inMemoryHapticsEnabled = value === 'true';
+        },
+    };
+}
 
 const FeedbackContext = React.createContext<FeedbackContextValue | null>(null);
 
@@ -28,7 +53,7 @@ function FeedbackProvider({children}: FeedbackProviderProps) {
         let isMounted = true;
 
         async function hydrate() {
-            const storedValue = await AsyncStorage.getItem(STORAGE_KEY);
+            const storedValue = await getStorage().getItem(STORAGE_KEY);
 
             if (!isMounted || storedValue == null) {
                 return;
@@ -46,8 +71,9 @@ function FeedbackProvider({children}: FeedbackProviderProps) {
 
     const setHapticsEnabled = React.useCallback((enabled: boolean) => {
         setHapticsEnabledState(enabled);
+        inMemoryHapticsEnabled = enabled;
 
-        AsyncStorage.setItem(STORAGE_KEY, String(enabled)).catch(() => {
+        getStorage().setItem(STORAGE_KEY, String(enabled)).catch(() => {
             // Keep the in-memory preference even if persistence fails.
         });
     }, []);
