@@ -39,6 +39,7 @@ type AccessoryButtonProps = {
 };
 
 const AnimatedPressable = createAnimatedComponent(Pressable);
+const AnimatedOverlay = createAnimatedComponent(View);
 
 function AccessoryButton({
     accessibilityLabel,
@@ -219,6 +220,24 @@ function AccessoryButton({
         };
     }, [holdProgress, hoverProgress, insideProgress, isIos, theme, tone]);
 
+    const iosOverlayAnimatedStyle = useAnimatedStyle(() => {
+        const pressedOverlayColor =
+            tone === 'accent' ? 'rgba(147, 197, 253, 0.24)' : 'rgba(255,255,255,0.12)';
+        const outsideOverlayColor =
+            tone === 'accent' ? 'rgba(147, 197, 253, 0.12)' : 'rgba(255,255,255,0.06)';
+
+        return {
+            backgroundColor: interpolateColor(
+                holdProgress.value,
+                [0, 1],
+                [
+                    'rgba(255,255,255,0)',
+                    interpolateColor(insideProgress.value, [0, 1], [outsideOverlayColor, pressedOverlayColor]),
+                ],
+            ),
+        };
+    }, [holdProgress, insideProgress, tone]);
+
     const radiusStyle = StyleSheet.flatten([sizeStyles[size], baseToneStyles[tone], style]) as ViewStyle | undefined;
     const glassFillStyle = [
         styles.glassFill,
@@ -264,7 +283,7 @@ function AccessoryButton({
                     <View pointerEvents="none" style={[glassFillStyle, styles.glassFallbackEdge]} />
                 </>
             ) : null}
-            {isIos ? <View pointerEvents="none" style={[glassFillStyle, styles.iosGlassOverlay, isHeld ? styles.iosPressedOverlay : null]} /> : null}
+            {isIos ? <AnimatedOverlay pointerEvents="none" style={[glassFillStyle, styles.iosGlassOverlay, iosOverlayAnimatedStyle]} /> : null}
             <View style={[styles.content, contentStyle]}>{content}</View>
         </AnimatedPressable>
     );
@@ -389,11 +408,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             borderColor: 'rgba(255,255,255,0.22)',
         },
         iosGlassOverlay: {
-            backgroundColor: 'rgba(255,255,255,0.06)',
-            opacity: 0,
-        },
-        iosPressedOverlay: {
-            opacity: 1,
+            backgroundColor: 'rgba(255,255,255,0)',
         },
     });
 }
