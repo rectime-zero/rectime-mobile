@@ -1,47 +1,43 @@
 import React from 'react';
 import {Platform, View} from 'react-native';
 import type {ViewProps} from 'react-native';
-import NativeLiquidGlassViewNativeComponent from '../specs/NativeLiquidGlassViewNativeComponent';
+import {
+  LiquidGlassView,
+  isLiquidGlassSupported,
+} from '@callstack/liquid-glass';
 
 type LiquidGlassEffectStyle = 'regular' | 'clear';
 
 type NativeLiquidGlassViewProps = ViewProps & {
-    effectStyle?: LiquidGlassEffectStyle;
-    interactive?: boolean;
+  effectStyle?: LiquidGlassEffectStyle;
+  interactive?: boolean;
 };
 
-const NATIVE_COMPONENT_NAME = 'RCTLiquidGlassView';
-
 export function isNativeLiquidGlassAvailable() {
-    return Platform.OS === 'ios' && getIosMajorVersion() >= 26;
+  return Platform.OS === 'ios' && isLiquidGlassSupported;
 }
 
 function NativeLiquidGlassView({
-    style,
-    effectStyle = 'regular',
-    interactive = false,
+  style,
+  effectStyle = 'regular',
+  interactive = false,
+  children,
+  ...rest
 }: NativeLiquidGlassViewProps) {
-    if (!isNativeLiquidGlassAvailable()) {
-        return <View pointerEvents="none" style={style} />;
-    }
+  if (!isNativeLiquidGlassAvailable()) {
+    return <View pointerEvents="none" style={style} />;
+  }
 
-    return (
-        <NativeLiquidGlassViewNativeComponent
-            effectStyle={effectStyle}
-            interactive={interactive}
-            pointerEvents="none"
-            nativeID={NATIVE_COMPONENT_NAME}
-            style={style}
-        />
-    );
-}
-
-function getIosMajorVersion() {
-    if (Platform.OS !== 'ios') {
-        return 0;
-    }
-
-    return typeof Platform.Version === 'string' ? Number.parseInt(Platform.Version, 10) : Platform.Version;
+  return (
+    <LiquidGlassView
+      {...rest}
+      effect={effectStyle}
+      interactive={interactive}
+      pointerEvents="none"
+      style={style}>
+      {children}
+    </LiquidGlassView>
+  );
 }
 
 export default NativeLiquidGlassView;
