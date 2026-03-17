@@ -14,7 +14,6 @@ export const rootRoutes = {
 } as const satisfies Record<string, RootRouteTarget>;
 
 export const sheetRoutes = {
-    notifications: {name: 'sample-sheet', params: undefined},
     themePicker: {name: 'theme-sheet', params: undefined},
 } as const satisfies Record<string, SheetRouteTarget>;
 
@@ -22,6 +21,10 @@ export const pushRoutes = {
     detail: (title: string, summary: string, eventId?: number): PushRouteTarget<'detail'> => ({
         name: 'detail',
         params: {title, summary, eventId},
+    }),
+    notifications: (): PushRouteTarget<'notifications'> => ({
+        name: 'notifications',
+        params: undefined,
     }),
     matchInfo: (teamName: string, summary: string): PushRouteTarget<'match-info'> => ({
         name: 'match-info',

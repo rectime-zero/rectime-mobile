@@ -4,6 +4,7 @@ import {DetailScreen} from '../features/detail';
 import {HomeScreen} from '../features/home';
 import {MapScreen} from '../features/map';
 import {MatchInfoScreen} from '../features/matchInfo';
+import {NotificationsScreen} from '../features/notifications';
 import {RankingScreen} from '../features/ranking';
 import {RulesScreen} from '../features/rules';
 import {SampleBottomSheet} from '../features/sampleSheet';
@@ -36,6 +37,8 @@ export function renderRootScreen(route: AppRoute<RootScreenName>) {
 
 export function renderPushScreen(route: AppRoute<PushScreenName>) {
     switch (route.name) {
+        case 'notifications':
+            return <NotificationsScreen route={route as AppRoute<'notifications'>} />;
         case 'development':
             return <DevelopmentScreen route={route as AppRoute<'development'>} />;
         case 'settings':

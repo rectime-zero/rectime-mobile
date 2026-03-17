@@ -3,7 +3,7 @@ import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
 import OpenMenuButton from '../../navigation/components/OpenMenuButton';
-import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
+import {pushRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import {TIMETABLE_CONFIG} from './config';
@@ -23,7 +23,7 @@ const CURRENT_TIME_BADGE_WIDTH = 48;
 
 function ScheduleScreen() {
     const {theme} = useTheme();
-    const {presentSheetRoute, pushRoute} = useNavigation();
+    const {pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
     const [now, setNow] = React.useState(() => new Date());
     const [gridWidth, setGridWidth] = React.useState(0);
@@ -62,7 +62,7 @@ function ScheduleScreen() {
                 <AccessoryButton
                     accessibilityLabel="通知"
                     icon="bell"
-                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                    onPress={() => pushRoute(pushRoutes.notifications())}
                 />
             }
             title="タイムテーブル">

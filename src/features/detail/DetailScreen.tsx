@@ -3,7 +3,7 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
-import {sheetRoutes} from '../../config/navigationRoutes';
+import {pushRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -15,7 +15,7 @@ type DetailScreenProps = {
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {pop, presentSheetRoute} = useNavigation();
+    const {pop, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
@@ -25,7 +25,7 @@ function DetailScreen({route}: DetailScreenProps) {
                 <AccessoryButton
                     accessibilityLabel="メニュー"
                     icon="ellipsis-h"
-                    onPress={() => presentSheetRoute(sheetRoutes.notifications)}
+                    onPress={() => pushRoute(pushRoutes.notifications())}
                 />
             }
             title={route.params.title}>
