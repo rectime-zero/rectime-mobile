@@ -1,7 +1,10 @@
 import React, {ReactNode} from 'react';
-import {ScrollView, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import Animated, {useAnimatedScrollHandler, useSharedValue} from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTheme} from '../../../theme';
 import {screenLayout, size} from '../../../tokens/layout';
+import ScreenHeader from '../../header/ScreenHeader';
 
 export type ScreenLayoutProps = {
     title: string;
@@ -19,55 +22,38 @@ function ScreenLayoutBase({
     contentContainerStyle,
 }: ScreenLayoutProps) {
     const {theme} = useTheme();
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const insets = useSafeAreaInsets();
+    const scrollY = useSharedValue(0);
+    const styles = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
+    const scrollHandler = useAnimatedScrollHandler(event => {
+        scrollY.value = event.contentOffset.y;
+    });
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.leading}>{headerLeading}</View>
-                <Text numberOfLines={1} style={styles.title}>
-                    {title}
-                </Text>
-                <View style={styles.trailing}>{headerTrailing}</View>
-            </View>
-
-            <ScrollView
+            <Animated.ScrollView
                 contentContainerStyle={[styles.content, contentContainerStyle]}
+                onScroll={scrollHandler}
+                scrollEventThrottle={16}
                 showsVerticalScrollIndicator={false}>
                 {children}
-            </ScrollView>
+            </Animated.ScrollView>
+
+            <ScreenHeader leading={headerLeading} scrollY={scrollY} title={title} trailing={headerTrailing} />
         </View>
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: number) {
+    const headerHeight = topInset + size.headerAction + screenLayout.headerPaddingTop + screenLayout.headerPaddingBottom;
+
     return StyleSheet.create({
         container: {
             flex: 1,
-        },
-        header: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: screenLayout.headerGap,
-            paddingHorizontal: screenLayout.horizontalPadding,
-            paddingTop: screenLayout.headerPaddingTop,
-            paddingBottom: screenLayout.headerPaddingBottom,
-        },
-        leading: {
-            width: size.headerAction,
-            alignItems: 'flex-start',
-        },
-        trailing: {
-            width: size.headerAction,
-            alignItems: 'flex-end',
-        },
-        title: {
-            flex: 1,
-            color: theme.colors.textPrimary,
-            fontSize: 18,
-            fontWeight: '800',
+            backgroundColor: theme.colors.navigationSurface,
         },
         content: {
+            paddingTop: headerHeight,
             paddingHorizontal: screenLayout.horizontalPadding,
             paddingBottom: screenLayout.contentPaddingBottom,
             gap: screenLayout.contentGap,

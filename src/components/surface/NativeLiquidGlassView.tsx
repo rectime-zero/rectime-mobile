@@ -13,7 +13,7 @@ type NativeLiquidGlassViewProps = ViewProps & {
   interactive?: boolean;
 };
 
-export function isNativeLiquidGlassAvailable() {
+export function isNativeLiquidGlassAvailable(): boolean {
   return Platform.OS === 'ios' && isLiquidGlassSupported;
 }
 

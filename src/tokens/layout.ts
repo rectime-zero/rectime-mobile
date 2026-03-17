@@ -27,7 +27,7 @@ export const size = {
 export const screenLayout = {
     horizontalPadding: spacing.xl,
     headerGap: spacing.md,
-    headerPaddingTop: spacing.lg,
+    headerPaddingTop: spacing.sm,
     headerPaddingBottom: spacing.md,
     contentGap: 14,
     contentPaddingBottom: spacing.section,

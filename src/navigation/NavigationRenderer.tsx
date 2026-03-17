@@ -222,7 +222,7 @@ function NavigationRenderer() {
                     <SideMenu />
 
                     <Animated.View style={[styles.rootShellLayer, rootShellStyle]}>
-                        <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
+                        <SafeAreaView edges={['left', 'right']} style={styles.safeArea}>
                             {renderRootScreen(rootRoute)}
                         </SafeAreaView>
 
