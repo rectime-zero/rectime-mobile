@@ -353,7 +353,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             backgroundColor: 'transparent',
             shadowColor: '#08111F',
             shadowOffset: {width: 0, height: 8},
-            shadowOpacity: 1,
+            shadowOpacity: 0.12,
             shadowRadius: 18,
         },
         iosAccentButton: {
