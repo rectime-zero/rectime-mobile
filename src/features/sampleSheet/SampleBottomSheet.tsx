@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import ActionButton from '../../components/ActionButton';
+import CommandButton from '../../components/CommandButton';
 import SheetHeader from '../../components/layout/SheetHeader';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -26,8 +26,8 @@ function SampleBottomSheet() {
                 </Text>
             </View>
 
-            <ActionButton label="閉じる" onPress={dismissSheet} />
-            <ActionButton label="閉じる" onPress={dismissSheet} />
+            <CommandButton label="閉じる" onPress={dismissSheet} />
+            <CommandButton label="閉じる" onPress={dismissSheet} />
         </View>
     );
 }

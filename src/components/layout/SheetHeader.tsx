@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import AppIcon from '../AppIcon';
-import SurfaceButton from '../SurfaceButton';
+import AccessoryButton from '../AccessoryButton';
 import {useTheme} from '../../theme';
 
 type HeaderAction = 'none' | 'back' | 'close';
@@ -28,16 +27,16 @@ function SheetHeader({
 
     return (
         <View style={styles.container}>
-            <HeaderActionButton action={leftAction} iconColor={theme.colors.textPrimary} onPress={onLeftPress} styles={styles} />
+            <HeaderAccessory action={leftAction} iconColor={theme.colors.textPrimary} onPress={onLeftPress} styles={styles} />
             <Text numberOfLines={1} style={styles.title}>
                 {title}
             </Text>
-            <HeaderActionButton action={rightAction} iconColor={theme.colors.textPrimary} onPress={onRightPress} styles={styles} />
+            <HeaderAccessory action={rightAction} iconColor={theme.colors.textPrimary} onPress={onRightPress} styles={styles} />
         </View>
     );
 }
 
-function HeaderActionButton({
+function HeaderAccessory({
     action,
     onPress,
     styles,
@@ -53,13 +52,14 @@ function HeaderActionButton({
     }
 
     return (
-        <SurfaceButton
+        <AccessoryButton
             accessibilityLabel={action === 'back' ? '戻る' : '閉じる'}
-            chrome="glass"
+            color={iconColor}
+            icon={action === 'back' ? 'chevron-left' : 'times'}
             onPress={onPress ?? (() => {})}
-            style={styles.actionButton}>
-            <AppIcon color={iconColor} icon={{kind: 'font-awesome', name: action === 'back' ? 'chevron-left' : 'times'}} size={14} />
-        </SurfaceButton>
+            size="small"
+            style={styles.actionButton}
+        />
     );
 }
 
@@ -81,7 +81,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             width: ACTION_SIZE,
             height: ACTION_SIZE,
             borderRadius: ACTION_SIZE / 2,
-            borderColor: 'transparent',
         },
         actionSpacer: {
             width: ACTION_SIZE,

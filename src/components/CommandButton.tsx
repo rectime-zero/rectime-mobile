@@ -1,24 +1,24 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
-import SurfaceButton from './SurfaceButton';
+import PressSurface from './PressSurface';
 import {useTheme} from '../theme';
 
-type ActionButtonTone = 'primary' | 'secondary' | 'ghost';
-type ActionButtonSize = 'regular' | 'compact';
+type CommandButtonTone = 'primary' | 'secondary' | 'ghost';
+type CommandButtonSize = 'regular' | 'compact';
 
-type ActionButtonProps = {
+type CommandButtonProps = {
     label: string;
     onPress: () => void;
-    tone?: ActionButtonTone;
-    size?: ActionButtonSize;
+    tone?: CommandButtonTone;
+    size?: CommandButtonSize;
 };
 
-function ActionButton({
+function CommandButton({
     label,
     onPress,
     tone = 'primary',
     size = 'regular',
-}: ActionButtonProps) {
+}: CommandButtonProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
@@ -40,14 +40,14 @@ function ActionButton({
     };
 
     return (
-        <SurfaceButton
+        <PressSurface
             accessibilityLabel={label}
             chrome="solid"
             onPress={onPress}
             size={size}
             style={[buttonSizeStyles[size], buttonToneStyles[tone]]}>
             <Text style={[styles.label, textToneStyles[tone]]}>{label}</Text>
-        </SurfaceButton>
+        </PressSurface>
     );
 }
 
@@ -84,4 +84,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default ActionButton;
+export default CommandButton;

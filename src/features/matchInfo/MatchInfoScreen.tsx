@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import HeaderIconButton from '../../components/HeaderIconButton';
+import AccessoryButton from '../../components/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
@@ -25,7 +25,7 @@ function MatchInfoScreen({route}: MatchInfoScreenProps) {
 
     return (
         <PageLayout
-            headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={handleBack} />}
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
             title="対戦情報">
             <View style={styles.heroCard}>
                 <View>

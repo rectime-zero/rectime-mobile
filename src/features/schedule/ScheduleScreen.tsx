@@ -1,6 +1,6 @@
 import React from 'react';
 import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
-import HeaderIconButton from '../../components/HeaderIconButton';
+import AccessoryButton from '../../components/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import MenuAvatarButton from '../../components/MenuAvatarButton';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
@@ -59,9 +59,9 @@ function ScheduleScreen() {
         <PageLayout
             headerLeading={<MenuAvatarButton onPress={openMenu} />}
             headerTrailing={
-                <HeaderIconButton
+                <AccessoryButton
+                    accessibilityLabel="通知"
                     icon="bell"
-                    label="通知"
                     onPress={() => presentSheetRoute(sheetRoutes.notifications)}
                 />
             }

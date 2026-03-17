@@ -2,7 +2,7 @@ import React from 'react';
 import {type ImageSourcePropType} from 'react-native';
 import {mockUserAvatarSource} from '../assets/mock/avatar';
 import {useTheme} from '../theme';
-import SurfaceButton from './SurfaceButton';
+import PressSurface from './PressSurface';
 import UserAvatar from './UserAvatar';
 
 type MenuAvatarButtonProps = {
@@ -19,7 +19,7 @@ function MenuAvatarButton({
     const {theme} = useTheme();
 
     return (
-        <SurfaceButton accessibilityLabel="メニューを開く" chrome="none" onPress={onPress}>
+        <PressSurface accessibilityLabel="メニューを開く" chrome="none" onPress={onPress}>
             <UserAvatar
                 initials={initials}
                 imageSource={imageSource}
@@ -29,7 +29,7 @@ function MenuAvatarButton({
                 textColor={theme.colors.textInverse}
                 textSize={13}
             />
-        </SurfaceButton>
+        </PressSurface>
     );
 }
 

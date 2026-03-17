@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AppIcon from '../AppIcon';
-import SurfaceButton from '../SurfaceButton';
+import PressSurface from '../PressSurface';
 import {navigationTabs} from '../../config/navigationTabs';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -20,7 +20,7 @@ function BottomNavigation() {
                     const isActive = item.route.name === rootRoute.name;
 
                     return (
-                        <SurfaceButton
+                        <PressSurface
                             key={item.route.name}
                             accessibilityLabel={item.label}
                             chrome="none"
@@ -35,7 +35,7 @@ function BottomNavigation() {
                             <Text style={[styles.label, isActive ? styles.activeLabel : styles.inactiveLabel]}>
                                 {item.label}
                             </Text>
-                        </SurfaceButton>
+                        </PressSurface>
                     );
                 })}
             </View>

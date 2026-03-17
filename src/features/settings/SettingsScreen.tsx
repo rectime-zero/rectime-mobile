@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
-import HeaderIconButton from '../../components/HeaderIconButton';
+import AccessoryButton from '../../components/AccessoryButton';
 import PageLayout from '../../components/layout/PageLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
@@ -20,7 +20,7 @@ function SettingsScreen({route}: SettingsScreenProps) {
 
     return (
         <PageLayout
-            headerLeading={<HeaderIconButton icon="chevron-left" label="戻る" onPress={handleBack} />}
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
             title="設定">
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>アプリ設定</Text>

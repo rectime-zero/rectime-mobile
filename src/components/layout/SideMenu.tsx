@@ -16,8 +16,9 @@ import {getMenuRevealWidth} from '../../navigation/menuLayout';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 import {resolveTheme} from '../../theme/themes';
+import AccessoryButton from '../AccessoryButton';
 import AppIcon from '../AppIcon';
-import SurfaceButton from '../SurfaceButton';
+import PressSurface from '../PressSurface';
 import UserAvatar from '../UserAvatar';
 
 const appIcon = require('../../assets/icons/app-icon.png');
@@ -60,7 +61,7 @@ function SideMenu() {
 
                 <View style={styles.tabList}>
                     {sideMenuItems.map(item => (
-                        <SurfaceButton
+                        <PressSurface
                             key={`${item.kind}-${item.route.name}-${item.label}`}
                             accessibilityLabel={item.label}
                             chrome="none"
@@ -73,14 +74,14 @@ function SideMenu() {
                                 size={18}
                             />
                             <Text style={[styles.tabLabel, styles.inactiveTabLabel]}>{item.label}</Text>
-                        </SurfaceButton>
+                        </PressSurface>
                     ))}
                 </View>
 
                 <View style={styles.footerPanel}>
-                    <SurfaceButton
+                    <AccessoryButton
                         accessibilityLabel="テーマを開く"
-                        chrome="none"
+                        shape="pill"
                         onPress={() => presentSheetRoute(sheetRoutes.themePicker)}
                         style={styles.footerActions}
                         contentStyle={styles.footerActionsContent}>
@@ -115,9 +116,9 @@ function SideMenu() {
                                 ]}
                             />
                         </View>
-                    </SurfaceButton>
+                    </AccessoryButton>
 
-                    <SurfaceButton
+                    <PressSurface
                         accessibilityLabel="メニューを閉じる"
                         chrome="none"
                         onPress={closeMenu}
@@ -125,7 +126,7 @@ function SideMenu() {
                         contentStyle={styles.brandButtonContent}>
                         <Image source={appIcon} style={brandIconStyle} resizeMode="cover" />
                         <Text style={styles.brandLabel}>rectime</Text>
-                    </SurfaceButton>
+                    </PressSurface>
                 </View>
             </View>
         </View>
@@ -203,7 +204,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             paddingLeft: 6,
             paddingRight: 7,
             paddingVertical: 3,
-            backgroundColor: theme.colors.surfacePrimary,
+            // backgroundColor: theme.colors.surfacePrimary,
         },
         footerActionsContent: {
             flexDirection: 'row',

@@ -13,25 +13,24 @@ import {
     useSharedValue,
     withTiming,
 } from 'react-native-reanimated';
-import {useTheme} from '../theme';
 import NativeLiquidGlassView, {isNativeLiquidGlassAvailable} from './NativeLiquidGlassView';
 
-type SurfaceButtonChrome = 'glass' | 'solid' | 'none';
-type SurfaceButtonSize = 'header' | 'regular' | 'compact' | 'none';
+type PressSurfaceChrome = 'glass' | 'solid' | 'none';
+type PressSurfaceSize = 'header' | 'regular' | 'compact' | 'none';
 
-type SurfaceButtonProps = {
+type PressSurfaceProps = {
     accessibilityLabel: string;
     children: ReactNode;
     onPress: () => void;
     style?: StyleProp<ViewStyle>;
     contentStyle?: StyleProp<ViewStyle>;
-    chrome?: SurfaceButtonChrome;
-    size?: SurfaceButtonSize;
+    chrome?: PressSurfaceChrome;
+    size?: PressSurfaceSize;
 };
 
 const AnimatedPressable = createAnimatedComponent(Pressable);
 
-function SurfaceButton({
+function PressSurface({
     accessibilityLabel,
     children,
     onPress,
@@ -39,10 +38,7 @@ function SurfaceButton({
     contentStyle,
     chrome = 'solid',
     size = 'none',
-}: SurfaceButtonProps) {
-    const {theme} = useTheme();
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
-
+}: PressSurfaceProps) {
     const isIos = Platform.OS === 'ios';
     const supportsNativeLiquidGlass = isNativeLiquidGlassAvailable();
     const scale = useSharedValue(1);
@@ -117,75 +113,73 @@ function SurfaceButton({
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
-    return StyleSheet.create({
-        base: {
-            position: 'relative',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        clippedBase: {
-            overflow: 'hidden',
-        },
-        headerSize: {
-            width: 44,
-            height: 44,
-            borderRadius: 50,
-        },
-        regularSize: {
-            minHeight: 48,
-            borderRadius: 16,
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-        },
-        compactSize: {
-            minHeight: 40,
-            borderRadius: 12,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-        },
-        solidBase: {
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: 'rgba(255,255,255,0.12)',
-        },
-        nativeGlassBase: {
-            backgroundColor: 'transparent',
-            shadowColor: '#08111F',
-            shadowOffset: {width: 0, height: 8},
-            shadowOpacity: 0.12,
-            shadowRadius: 18,
-        },
-        glassFallbackSolidBase: {
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: 'rgba(255,255,255,0.18)',
-            shadowColor: '#08111F',
-            shadowOffset: {width: 0, height: 8},
-            shadowOpacity: 0.18,
-            shadowRadius: 20,
-            backgroundColor: 'rgba(222, 236, 255, 0.12)',
-        },
-        glassFill: {
-            ...StyleSheet.absoluteFillObject,
-        },
-        glassFallbackFill: {
-            backgroundColor: 'rgba(196, 220, 255, 0.14)',
-        },
-        glassFallbackHighlight: {
-            top: 1,
-            left: 1,
-            right: 1,
-            bottom: '48%',
-            backgroundColor: 'rgba(255,255,255,0.18)',
-        },
-        glassFallbackEdge: {
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.22)',
-        },
-        content: {
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-    });
-}
+const styles = StyleSheet.create({
+    base: {
+        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    clippedBase: {
+        overflow: 'hidden',
+    },
+    headerSize: {
+        width: 44,
+        height: 44,
+        borderRadius: 50,
+    },
+    regularSize: {
+        minHeight: 48,
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+    },
+    compactSize: {
+        minHeight: 40,
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+    },
+    solidBase: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: 'rgba(255,255,255,0.12)',
+    },
+    nativeGlassBase: {
+        backgroundColor: 'transparent',
+        shadowColor: '#08111F',
+        shadowOffset: {width: 0, height: 8},
+        shadowOpacity: 0.12,
+        shadowRadius: 18,
+    },
+    glassFallbackSolidBase: {
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: 'rgba(255,255,255,0.18)',
+        shadowColor: '#08111F',
+        shadowOffset: {width: 0, height: 8},
+        shadowOpacity: 0.18,
+        shadowRadius: 20,
+        backgroundColor: 'rgba(222, 236, 255, 0.12)',
+    },
+    glassFill: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    glassFallbackFill: {
+        backgroundColor: 'rgba(196, 220, 255, 0.14)',
+    },
+    glassFallbackHighlight: {
+        top: 1,
+        left: 1,
+        right: 1,
+        bottom: '48%',
+        backgroundColor: 'rgba(255,255,255,0.18)',
+    },
+    glassFallbackEdge: {
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.22)',
+    },
+    content: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+});
 
-export default SurfaceButton;
+export default PressSurface;
