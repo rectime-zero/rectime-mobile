@@ -1,6 +1,5 @@
 import React from 'react';
 import {Dimensions, NativeModules, PixelRatio, Platform, type ScaledSize} from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {createIOSSignature, getIOSCornerEntry} from '../constants/iosCornerRadii';
 
@@ -68,6 +67,10 @@ export function getTopCornerRadius(corners: CornerRadii) {
     return Math.max(corners.topLeft, corners.topRight);
 }
 
+export function getLeftCornerRadius(corners: CornerRadii) {
+    return Math.max(corners.topLeft, corners.bottomLeft);
+}
+
 function hasAnyCornerRadius(corners: CornerRadii) {
     return getLargestCornerRadius(corners) > 0;
 }
@@ -75,7 +78,6 @@ function hasAnyCornerRadius(corners: CornerRadii) {
 export function useDisplayCorners(): UseDisplayCornersResult {
     const insets = useSafeAreaInsets();
     const portraitTopInsetRef = React.useRef(0);
-    const loggedSignatureRef = React.useRef<string | null>(null);
     const warnedSignatureRef = React.useRef<string | null>(null);
     const [androidCorners, setAndroidCorners] = React.useState<UseDisplayCornersResult>({
         corners: zeroCorners,
@@ -114,7 +116,9 @@ export function useDisplayCorners(): UseDisplayCornersResult {
             } catch {
                 if (!cancelled && attempt < ANDROID_CORNER_MAX_ATTEMPTS) {
                     retryTimer = setTimeout(() => {
-                        void loadCorners(attempt + 1);
+                        loadCorners(attempt + 1).catch(() => {
+                            // Retry path already falls back inside loadCorners.
+                        });
                     }, ANDROID_CORNER_RETRY_DELAY_MS);
                     return;
                 }
@@ -125,7 +129,11 @@ export function useDisplayCorners(): UseDisplayCornersResult {
             }
         };
 
-        void loadCorners(1);
+        loadCorners(1).catch(() => {
+            if (!cancelled) {
+                setAndroidCorners({corners: zeroCorners, source: 'safearea_fallback'});
+            }
+        });
 
         return () => {
             cancelled = true;
@@ -146,24 +154,6 @@ export function useDisplayCorners(): UseDisplayCornersResult {
 
         warnedSignatureRef.current = signature;
         console.warn(`[display-corners] Unmapped iOS signature: ${signature}`);
-    }, [hardcodedEntry, signature]);
-
-    React.useEffect(() => {
-        if (!__DEV__ || Platform.OS !== 'ios') {
-            return;
-        }
-
-        if (loggedSignatureRef.current === signature) {
-            return;
-        }
-
-        loggedSignatureRef.current = signature;
-        console.log('[display-corners]', {
-            signature,
-            hardcodedEntry,
-            deviceId: DeviceInfo.getDeviceId(),
-            model: DeviceInfo.getModel(),
-        });
     }, [hardcodedEntry, signature]);
 
     if (Platform.OS === 'android') {

@@ -13,7 +13,7 @@ import Animated, {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import BottomNavigation from '../components/layout/navigation/BottomNavigation';
 import SideMenu from '../components/layout/navigation/SideMenu';
-import {getLargestCornerRadius, useDisplayCorners} from '../hooks/useDisplayCorners';
+import {getLeftCornerRadius, useDisplayCorners} from '../hooks/useDisplayCorners';
 import {useTheme} from '../theme';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
@@ -32,7 +32,7 @@ function NavigationRenderer() {
     const {corners} = useDisplayCorners();
     const {width: screenWidth} = useWindowDimensions();
     const menuRevealWidth = getMenuRevealWidth(screenWidth);
-    const shellCornerRadius = getLargestCornerRadius(corners);
+    const shellCornerRadius = getLeftCornerRadius(corners);
     const {
         rootRoute,
         pushStack,
@@ -166,7 +166,8 @@ function NavigationRenderer() {
         }
 
         return {
-            borderRadius: shellCornerRadius,
+            borderTopLeftRadius: shellCornerRadius,
+            borderBottomLeftRadius: shellCornerRadius,
             shadowOpacity: interpolate(baseProgress, [0, 1], [0, 0.18]),
             transform: [{translateX: interpolate(baseProgress, [0, 1], [0, menuRevealWidth])}],
         };
@@ -202,7 +203,6 @@ function NavigationRenderer() {
         }
 
         return {
-            borderRadius: shellCornerRadius,
             transform: [{translateX: interpolate(baseProgress, [0, 1], [0, menuRevealWidth])}],
         };
     }, [menuRevealWidth, menuProgress, pushTransitionMode, pushTransitionProgress, pushTransitionRouteKey, pushTransitionSourceProgress, shellCornerRadius, topPushRoute]);
@@ -210,7 +210,6 @@ function NavigationRenderer() {
     const bottomNavigationClipStyle = useAnimatedStyle(() => {
         return {
             borderBottomLeftRadius: shellCornerRadius,
-            borderBottomRightRadius: shellCornerRadius,
         };
     }, [shellCornerRadius]);
 
@@ -235,12 +234,6 @@ function NavigationRenderer() {
                             </Pressable>
                         </View>
                     </Animated.View>
-
-                    <Animated.View pointerEvents="box-none" style={[styles.navigationLayer, bottomNavigationLayerStyle]}>
-                        <Animated.View pointerEvents="box-none" style={[styles.navigationClip, bottomNavigationClipStyle]}>
-                            <BottomNavigation />
-                        </Animated.View>
-                    </Animated.View>
                 </View>
             </GestureDetector>
 
@@ -251,6 +244,12 @@ function NavigationRenderer() {
                     isTopCard={index === pushStack.length - 1}
                 />
             ))}
+
+            <Animated.View pointerEvents="box-none" style={[styles.navigationLayer, bottomNavigationLayerStyle]}>
+                <Animated.View pointerEvents="box-none" style={[styles.navigationClip, bottomNavigationClipStyle]}>
+                    <BottomNavigation />
+                </Animated.View>
+            </Animated.View>
 
             {sheetRoute ? <NavigationSheet route={sheetRoute} /> : null}
         </View>
@@ -280,7 +279,8 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         navigationLayer: {
             ...StyleSheet.absoluteFillObject,
-            zIndex: 20,
+            zIndex: 100,
+            elevation: 100,
         },
         navigationClip: {
             ...StyleSheet.absoluteFillObject,

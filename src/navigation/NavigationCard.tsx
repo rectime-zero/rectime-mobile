@@ -9,6 +9,7 @@ import Animated, {
     withTiming,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {getLeftCornerRadius, useDisplayCorners} from '../hooks/useDisplayCorners';
 import {renderPushScreen} from './renderRoute';
 import {getMenuRevealWidth} from './menuLayout';
 import {type AppRoute, type PushScreenName} from './types';
@@ -29,8 +30,10 @@ type NavigationCardProps = {
 
 function NavigationCard({route, isTopCard}: NavigationCardProps) {
     const {theme} = useTheme();
+    const {corners} = useDisplayCorners();
     const {width: screenWidth} = useWindowDimensions();
     const menuRevealWidth = getMenuRevealWidth(screenWidth);
+    const sideMenuCornerRadius = getLeftCornerRadius(corners);
     const {activeGestureValue, completePop, pushDismissRequest, setActiveGesture, sheetRoute} = useNavigation();
     const initialTranslateX = route.transitionSource === 'side-menu' ? menuRevealWidth : screenWidth;
     const translateX = useSharedValue(initialTranslateX);
@@ -111,7 +114,10 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
     const cardStyle = useAnimatedStyle(() => ({
         transform: [{translateX: translateX.value}],
     }));
-    const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const styles = React.useMemo(
+        () => createStyles(theme, route.transitionSource === 'side-menu' ? sideMenuCornerRadius : 0),
+        [route.transitionSource, sideMenuCornerRadius, theme],
+    );
 
     return (
         <GestureDetector gesture={backGesture}>
@@ -125,15 +131,20 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], sideMenuCornerRadius: number) {
     return StyleSheet.create({
         cardLayer: {
             ...StyleSheet.absoluteFillObject,
             backgroundColor: theme.colors.navigationSurface,
+            borderTopLeftRadius: sideMenuCornerRadius,
+            borderBottomLeftRadius: sideMenuCornerRadius,
+            overflow: 'hidden',
         },
         cardSurface: {
             flex: 1,
             backgroundColor: theme.colors.navigationSurface,
+            borderTopLeftRadius: sideMenuCornerRadius,
+            borderBottomLeftRadius: sideMenuCornerRadius,
         },
         cardShadow: {
             ...StyleSheet.absoluteFillObject,
