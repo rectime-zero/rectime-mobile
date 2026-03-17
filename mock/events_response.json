@@ -3,7 +3,7 @@
     {
       "f_event_id": 1,
       "f_event_code": "C",
-      "f_event_name": "\u958b\u5834",
+      "f_event_name": "開場",
       "f_time": "0930",
       "f_duration": 20,
       "f_place": null,
@@ -13,7 +13,7 @@
     {
       "f_event_id": 2,
       "f_event_code": "A",
-      "f_event_name": "\u51fa\u5e2d\u78ba\u8a8d\u2460",
+      "f_event_name": "出席確認①",
       "f_time": "1000",
       "f_duration": 10,
       "f_place": null,
@@ -23,7 +23,7 @@
     {
       "f_event_id": 3,
       "f_event_code": "C",
-      "f_event_name": "\u958b\u4f1a\u5f0f",
+      "f_event_name": "開会式",
       "f_time": "1015",
       "f_duration": 10,
       "f_place": null,
@@ -33,7 +33,7 @@
     {
       "f_event_id": 4,
       "f_event_code": "E",
-      "f_event_name": "\u8d70\u308c\uff01\u3007\u4eba\u3007\u811a\uff01",
+      "f_event_name": "走れ！〇人〇脚！",
       "f_time": "1030",
       "f_duration": 50,
       "f_place": null,
@@ -43,7 +43,7 @@
     {
       "f_event_id": 5,
       "f_event_code": "E",
-      "f_event_name": "8\u4eba\u00d750m\u30c1\u30e3\u30ec\u30f3\u30b8",
+      "f_event_name": "8人×50mチャレンジ",
       "f_time": "1030",
       "f_duration": 50,
       "f_place": null,
@@ -53,7 +53,7 @@
     {
       "f_event_id": 6,
       "f_event_code": "E",
-      "f_event_name": "\u771f\u306e\u30b9\u30c8\u30e9\u30a4\u30ab\u30fc\u306f\u541b\u3060!!",
+      "f_event_name": "真のストライカーは君だ!!",
       "f_time": "1130",
       "f_duration": 50,
       "f_place": null,
@@ -63,7 +63,7 @@
     {
       "f_event_id": 7,
       "f_event_code": "E",
-      "f_event_name": "\u663c\u4f11\u61a9\u30b3\u30b9\u30d7\u30ec\u5927\u4f1a",
+      "f_event_name": "昼休憩コスプレ大会",
       "f_time": "1230",
       "f_duration": 30,
       "f_place": null,
@@ -73,7 +73,7 @@
     {
       "f_event_id": 8,
       "f_event_code": "A",
-      "f_event_name": "\u51fa\u5e2d\u78ba\u8a8d\u2461",
+      "f_event_name": "出席確認②",
       "f_time": "1300",
       "f_duration": 10,
       "f_place": null,
@@ -83,7 +83,7 @@
     {
       "f_event_id": 9,
       "f_event_code": "E",
-      "f_event_name": "\u56db\u5929\u738b\u30c9\u30c3\u30c1\u30dc\u30fc\u30eb",
+      "f_event_name": "四天王ドッジボール",
       "f_time": "1330",
       "f_duration": 50,
       "f_place": null,
@@ -93,7 +93,7 @@
     {
       "f_event_id": 10,
       "f_event_code": "E",
-      "f_event_name": "HAL\u30c0\u30fc\u30d3\u30fc\u30ec\u30af\u30ea\u30a8\u30a4\u30b7\u30e7\u30f3\u676f",
+      "f_event_name": "HALダービーレクリエイション杯",
       "f_time": "1430",
       "f_duration": 20,
       "f_place": null,
@@ -103,7 +103,7 @@
     {
       "f_event_id": 11,
       "f_event_code": "E",
-      "f_event_name": "\u5b66\u79d1\u5225\u5bfe\u6297\u30ea\u30ec\u30fc",
+      "f_event_name": "学科別対抗リレー",
       "f_time": "1500",
       "f_duration": 20,
       "f_place": null,
@@ -113,7 +113,7 @@
     {
       "f_event_id": 12,
       "f_event_code": "A",
-      "f_event_name": "\u51fa\u5e2d\u78ba\u8a8d",
+      "f_event_name": "出席確認",
       "f_time": "1530",
       "f_duration": 10,
       "f_place": null,
@@ -123,7 +123,7 @@
     {
       "f_event_id": 13,
       "f_event_code": "C",
-      "f_event_name": "\u9589\u4f1a\u5f0f",
+      "f_event_name": "閉会式",
       "f_time": "1545",
       "f_duration": 15,
       "f_place": null,
