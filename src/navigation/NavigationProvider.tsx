@@ -4,29 +4,28 @@ import {
     type ActiveGesture,
     type AppRoute,
     type AppScreenName,
-    type MenuPageRouteTarget,
-    type MenuPageSource,
-    type MenuPageTransitionMode,
     type PresentationMode,
     type PushRouteTarget,
+    type PushTransitionMode,
+    type PushTransitionSource,
     type PushScreenName,
     type RouteParamsMap,
     type RootRouteTarget,
     type RootScreenName,
     type SheetRouteTarget,
     type SheetScreenName,
+    type SideMenuPushRouteTarget,
 } from './types';
 
 type NavigationContextValue = {
     rootRoute: AppRoute<RootScreenName>;
-    menuPageRoute: AppRoute<PushScreenName> | null;
-    menuPageTransitionMode: MenuPageTransitionMode;
-    menuPageSource: MenuPageSource | null;
     pushStack: AppRoute<PushScreenName>[];
     sheetRoute: AppRoute<SheetScreenName> | null;
     menuProgress: SharedValue<number>;
-    menuPageTransitionProgress: SharedValue<number>;
-    menuPageSourceProgress: SharedValue<number>;
+    pushTransitionProgress: SharedValue<number>;
+    pushTransitionSourceProgress: SharedValue<number>;
+    pushTransitionMode: PushTransitionMode;
+    pushTransitionRouteKey: string | null;
     activeGestureValue: SharedValue<ActiveGesture>;
     openMenu: () => void;
     closeMenu: () => void;
@@ -35,18 +34,17 @@ type NavigationContextValue = {
     push: <TName extends PushScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
+        source?: PushTransitionSource,
     ) => void;
     pushRoute: <TName extends PushScreenName>(route: PushRouteTarget<TName>) => void;
-    openMenuPage: <TName extends PushScreenName>(
+    pushFromMenu: <TName extends PushScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
-        source?: MenuPageSource,
     ) => void;
-    openMenuPageRoute: (route: MenuPageRouteTarget, source?: MenuPageSource) => void;
-    closeMenuPage: () => void;
-    finishMenuPageEnter: () => void;
+    pushFromMenuRoute: (route: SideMenuPushRouteTarget) => void;
     pop: () => void;
     completePop: (key: string) => void;
+    finishPushEnter: (key: string) => void;
     presentSheet: <TName extends SheetScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
@@ -54,7 +52,6 @@ type NavigationContextValue = {
     presentSheetRoute: <TName extends SheetScreenName>(route: SheetRouteTarget<TName>) => void;
     dismissSheet: () => void;
     clearSheet: (key: string) => void;
-    clearMenuPage: (key: string) => void;
     sheetDismissRequest: number;
     pushDismissRequest: number;
     setActiveGesture: (gesture: ActiveGesture) => void;
@@ -72,12 +69,14 @@ function createRoute<TName extends AppScreenName>(
     name: TName,
     presentation: PresentationMode,
     params: RouteParamsMap[TName],
+    transitionSource: PushTransitionSource = 'default',
 ): AppRoute<TName> {
     return {
         key: `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         name,
         presentation,
         params,
+        transitionSource,
     };
 }
 
@@ -87,18 +86,17 @@ type NavigationProviderProps = {
 
 function NavigationProvider({children}: NavigationProviderProps) {
     const [rootScreen, setRootScreenState] = useState<RootScreenName>('home');
-    const [menuPageRoute, setMenuPageRoute] = useState<AppRoute<PushScreenName> | null>(null);
-    const [menuPageTransitionMode, setMenuPageTransitionMode] = useState<MenuPageTransitionMode>('idle');
-    const [menuPageSource, setMenuPageSource] = useState<MenuPageSource | null>(null);
     const [pushStack, setPushStack] = useState<AppRoute<PushScreenName>[]>([]);
     const [sheetRoute, setSheetRoute] = useState<AppRoute<SheetScreenName> | null>(null);
     const [sheetDismissRequest, setSheetDismissRequest] = useState(0);
     const [pushDismissRequest, setPushDismissRequest] = useState(0);
+    const [pushTransitionMode, setPushTransitionMode] = useState<PushTransitionMode>('idle');
+    const [pushTransitionRouteKey, setPushTransitionRouteKey] = useState<string | null>(null);
     const activeGestureValue = useSharedValue<ActiveGesture>('none');
 
     const menuProgress = useSharedValue(0);
-    const menuPageTransitionProgress = useSharedValue(0);
-    const menuPageSourceProgress = useSharedValue(0);
+    const pushTransitionProgress = useSharedValue(0);
+    const pushTransitionSourceProgress = useSharedValue(0);
 
     const rootRoute = useMemo(() => createRoute(rootScreen, 'root', undefined), [rootScreen]);
 
@@ -114,30 +112,25 @@ function NavigationProvider({children}: NavigationProviderProps) {
         animateMenu(0);
     }, [animateMenu]);
 
-    const resetMenuPageState = useCallback(() => {
-        setMenuPageRoute(null);
-        setMenuPageTransitionMode('idle');
-        setMenuPageSource(null);
-        menuPageTransitionProgress.value = 0;
-        menuPageSourceProgress.value = 0;
-    }, [menuPageSourceProgress, menuPageTransitionProgress]);
-
     const openMenu = useCallback(() => {
-        if (pushStack.length > 0 || menuPageRoute || menuPageTransitionMode !== 'idle' || sheetRoute) {
+        if (pushStack.length > 0 || sheetRoute) {
             return;
         }
 
         animateMenu(1);
-    }, [animateMenu, menuPageRoute, menuPageTransitionMode, pushStack.length, sheetRoute]);
+    }, [animateMenu, pushStack.length, sheetRoute]);
 
     const setRootScreen = useCallback((screen: RootScreenName) => {
         setRootScreenState(screen);
-        resetMenuPageState();
         setPushStack([]);
         setSheetRoute(null);
+        setPushTransitionMode('idle');
+        setPushTransitionRouteKey(null);
+        pushTransitionProgress.value = 0;
+        pushTransitionSourceProgress.value = 0;
         closeMenu();
         setActiveGesture('none');
-    }, [closeMenu, resetMenuPageState, setActiveGesture]);
+    }, [closeMenu, pushTransitionProgress, pushTransitionSourceProgress, setActiveGesture]);
 
     const setRootRoute = useCallback((route: RootRouteTarget) => {
         setRootScreen(route.name);
@@ -146,75 +139,45 @@ function NavigationProvider({children}: NavigationProviderProps) {
     const push = useCallback(<TName extends PushScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
+        source: PushTransitionSource = 'default',
     ) => {
-        if (menuPageTransitionMode !== 'idle') {
+        if (sheetRoute) {
             return;
         }
 
-        closeMenu();
-        setPushStack(current => [...current, createRoute(screen, 'push', params)]);
-    }, [closeMenu, menuPageTransitionMode]);
+        const route = createRoute(screen, 'push', params, source);
+
+        if (source === 'side-menu' && pushStack.length === 0 && menuProgress.value > 0.01) {
+            pushTransitionSourceProgress.value = menuProgress.value;
+            pushTransitionProgress.value = 0;
+            setPushTransitionMode('enter');
+            setPushTransitionRouteKey(route.key);
+        } else {
+            closeMenu();
+        }
+
+        setPushStack(current => [...current, route]);
+    }, [closeMenu, menuProgress, pushStack.length, pushTransitionProgress, pushTransitionSourceProgress, sheetRoute]);
 
     const pushRoute = useCallback(<TName extends PushScreenName>(route: PushRouteTarget<TName>) => {
         push(route.name, route.params);
     }, [push]);
 
-    const openMenuPage = useCallback(<TName extends PushScreenName>(
+    const pushFromMenu = useCallback(<TName extends PushScreenName>(
         screen: TName,
         params: RouteParamsMap[TName],
-        source: MenuPageSource = 'side-menu',
     ) => {
-        if (pushStack.length > 0 || sheetRoute || menuPageRoute || menuPageTransitionMode !== 'idle') {
+        if (pushStack.length > 0 || sheetRoute) {
             return;
         }
 
         setActiveGesture('none');
-        menuPageSourceProgress.value = menuProgress.value;
-        menuPageTransitionProgress.value = 0;
-        setMenuPageRoute(createRoute(screen, 'menu-page', params));
-        setMenuPageSource(source);
-        setMenuPageTransitionMode('enter');
-        setPushStack([]);
-        setSheetRoute(null);
-    }, [
-        menuPageTransitionMode,
-        menuPageSourceProgress,
-        menuPageTransitionProgress,
-        menuPageRoute,
-        menuProgress,
-        pushStack.length,
-        setActiveGesture,
-        sheetRoute,
-    ]);
+        push(screen, params, 'side-menu');
+    }, [push, pushStack.length, setActiveGesture, sheetRoute]);
 
-    const openMenuPageRoute = useCallback((route: MenuPageRouteTarget, source: MenuPageSource = 'side-menu') => {
-        openMenuPage(route.name, route.params, source);
-    }, [openMenuPage]);
-
-    const closeMenuPage = useCallback(() => {
-        if (!menuPageRoute || menuPageTransitionMode !== 'idle') {
-            // TODO: support reversing an in-flight enter transition.
-            return;
-        }
-
-        setMenuPageTransitionMode('exit');
-        setActiveGesture('none');
-    }, [menuPageRoute, menuPageTransitionMode, setActiveGesture]);
-
-    const finishMenuPageEnter = useCallback(() => {
-        menuProgress.value = 0;
-        menuPageSourceProgress.value = 0;
-        setMenuPageTransitionMode(current => (current === 'enter' ? 'idle' : current));
-    }, [menuPageSourceProgress, menuProgress]);
-
-    const clearMenuPage = useCallback((key: string) => {
-        setMenuPageRoute(current => (current?.key === key ? null : current));
-        setMenuPageTransitionMode('idle');
-        setMenuPageSource(null);
-        menuPageTransitionProgress.value = 0;
-        menuPageSourceProgress.value = 0;
-        setActiveGesture('none');
-    }, [menuPageSourceProgress, menuPageTransitionProgress, setActiveGesture]);
+    const pushFromMenuRoute = useCallback((route: SideMenuPushRouteTarget) => {
+        push(route.name, route.params, 'side-menu');
+    }, [push]);
 
     const pop = useCallback(() => {
         if (pushStack.length === 0) {
@@ -229,6 +192,14 @@ function NavigationProvider({children}: NavigationProviderProps) {
         setPushStack(current => current.filter(route => route.key !== key));
         setActiveGesture('none');
     }, [setActiveGesture]);
+
+    const finishPushEnter = useCallback((key: string) => {
+        setPushTransitionRouteKey(currentKey => (currentKey === key ? null : currentKey));
+        setPushTransitionMode('idle');
+        pushTransitionProgress.value = 0;
+        pushTransitionSourceProgress.value = 0;
+        menuProgress.value = 0;
+    }, [menuProgress, pushTransitionProgress, pushTransitionSourceProgress]);
 
     const presentSheet = useCallback(<TName extends SheetScreenName>(
         screen: TName,
@@ -259,14 +230,13 @@ function NavigationProvider({children}: NavigationProviderProps) {
     const value = useMemo<NavigationContextValue>(
         () => ({
             rootRoute,
-            menuPageRoute,
-            menuPageTransitionMode,
-            menuPageSource,
             pushStack,
             sheetRoute,
             menuProgress,
-            menuPageTransitionProgress,
-            menuPageSourceProgress,
+            pushTransitionProgress,
+            pushTransitionSourceProgress,
+            pushTransitionMode,
+            pushTransitionRouteKey,
             activeGestureValue,
             openMenu,
             closeMenu,
@@ -274,16 +244,14 @@ function NavigationProvider({children}: NavigationProviderProps) {
             setRootRoute,
             push,
             pushRoute,
-            openMenuPage,
-            openMenuPageRoute,
-            closeMenuPage,
-            finishMenuPageEnter,
+            pushFromMenu,
+            pushFromMenuRoute,
             pop,
             completePop,
+            finishPushEnter,
             presentSheet,
             presentSheetRoute,
             dismissSheet,
-            clearMenuPage,
             clearSheet,
             sheetDismissRequest,
             pushDismissRequest,
@@ -291,29 +259,26 @@ function NavigationProvider({children}: NavigationProviderProps) {
         }),
         [
             activeGestureValue,
-            clearMenuPage,
             clearSheet,
             closeMenu,
-            closeMenuPage,
             completePop,
             dismissSheet,
-            finishMenuPageEnter,
-            menuPageRoute,
-            menuPageSource,
-            menuPageTransitionMode,
-            menuPageTransitionProgress,
-            menuPageSourceProgress,
+            finishPushEnter,
             menuProgress,
             openMenu,
-            openMenuPage,
-            openMenuPageRoute,
             pop,
             presentSheet,
             presentSheetRoute,
             push,
+            pushFromMenu,
+            pushFromMenuRoute,
             pushDismissRequest,
             pushRoute,
             pushStack,
+            pushTransitionMode,
+            pushTransitionProgress,
+            pushTransitionRouteKey,
+            pushTransitionSourceProgress,
             rootRoute,
             setActiveGesture,
             setRootRoute,

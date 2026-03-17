@@ -2,7 +2,7 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
 import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
@@ -15,7 +15,7 @@ function RulesScreen() {
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PageLayout
+        <RootScreenLayout
             headerLeading={<OpenMenuButton />}
             headerTrailing={
                 <AccessoryButton
@@ -43,7 +43,7 @@ function RulesScreen() {
                     </View>
                 ))}
             </View>
-        </PageLayout>
+        </RootScreenLayout>
     );
 }
 

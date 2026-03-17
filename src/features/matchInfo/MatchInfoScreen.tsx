@@ -2,7 +2,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -19,13 +19,12 @@ const recentResults = [
 
 function MatchInfoScreen({route}: MatchInfoScreenProps) {
     const {theme} = useTheme();
-    const {closeMenuPage, pop} = useNavigation();
-    const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
+    const {pop} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PageLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
+        <PushScreenLayout
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
             title="対戦情報">
             <View style={styles.heroCard}>
                 <View>
@@ -53,7 +52,7 @@ function MatchInfoScreen({route}: MatchInfoScreenProps) {
                     ))}
                 </View>
             </View>
-        </PageLayout>
+        </PushScreenLayout>
     );
 }
 

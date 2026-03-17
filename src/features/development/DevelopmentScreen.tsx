@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -10,20 +10,19 @@ type DevelopmentScreenProps = {
     route: AppRoute<'development'>;
 };
 
-function DevelopmentScreen({route}: DevelopmentScreenProps) {
+function DevelopmentScreen({route: _route}: DevelopmentScreenProps) {
     const {theme} = useTheme();
-    const {closeMenuPage, pop} = useNavigation();
-    const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
+    const {pop} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PageLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
+        <PushScreenLayout
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
             title="開発メニュー">
             <View style={styles.card}>
                 <Text style={styles.label}>開発</Text>
             </View>
-        </PageLayout>
+        </PushScreenLayout>
     );
 }
 

@@ -1,20 +1,22 @@
-﻿import React, {ReactNode} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {useTheme} from '../../theme';
+import React, {ReactNode} from 'react';
+import {ScrollView, StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {useTheme} from '../../../theme';
 
-type PageLayoutProps = {
+export type ScreenLayoutProps = {
     title: string;
     headerLeading?: ReactNode;
     headerTrailing?: ReactNode;
     children: ReactNode;
+    contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
-function PageLayout({
+function ScreenLayoutBase({
     title,
     headerLeading,
     headerTrailing,
     children,
-}: PageLayoutProps) {
+    contentContainerStyle,
+}: ScreenLayoutProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
@@ -29,7 +31,7 @@ function PageLayout({
             </View>
 
             <ScrollView
-                contentContainerStyle={[styles.content, styles.contentWithBottomNavigation]}
+                contentContainerStyle={[styles.content, contentContainerStyle]}
                 showsVerticalScrollIndicator={false}>
                 {children}
             </ScrollView>
@@ -69,11 +71,7 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             paddingBottom: 28,
             gap: 14,
         },
-        contentWithBottomNavigation: {
-            paddingBottom: 112,
-        },
     });
 }
 
-export default PageLayout;
-
+export default ScreenLayoutBase;

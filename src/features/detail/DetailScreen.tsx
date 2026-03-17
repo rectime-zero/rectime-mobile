@@ -2,7 +2,7 @@
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {sheetRoutes} from '../../config/navigationRoutes';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
@@ -15,13 +15,12 @@ type DetailScreenProps = {
 
 function DetailScreen({route}: DetailScreenProps) {
     const {theme} = useTheme();
-    const {closeMenuPage, pop, presentSheetRoute} = useNavigation();
-    const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
+    const {pop, presentSheetRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
-        <PageLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
+        <PushScreenLayout
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
             headerTrailing={
                 <AccessoryButton
                     accessibilityLabel="メニュー"
@@ -66,7 +65,7 @@ function DetailScreen({route}: DetailScreenProps) {
                     </Pressable>
                 ))}
             </View>
-        </PageLayout>
+        </PushScreenLayout>
     );
 }
 

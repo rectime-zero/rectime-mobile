@@ -1,55 +1,72 @@
 import React, {useEffect} from 'react';
-import {StyleSheet, View, useWindowDimensions} from 'react-native';
+import {Pressable, StyleSheet, View, useWindowDimensions} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
     interpolate,
     runOnJS,
+    useAnimatedReaction,
     useAnimatedStyle,
     useSharedValue,
     withSpring,
     withTiming,
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import BottomNavigation from '../components/layout/BottomNavigation';
-import SideMenu from '../components/layout/SideMenu';
+import BottomNavigation from '../components/layout/navigation/BottomNavigation';
+import SideMenu from '../components/layout/navigation/SideMenu';
 import {useTheme} from '../theme';
 import NavigationCard from './NavigationCard';
 import NavigationSheet from './NavigationSheet';
 import {getMenuRevealWidth} from './menuLayout';
-import {renderPushScreen, renderRootScreen} from './renderRoute';
+import {renderRootScreen} from './renderRoute';
 import {useNavigation} from './useNavigation';
 
-const EDGE_WIDTH = 28;
 const SPRING_CONFIG = {
     damping: 24,
     stiffness: 220,
     mass: 0.95,
 } as const;
-const MENU_PAGE_TRANSITION_MS = 240;
-
+const PUSH_ENTER_TRANSITION_MS = 240;
 function NavigationRenderer() {
     const {theme} = useTheme();
     const {width: screenWidth} = useWindowDimensions();
     const menuRevealWidth = getMenuRevealWidth(screenWidth);
     const {
         rootRoute,
-        menuPageRoute,
-        menuPageTransitionMode,
-        menuPageSource,
         pushStack,
         sheetRoute,
         menuProgress,
-        menuPageTransitionProgress,
-        menuPageSourceProgress,
+        pushTransitionProgress,
+        pushTransitionSourceProgress,
+        pushTransitionMode,
+        pushTransitionRouteKey,
         activeGestureValue,
-        clearMenuPage,
-        finishMenuPageEnter,
+        closeMenu,
+        finishPushEnter,
         setActiveGesture,
     } = useNavigation();
+    const topPushRoute = pushStack[pushStack.length - 1] ?? null;
 
     const rootCardPanStart = useSharedValue(0);
-    const canUseMenuGesture =
-        pushStack.length === 0 && !menuPageRoute && menuPageTransitionMode === 'idle' && !sheetRoute;
+    const [isMenuInteractive, setIsMenuInteractive] = React.useState(false);
+    const canOpenMenuGesture = pushStack.length === 0 && !sheetRoute;
+    const canUseMenuGesture = canOpenMenuGesture || isMenuInteractive;
+
+    useAnimatedReaction(
+        () => menuProgress.value > 0.02,
+        nextIsInteractive => {
+            runOnJS(setIsMenuInteractive)(nextIsInteractive);
+        },
+        [menuProgress],
+    );
+
+    const handleCloseMenu = React.useCallback(() => {
+        if (!isMenuInteractive || sheetRoute) {
+            return;
+        }
+
+        setActiveGesture('none');
+        closeMenu();
+    }, [closeMenu, isMenuInteractive, setActiveGesture, sheetRoute]);
 
     const menuGesture = React.useMemo(
         () =>
@@ -57,13 +74,13 @@ function NavigationRenderer() {
                 .enabled(canUseMenuGesture)
                 .activeOffsetX([-10, 10])
                 .failOffsetY([-12, 12])
-                .onStart(event => {
+                .onStart(() => {
                     if (activeGestureValue.value !== 'none') {
                         return;
                     }
 
-                    const canOpenMenu = menuProgress.value <= 0.01 && event.absoluteX <= EDGE_WIDTH;
-                    const canCloseMenu = menuProgress.value > 0.01;
+                    const canCloseMenu = menuProgress.value > 0.01 && !sheetRoute;
+                    const canOpenMenu = menuProgress.value <= 0.01 && canOpenMenuGesture;
 
                     if (!canOpenMenu && !canCloseMenu) {
                         return;
@@ -89,7 +106,8 @@ function NavigationRenderer() {
                         return;
                     }
 
-                    const shouldOpen = menuProgress.value > 0.45 || event.velocityX > 700;
+                    const shouldOpen =
+                        event.velocityX > 700 || (event.velocityX > -700 && menuProgress.value > 0.45);
                     menuProgress.value = withSpring(shouldOpen ? 1 : 0, SPRING_CONFIG);
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
@@ -102,40 +120,46 @@ function NavigationRenderer() {
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
                 }),
-        [activeGestureValue, canUseMenuGesture, menuProgress, menuRevealWidth, rootCardPanStart, setActiveGesture],
+        [
+            activeGestureValue,
+            canOpenMenuGesture,
+            canUseMenuGesture,
+            menuProgress,
+            menuRevealWidth,
+            rootCardPanStart,
+            setActiveGesture,
+            sheetRoute,
+        ],
     );
 
     useEffect(() => {
-        if (!menuPageRoute || menuPageTransitionMode !== 'enter') {
+        if (
+            !topPushRoute
+            || topPushRoute.transitionSource !== 'side-menu'
+            || pushTransitionMode !== 'enter'
+            || pushTransitionRouteKey !== topPushRoute.key
+        ) {
             return;
         }
 
-        menuPageTransitionProgress.value = 0;
-        menuPageTransitionProgress.value = withTiming(1, {duration: MENU_PAGE_TRANSITION_MS}, finished => {
+        pushTransitionProgress.value = 0;
+        pushTransitionProgress.value = withTiming(1, {duration: PUSH_ENTER_TRANSITION_MS}, finished => {
             if (finished) {
-                runOnJS(finishMenuPageEnter)();
+                runOnJS(finishPushEnter)(topPushRoute.key);
             }
         });
-    }, [finishMenuPageEnter, menuPageRoute, menuPageTransitionMode, menuPageTransitionProgress]);
-
-    useEffect(() => {
-        if (!menuPageRoute || menuPageTransitionMode !== 'exit') {
-            return;
-        }
-
-        setActiveGesture('none');
-        menuPageTransitionProgress.value = withTiming(0, {duration: MENU_PAGE_TRANSITION_MS}, finished => {
-            if (finished) {
-                runOnJS(clearMenuPage)(menuPageRoute.key);
-            }
-        });
-    }, [clearMenuPage, menuPageRoute, menuPageTransitionMode, menuPageTransitionProgress, setActiveGesture]);
+    }, [finishPushEnter, pushTransitionMode, pushTransitionProgress, pushTransitionRouteKey, topPushRoute]);
 
     const rootShellStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
-            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        if (
+            topPushRoute
+            && topPushRoute.transitionSource === 'side-menu'
+            && pushTransitionMode === 'enter'
+            && pushTransitionRouteKey === topPushRoute.key
+        ) {
+            baseProgress = interpolate(pushTransitionProgress.value, [0, 1], [pushTransitionSourceProgress.value, 0]);
         }
 
         return {
@@ -148,8 +172,13 @@ function NavigationRenderer() {
     const scrimStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
-            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        if (
+            topPushRoute
+            && topPushRoute.transitionSource === 'side-menu'
+            && pushTransitionMode === 'enter'
+            && pushTransitionRouteKey === topPushRoute.key
+        ) {
+            baseProgress = interpolate(pushTransitionProgress.value, [0, 1], [pushTransitionSourceProgress.value, 0]);
         }
 
         return {
@@ -157,34 +186,16 @@ function NavigationRenderer() {
         };
     });
 
-    const menuPageStyle = useAnimatedStyle(() => {
-        const enterStartX = menuPageSource === 'side-menu' ? menuRevealWidth : screenWidth;
-        const exitEndX = screenWidth;
-
-        if (menuPageTransitionMode === 'exit') {
-            return {
-                transform: [
-                    {
-                        translateX: interpolate(menuPageTransitionProgress.value, [0, 1], [exitEndX, 0]),
-                    },
-                ],
-            };
-        }
-
-        return {
-            transform: [
-                {
-                    translateX: interpolate(menuPageTransitionProgress.value, [0, 1], [enterStartX, 0]),
-                },
-            ],
-        };
-    });
-
     const bottomNavigationLayerStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
-            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        if (
+            topPushRoute
+            && topPushRoute.transitionSource === 'side-menu'
+            && pushTransitionMode === 'enter'
+            && pushTransitionRouteKey === topPushRoute.key
+        ) {
+            baseProgress = interpolate(pushTransitionProgress.value, [0, 1], [pushTransitionSourceProgress.value, 0]);
         }
 
         return {
@@ -196,8 +207,13 @@ function NavigationRenderer() {
     const bottomNavigationClipStyle = useAnimatedStyle(() => {
         let baseProgress = menuProgress.value;
 
-        if (menuPageSource === 'side-menu' && menuPageRoute && menuPageTransitionMode === 'enter') {
-            baseProgress = interpolate(menuPageTransitionProgress.value, [0, 1], [menuPageSourceProgress.value, 0]);
+        if (
+            topPushRoute
+            && topPushRoute.transitionSource === 'side-menu'
+            && pushTransitionMode === 'enter'
+            && pushTransitionRouteKey === topPushRoute.key
+        ) {
+            baseProgress = interpolate(pushTransitionProgress.value, [0, 1], [pushTransitionSourceProgress.value, 0]);
         }
 
         const radius = interpolate(baseProgress, [0, 1], [0, 32]);
@@ -212,34 +228,31 @@ function NavigationRenderer() {
 
     return (
         <View style={styles.container}>
-            <SideMenu />
-
             <GestureDetector gesture={menuGesture}>
-                <Animated.View style={[styles.rootShellLayer, rootShellStyle]}>
-                    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-                        {renderRootScreen(rootRoute)}
-                    </SafeAreaView>
+                <View style={StyleSheet.absoluteFill}>
+                    <SideMenu />
 
-                    <Animated.View
-                        pointerEvents="none"
-                        style={[StyleSheet.absoluteFillObject, styles.rootScrim, scrimStyle]}
-                    />
-                </Animated.View>
+                    <Animated.View style={[styles.rootShellLayer, rootShellStyle]}>
+                        <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
+                            {renderRootScreen(rootRoute)}
+                        </SafeAreaView>
+
+                        <View
+                            pointerEvents={isMenuInteractive ? 'auto' : 'none'}
+                            style={StyleSheet.absoluteFillObject}>
+                            <Pressable onPress={handleCloseMenu} style={StyleSheet.absoluteFill}>
+                                <Animated.View style={[StyleSheet.absoluteFillObject, styles.rootScrim, scrimStyle]} />
+                            </Pressable>
+                        </View>
+                    </Animated.View>
+
+                    <Animated.View pointerEvents="box-none" style={[styles.navigationLayer, bottomNavigationLayerStyle]}>
+                        <Animated.View pointerEvents="box-none" style={[styles.navigationClip, bottomNavigationClipStyle]}>
+                            <BottomNavigation />
+                        </Animated.View>
+                    </Animated.View>
+                </View>
             </GestureDetector>
-
-            {menuPageRoute ? (
-                <Animated.View style={[styles.menuPageLayer, menuPageStyle]}>
-                    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
-                        {renderPushScreen(menuPageRoute)}
-                    </SafeAreaView>
-                </Animated.View>
-            ) : null}
-
-            <Animated.View pointerEvents="box-none" style={[styles.navigationLayer, bottomNavigationLayerStyle]}>
-                <Animated.View pointerEvents="box-none" style={[styles.navigationClip, bottomNavigationClipStyle]}>
-                    <BottomNavigation />
-                </Animated.View>
-            </Animated.View>
 
             {pushStack.map((route, index) => (
                 <NavigationCard
@@ -274,10 +287,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         safeArea: {
             flex: 1,
-        },
-        menuPageLayer: {
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: theme.colors.navigationSurface,
         },
         navigationLayer: {
             ...StyleSheet.absoluteFillObject,

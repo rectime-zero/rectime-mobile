@@ -1,8 +1,8 @@
 import {
-    type MenuPageRouteTarget,
     type PushRouteTarget,
     type RootRouteTarget,
     type SheetRouteTarget,
+    type SideMenuPushRouteTarget,
 } from '../navigation/types';
 
 export const rootRoutes = {
@@ -32,16 +32,16 @@ export const pushRoutes = {
     }),
 } as const;
 
-export const menuPageRoutes = {
-    settings: (): MenuPageRouteTarget<'settings'> => ({
+export const sideMenuRoutes = {
+    settings: (): SideMenuPushRouteTarget<'settings'> => ({
         name: 'settings',
         params: undefined,
     }),
-    development: (): MenuPageRouteTarget<'development'> => ({
+    development: (): SideMenuPushRouteTarget<'development'> => ({
         name: 'development',
         params: undefined,
     }),
-    matchInfo: (teamName: string, summary: string): MenuPageRouteTarget<'match-info'> => ({
+    matchInfo: (teamName: string, summary: string): SideMenuPushRouteTarget<'match-info'> => ({
         name: 'match-info',
         params: {
             teamName,

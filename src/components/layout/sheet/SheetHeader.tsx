@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import AccessoryButton from '../button/AccessoryButton';
-import {useTheme} from '../../theme';
+import AccessoryButton from '../../button/AccessoryButton';
+import {useTheme} from '../../../theme';
 
 type HeaderAction = 'none' | 'back' | 'close';
 

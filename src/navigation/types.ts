@@ -1,11 +1,11 @@
-export type PresentationMode = 'root' | 'push' | 'menu-page' | 'bottom-sheet' | 'modal';
+export type PresentationMode = 'root' | 'push' | 'bottom-sheet' | 'modal';
 export type SheetLayoutMode = 'fit' | 'full';
-export type MenuPageTransitionMode = 'idle' | 'enter' | 'exit';
-export type MenuPageSource = 'side-menu' | 'root';
+export type PushTransitionSource = 'default' | 'side-menu';
+export type PushTransitionMode = 'idle' | 'enter';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
 export type PushScreenName = 'detail' | 'settings' | 'match-info' | 'development';
-export type MenuPageScreenName = Exclude<PushScreenName, 'detail'>;
+export type SideMenuPushScreenName = Exclude<PushScreenName, 'detail'>;
 export type SheetScreenName = 'sample-sheet' | 'theme-sheet';
 export type AppScreenName = RootScreenName | PushScreenName | SheetScreenName;
 
@@ -39,6 +39,7 @@ export type AppRoute<TName extends RouteName = RouteName> = {
     name: TName;
     presentation: PresentationMode;
     params: RouteParamsMap[TName];
+    transitionSource: PushTransitionSource;
 };
 
 export type SheetScreenOptions = {
@@ -55,7 +56,7 @@ export type PushRouteTarget<TName extends PushScreenName = PushScreenName> = {
     params: RouteParamsMap[TName];
 };
 
-export type MenuPageRouteTarget<TName extends MenuPageScreenName = MenuPageScreenName> = {
+export type SideMenuPushRouteTarget<TName extends SideMenuPushScreenName = SideMenuPushScreenName> = {
     name: TName;
     params: RouteParamsMap[TName];
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
 import OpenMenuButton from '../../navigation/components/OpenMenuButton';
 import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {useNavigation} from '../../navigation/useNavigation';
@@ -56,7 +56,7 @@ function ScheduleScreen() {
     );
 
     return (
-        <PageLayout
+        <RootScreenLayout
             headerLeading={<OpenMenuButton />}
             headerTrailing={
                 <AccessoryButton
@@ -126,7 +126,7 @@ function ScheduleScreen() {
                     </View>
                 </View>
             </View>
-        </PageLayout>
+        </RootScreenLayout>
     );
 }
 

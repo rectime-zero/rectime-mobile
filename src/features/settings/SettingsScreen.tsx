@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Switch, Text, View} from 'react-native';
 import {useFeedback} from '../../feedback';
 import AccessoryButton from '../../components/button/AccessoryButton';
-import PageLayout from '../../components/layout/PageLayout';
+import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
@@ -11,12 +11,11 @@ type SettingsScreenProps = {
     route: AppRoute<'settings'>;
 };
 
-function SettingsScreen({route}: SettingsScreenProps) {
+function SettingsScreen({route: _route}: SettingsScreenProps) {
     const {theme} = useTheme();
     const {hapticsEnabled, setHapticsEnabled, triggerHaptic} = useFeedback();
-    const {closeMenuPage, pop} = useNavigation();
+    const {pop} = useNavigation();
     const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-    const handleBack = route.presentation === 'menu-page' ? closeMenuPage : pop;
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     const handleHapticsValueChange = React.useCallback(
@@ -31,8 +30,8 @@ function SettingsScreen({route}: SettingsScreenProps) {
     );
 
     return (
-        <PageLayout
-            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={handleBack} />}
+        <PushScreenLayout
+            headerLeading={<AccessoryButton accessibilityLabel="戻る" icon="chevron-left" onPress={pop} />}
             title="設定">
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>アプリ設定</Text>
@@ -72,7 +71,7 @@ function SettingsScreen({route}: SettingsScreenProps) {
                     </View>
                 </View>
             </View>
-        </PageLayout>
+        </PushScreenLayout>
     );
 }
 

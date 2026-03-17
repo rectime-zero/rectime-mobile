@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {StyleSheet, View, useWindowDimensions} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,
@@ -10,12 +10,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {renderPushScreen} from './renderRoute';
+import {getMenuRevealWidth} from './menuLayout';
 import {type AppRoute, type PushScreenName} from './types';
 import {useNavigation} from './useNavigation';
 import {useTheme} from '../theme';
 
-const EDGE_WIDTH = 28;
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
+const EDGE_WIDTH = 56;
 const SPRING_CONFIG = {
     damping: 24,
     stiffness: 220,
@@ -29,9 +29,12 @@ type NavigationCardProps = {
 
 function NavigationCard({route, isTopCard}: NavigationCardProps) {
     const {theme} = useTheme();
+    const {width: screenWidth} = useWindowDimensions();
+    const menuRevealWidth = getMenuRevealWidth(screenWidth);
     const {activeGestureValue, completePop, pushDismissRequest, setActiveGesture, sheetRoute} = useNavigation();
-    const translateX = useSharedValue(SCREEN_WIDTH);
-    const dragStart = useSharedValue(SCREEN_WIDTH);
+    const initialTranslateX = route.transitionSource === 'side-menu' ? menuRevealWidth : screenWidth;
+    const translateX = useSharedValue(initialTranslateX);
+    const dragStart = useSharedValue(initialTranslateX);
     const handledDismissRequestRef = useRef(pushDismissRequest);
 
     useEffect(() => {
@@ -45,12 +48,12 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
 
         handledDismissRequestRef.current = pushDismissRequest;
         setActiveGesture('none');
-        translateX.value = withTiming(SCREEN_WIDTH, {duration: 180}, finished => {
+        translateX.value = withTiming(screenWidth, {duration: 180}, finished => {
             if (finished) {
                 runOnJS(completePop)(route.key);
             }
         });
-    }, [completePop, isTopCard, pushDismissRequest, route.key, setActiveGesture, translateX]);
+    }, [completePop, isTopCard, pushDismissRequest, route.key, screenWidth, setActiveGesture, translateX]);
 
     const backGesture = React.useMemo(
         () =>
@@ -79,12 +82,12 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
                         return;
                     }
 
-                    const shouldPop = translateX.value > SCREEN_WIDTH * 0.35 || event.velocityX > 900;
+                    const shouldPop = translateX.value > screenWidth * 0.22 || event.velocityX > 650;
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
 
                     if (shouldPop) {
-                        translateX.value = withTiming(SCREEN_WIDTH, {duration: 180}, finished => {
+                        translateX.value = withTiming(screenWidth, {duration: 180}, finished => {
                             if (finished) {
                                 runOnJS(completePop)(route.key);
                             }
@@ -102,7 +105,7 @@ function NavigationCard({route, isTopCard}: NavigationCardProps) {
                     activeGestureValue.value = 'none';
                     runOnJS(setActiveGesture)('none');
                 }),
-        [activeGestureValue, completePop, dragStart, isTopCard, route.key, setActiveGesture, sheetRoute, translateX],
+        [activeGestureValue, completePop, dragStart, isTopCard, route.key, screenWidth, setActiveGesture, sheetRoute, translateX],
     );
 
     const cardStyle = useAnimatedStyle(() => ({
