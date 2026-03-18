@@ -11,19 +11,29 @@ tools: ["read", "search"]
 
 ### 1. アーキテクチャ原則（最優先）
 
-@AGENTS.md の原則への準拠を確認する：
+@AGENTS.md と @react-native-policy.md の原則への準拠を確認する：
 
 - [ ] 1ファイル1責務になっているか（2.2）
 - [ ] レイヤーの依存方向が正しいか（2.3）
+  - features/ は presentation 層
+  - components/ は共通UI層
+  - theme/, tokens/ は design system層
+  - navigation/ は routing層
+  - hooks/ は共通ロジック層
 - [ ] レイヤー間のマッピングが明示的か（2.6）
 - [ ] 外部の型がドメイン内に漏れていないか（2.8）
+- [ ] ディレクトリ構造が適切か（@react-native-policy.md Section 3-4）
+- [ ] feature固有のコードが共通層に配置されていないか（Section 17）
 
 ### 2. 技術スタック準拠
 
-- [ ] NativeWind v4 のクラスのみ使用されているか（StyleSheet 不使用）
-- [ ] アイコンが lucide-react-native のみか
+- [ ] StyleSheet を使用しているか（React Native標準のスタイリング / @react-native-policy.md Section 22）
+- [ ] アイコンが @react-native-vector-icons/fontawesome5 を使用しているか
 - [ ] TypeScript の型が明示的か（any がないか）
-- [ ] React Navigation の使い方が正しいか
+- [ ] React Native Reanimated の使い方が正しいか
+- [ ] react-native-safe-area-context が適切に使用されているか
+- [ ] テーマトークンを直接使用しているか（theme.colors.*）
+- [ ] snake_case がドメイン型に含まれていないか（Section 13）
 
 ### 3. コード品質
 
@@ -35,8 +45,11 @@ tools: ["read", "search"]
 
 問題がある場合のみ指摘する。問題がなければ「LGTM」のみ返す。
 
-指摘する場合：
+指摘は必ず以下の形式で orchestrator に返すこと：
 - **重大**（アーキテクチャ違反・バグ）: 必ず修正
 - **軽微**（可読性・命名）: 推奨修正
+- **問題なし**: LGTM のみ
 
-コードを自分で書き直してはいけない。指摘のみ行う。
+## 禁止事項
+- コードを自分で書き直すこと
+- 実装の提案をすること（指摘のみ）
