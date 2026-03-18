@@ -2013,6 +2013,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-splash-screen (3.3.0):
+    - React-Core
   - react-native-vector-icons-fontawesome5 (12.3.2)
   - React-NativeModulesApple (0.84.1):
     - boost
@@ -2888,6 +2890,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - "react-native-vector-icons-fontawesome5 (from `../node_modules/@react-native-vector-icons/fontawesome5`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-networking (from `../node_modules/react-native/ReactCommon/react/networking`)
@@ -3028,6 +3031,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-vector-icons-fontawesome5:
     :path: "../node_modules/@react-native-vector-icons/fontawesome5"
   React-NativeModulesApple:
@@ -3156,6 +3161,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: a8b3f90538e7dfa4cadd7e8c6b5556b887dedae7
   React-microtasksnativemodule: 53a302fac7dddfca18b54051f9c3bdc4fba75b10
   react-native-safe-area-context: befb5404eb8a16fdc07fa2bebab3568ecabcbb8a
+  react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
   react-native-vector-icons-fontawesome5: 8187e7738d0db1b8373cf030f7140299a7216103
   React-NativeModulesApple: e889a8973f2fc5d141b713cce2fa0f5917525e3e
   React-networking: 23fcf73347415e2fa88f77b442316e42aef06b2c
