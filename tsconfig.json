@@ -3,7 +3,11 @@
   "compilerOptions": {
     "types": [
       "jest"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "**/*.ts",

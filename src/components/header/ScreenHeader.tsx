@@ -80,7 +80,6 @@ function ScreenHeader({title, leading, trailing, scrollY}: ScreenHeaderProps) {
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: number) {
     const headerHeight = topInset + size.headerAction + screenLayout.headerPaddingTop + screenLayout.headerPaddingBottom;
-    const fadeHeight = Math.round(headerHeight * 0.35);
     const gradientHeight = headerHeight;
 
     return StyleSheet.create({

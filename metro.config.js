@@ -6,6 +6,20 @@ const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
  *
  * @type {import('@react-native/metro-config').MetroConfig}
  */
-const config = mergeConfig(getDefaultConfig(__dirname), {});
+const config = mergeConfig(getDefaultConfig(__dirname), {
+  resolver: {
+    extraNodeModules: new Proxy(
+      {},
+      {
+        get: (target, name) => {
+          if (name === '@') {
+            return `${__dirname}`;
+          }
+          return target[name];
+        },
+      }
+    ),
+  },
+});
 
 module.exports = config;
