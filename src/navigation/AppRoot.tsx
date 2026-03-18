@@ -29,16 +29,12 @@ function AppContent() {
 function App() {
     const [splashDone, setSplashDone] = useState(false);
 
-    if (!splashDone) {
-        return <SplashScreen onFinish={() => setSplashDone(true)} />;
-    }
-
     return (
         <GestureHandlerRootView style={styles.root}>
             <SafeAreaProvider>
                 <FeedbackProvider>
                     <ThemeProvider>
-                        <AppContent />
+                        {splashDone ? <AppContent /> : <SplashScreen onFinish={() => setSplashDone(true)} />}
                     </ThemeProvider>
                 </FeedbackProvider>
             </SafeAreaProvider>

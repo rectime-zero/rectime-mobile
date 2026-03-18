@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- TODO: ブランドカラーが決まったら変更 -->
-    <color name="splashBackground">#FFFFFF</color>
+    <color name="splashBackground">#FAF9F5</color>
 </resources>
