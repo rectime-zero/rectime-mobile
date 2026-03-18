@@ -7,6 +7,7 @@ export type AppIconName =
     | 'chevron-left'
     | 'chevron-right'
     | 'clipboard-check'
+    | 'code'
     | 'cog'
     | 'clock'
     | 'ellipsis-h'

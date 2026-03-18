@@ -33,7 +33,9 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-		<key>NSLocationWhenInUseUsageDescription</key>
+		<key>NSCameraUsageDescription</key>
+	<string>QRコードを読み取るためにカメラを使用します。</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Rectime uses your location to support schedule features tied to where you are.</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>

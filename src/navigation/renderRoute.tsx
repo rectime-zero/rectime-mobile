@@ -1,6 +1,6 @@
 import React from 'react';
-import {DevelopmentScreen} from '../features/development';
 import {DetailScreen} from '../features/detail';
+import {DevMenuScreen} from '../features/dev/screens/DevMenuScreen';
 import {HelpCenterScreen} from '../features/helpCenter';
 import {HomeScreen} from '../features/home';
 import {MapScreen} from '../features/map';
@@ -40,14 +40,14 @@ export function renderPushScreen(route: AppRoute<PushScreenName>) {
     switch (route.name) {
         case 'notifications':
             return <NotificationsScreen route={route as AppRoute<'notifications'>} />;
-        case 'development':
-            return <DevelopmentScreen route={route as AppRoute<'development'>} />;
         case 'settings':
             return <SettingsScreen route={route as AppRoute<'settings'>} />;
         case 'help-center':
             return <HelpCenterScreen route={route as AppRoute<'help-center'>} />;
         case 'match-info':
             return <MatchInfoScreen route={route as AppRoute<'match-info'>} />;
+        case 'dev':
+            return <DevMenuScreen />;
         case 'detail':
         default:
             return <DetailScreen route={route as AppRoute<'detail'>} />;

@@ -20,13 +20,13 @@ export const sideMenuItems: SideMenuItem[] = [
         icon: 'settings',
     },
     {
-        route: sideMenuRoutes.development(),
-        label: '開発メニュー',
-        icon: 'development',
-    },
-    {
         route: sideMenuRoutes.helpCenter(),
         label: 'ヘルプセンター',
         icon: 'help-center',
+    },
+    {
+        route: sideMenuRoutes.dev(),
+        label: '開発メニュー',
+        icon: 'dev',
     },
 ];

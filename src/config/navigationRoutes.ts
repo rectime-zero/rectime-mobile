@@ -30,7 +30,7 @@ export function getRootRouteTitle(name: keyof typeof rootRouteTitles) {
 const pushRouteTitles = {
     settings: '設定',
     'match-info': '対戦情報',
-    development: '開発メニュー',
+    dev: '開発メニュー',
     notifications: '通知',
     'help-center': 'ヘルプセンター',
 } as const;
@@ -70,10 +70,6 @@ export const sideMenuRoutes = {
         name: 'settings',
         params: undefined,
     }),
-    development: (): SideMenuPushRouteTarget<'development'> => ({
-        name: 'development',
-        params: undefined,
-    }),
     helpCenter: (): SideMenuPushRouteTarget<'help-center'> => ({
         name: 'help-center',
         params: undefined,
@@ -84,5 +80,9 @@ export const sideMenuRoutes = {
             teamName,
             summary,
         },
+    }),
+    dev: (): SideMenuPushRouteTarget<'dev'> => ({
+        name: 'dev',
+        params: undefined,
     }),
 } as const;
