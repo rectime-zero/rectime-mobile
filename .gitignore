@@ -82,3 +82,9 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Agent
+AGENTS.md
+
+# ai
+ai

@@ -1,0 +1,1 @@
+export {TicketQrSheet} from './TicketQrSheet';

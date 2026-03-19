@@ -1,0 +1,60 @@
+import React, { useState } from 'react';
+import {StatusBar, StyleSheet, View} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {FeedbackProvider} from '../feedback';
+import NavigationProvider from './NavigationProvider';
+import NavigationRenderer from './NavigationRenderer';
+import {ThemeProvider, useTheme} from '../theme';
+import { SplashScreen } from '../components/SplashScreen';
+
+function AppContent() {
+    const {resolvedMode, theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme.colors.navigationSurface), [theme.colors.navigationSurface]);
+
+    return (
+        <View style={styles.appShell}>
+            <StatusBar
+                barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'}
+                backgroundColor={theme.colors.navigationSurface}
+                translucent={false}
+            />
+            <NavigationProvider>
+                <NavigationRenderer />
+            </NavigationProvider>
+        </View>
+    );
+}
+
+function App() {
+    const [splashDone, setSplashDone] = useState(false);
+
+    return (
+        <GestureHandlerRootView style={styles.root}>
+            <SafeAreaProvider>
+                <FeedbackProvider>
+                    <ThemeProvider>
+                        {splashDone ? <AppContent /> : <SplashScreen onFinish={() => setSplashDone(true)} />}
+                    </ThemeProvider>
+                </FeedbackProvider>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
+    );
+}
+
+const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+    },
+});
+
+function createStyles(backgroundColor: string) {
+    return StyleSheet.create({
+        appShell: {
+            flex: 1,
+            backgroundColor,
+        },
+    });
+}
+
+export default App;

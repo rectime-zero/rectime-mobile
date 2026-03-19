@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+def vectorIconsFontAwesome5FontsDir = file("../../node_modules/@react-native-vector-icons/fontawesome5/fonts")
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -85,6 +87,13 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -106,6 +115,18 @@ android {
         }
     }
 }
+
+tasks.register("copyFontAwesome5Fonts", Copy) {
+    from(vectorIconsFontAwesome5FontsDir)
+    include("*.ttf")
+    into(layout.buildDirectory.dir("generated/assets/fontawesome5/fonts"))
+}
+
+tasks.named("preBuild").configure {
+    dependsOn("copyFontAwesome5Fonts")
+}
+
+android.sourceSets.main.assets.srcDirs += layout.buildDirectory.dir("generated/assets/fontawesome5")
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin

@@ -1,0 +1,139 @@
+import React from 'react';
+import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
+import {mapCopy, mapPlaces} from '../../features/map/data';
+import {useTheme} from '../../theme';
+
+function MapScreen() {
+    const {theme} = useTheme();
+    const styles = React.useMemo(() => createStyles(theme), [theme]);
+
+    return (
+        <RootScreenLayout>
+            <View style={styles.mapPlaceholder}>
+                <View style={styles.blurLayer} />
+                <Text style={styles.placeholderTitle}>{mapCopy.title}</Text>
+                <Text style={styles.placeholderBody}>{mapCopy.body}</Text>
+
+                <View style={styles.floatingLeft}>
+                    <FontAwesome5 color={theme.colors.textOnAccent} iconStyle="solid" name="bullseye" size={18} />
+                </View>
+                <View style={styles.floatingRight}>
+                    <FontAwesome5 color={theme.colors.textPrimary} iconStyle="solid" name="list-ul" size={18} />
+                </View>
+            </View>
+
+            <View style={styles.placeCard}>
+                <View style={styles.placeHandle} />
+                <Text style={styles.placeTitle}>{mapCopy.placeTitle}</Text>
+                <View style={styles.placeList}>
+                    {mapPlaces.map((place, index) => (
+                        <Pressable key={place.id} style={[styles.placeRow, index < mapPlaces.length - 1 ? styles.placeRowBorder : null]}>
+                            <Text style={styles.placeName}>{place.name}</Text>
+                            <FontAwesome5 color={theme.colors.textMuted} iconStyle="solid" name="chevron-right" size={12} />
+                        </Pressable>
+                    ))}
+                </View>
+            </View>
+        </RootScreenLayout>
+    );
+}
+
+function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
+    return StyleSheet.create({
+        mapPlaceholder: {
+            height: 360,
+            justifyContent: 'flex-end',
+            overflow: 'hidden',
+            borderRadius: 28,
+            padding: 20,
+            backgroundColor: theme.colors.surfaceMuted,
+        },
+        blurLayer: {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: theme.colors.surfaceAccent,
+            opacity: 0.78,
+        },
+        placeholderTitle: {
+            color: theme.colors.textPrimary,
+            fontSize: 24,
+            fontWeight: '800',
+        },
+        placeholderBody: {
+            marginTop: 8,
+            maxWidth: 240,
+            color: theme.colors.textSecondary,
+            fontSize: 14,
+            lineHeight: 22,
+        },
+        floatingLeft: {
+            position: 'absolute',
+            left: 18,
+            bottom: 22,
+            width: 56,
+            height: 56,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 28,
+            backgroundColor: theme.colors.navigationActive,
+        },
+        floatingRight: {
+            position: 'absolute',
+            right: 18,
+            bottom: 22,
+            width: 56,
+            height: 56,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 28,
+            backgroundColor: theme.colors.surfacePrimary,
+        },
+        placeCard: {
+            marginTop: -78,
+            gap: 12,
+            borderRadius: 28,
+            paddingHorizontal: 18,
+            paddingTop: 10,
+            paddingBottom: 8,
+            backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+        },
+        placeHandle: {
+            alignSelf: 'center',
+            width: 52,
+            height: 6,
+            borderRadius: 3,
+            backgroundColor: theme.colors.borderSubtle,
+        },
+        placeTitle: {
+            color: theme.colors.textPrimary,
+            fontSize: 18,
+            fontWeight: '800',
+        },
+        placeList: {
+            overflow: 'hidden',
+            borderRadius: 20,
+            backgroundColor: theme.colors.surfaceMuted,
+        },
+        placeRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 16,
+            paddingVertical: 15,
+        },
+        placeRowBorder: {
+            borderBottomWidth: 1,
+            borderBottomColor: theme.colors.borderSubtle,
+        },
+        placeName: {
+            color: theme.colors.textPrimary,
+            fontSize: 15,
+            fontWeight: '700',
+        },
+    });
+}
+
+export default MapScreen;

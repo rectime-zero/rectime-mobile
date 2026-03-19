@@ -29,7 +29,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       launchOptions: launchOptions
     )
 
+    showSplashScreenIfAvailable()
+
     return true
+  }
+
+  private func showSplashScreenIfAvailable() {
+    let selector = NSSelectorFromString("show")
+    guard let splashScreenClass = NSClassFromString("RNSplashScreen") as? NSObject.Type else {
+      return
+    }
+    guard splashScreenClass.responds(to: selector) else {
+      return
+    }
+    _ = splashScreenClass.perform(selector)
   }
 }
 
