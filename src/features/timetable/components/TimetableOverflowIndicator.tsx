@@ -1,36 +1,34 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
 import type {DimensionValue} from 'react-native';
-import {useTheme} from '../../theme';
-import {TIMETABLE_CONFIG} from './config';
-import type {ScheduleLayoutEvent} from './types';
+import {type TimetableLayoutItem, TIMETABLE_CONFIG} from '../../../domain/timetable';
+import {useTheme} from '../../../theme';
 
-type OverflowEventIndicatorProps = {
-    event: ScheduleLayoutEvent;
+type TimetableOverflowIndicatorProps = {
+    item: TimetableLayoutItem;
     hiddenCount: number;
     gridWidth: number;
-    onPress?: (event: ScheduleLayoutEvent) => void;
+    onPress?: (item: TimetableLayoutItem) => void;
 };
 
-function OverflowEventIndicator({event, hiddenCount, gridWidth, onPress}: OverflowEventIndicatorProps) {
+function TimetableOverflowIndicator({item, hiddenCount, gridWidth, onPress}: TimetableOverflowIndicatorProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
     const resolvedWidth: DimensionValue =
         gridWidth > 0
-            ? Math.max((gridWidth * event.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
-            : `${event.widthPercent}%`;
-    const resolvedLeft: DimensionValue =
-        gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
+            ? Math.max((gridWidth * item.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
+            : `${item.widthPercent}%`;
+    const resolvedLeft: DimensionValue = gridWidth > 0 ? (gridWidth * item.leftPercent) / 100 : `${item.leftPercent}%`;
 
     return (
         <Pressable
             accessibilityRole="button"
-            onPress={onPress ? () => onPress(event) : undefined}
+            onPress={onPress ? () => onPress(item) : undefined}
             style={[
                 styles.container,
                 {
-                    top: event.top,
-                    height: event.height,
+                    top: item.top,
+                    height: item.height,
                     left: resolvedLeft,
                     width: resolvedWidth,
                 },
@@ -59,4 +57,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default OverflowEventIndicator;
+export default TimetableOverflowIndicator;

@@ -1,1 +1,1 @@
-export {default as ScheduleScreen} from './ScheduleScreen';
+export {default as ScheduleScreen} from '../timetable/screens/TimetableScreen';

@@ -1,46 +1,44 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import type {DimensionValue} from 'react-native';
-import {useTheme} from '../../theme';
-import {TIMETABLE_CONFIG} from './config';
-import type {ScheduleLayoutEvent} from './types';
+import {type TimetableLayoutItem, TIMETABLE_CONFIG} from '../../../domain/timetable';
+import {useTheme} from '../../../theme';
 
-type EventCardProps = {
-    event: ScheduleLayoutEvent;
+type TimetableEventBlockProps = {
+    item: TimetableLayoutItem;
     gridWidth: number;
-    onPress?: (event: ScheduleLayoutEvent) => void;
+    onPress?: (item: TimetableLayoutItem) => void;
 };
 
-function EventCard({event, gridWidth, onPress}: EventCardProps) {
+function TimetableEventBlock({item, gridWidth, onPress}: TimetableEventBlockProps) {
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
-    const isParticipant = event.accent === 'red';
-    const isCompact = event.height < TIMETABLE_CONFIG.COMPACT_THRESHOLD_PX;
-    const isVeryCompact = event.height < TIMETABLE_CONFIG.VERY_COMPACT_THRESHOLD_PX;
-    const isNarrow = event.actualColumns >= 3;
-    const isVeryNarrow = event.actualColumns >= 4;
-    const isUltraNarrow = event.actualColumns >= 5;
+    const isParticipant = item.accent === 'red';
+    const isCompact = item.height < TIMETABLE_CONFIG.COMPACT_THRESHOLD_PX;
+    const isVeryCompact = item.height < TIMETABLE_CONFIG.VERY_COMPACT_THRESHOLD_PX;
+    const isNarrow = item.actualColumns >= 3;
+    const isVeryNarrow = item.actualColumns >= 4;
+    const isUltraNarrow = item.actualColumns >= 5;
     const backgroundColor = isParticipant ? theme.colors.timetableCardParticipant : theme.colors.timetableCardBackground;
     const textColor = isParticipant ? theme.colors.timetableCardTextDark : theme.colors.surfacePrimary;
     const resolvedWidth: DimensionValue =
         gridWidth > 0
-            ? Math.max((gridWidth * event.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
-            : `${event.widthPercent}%`;
-    const resolvedLeft: DimensionValue =
-        gridWidth > 0 ? (gridWidth * event.leftPercent) / 100 : `${event.leftPercent}%`;
+            ? Math.max((gridWidth * item.widthPercent) / 100, TIMETABLE_CONFIG.MIN_EVENT_WIDTH_PX)
+            : `${item.widthPercent}%`;
+    const resolvedLeft: DimensionValue = gridWidth > 0 ? (gridWidth * item.leftPercent) / 100 : `${item.leftPercent}%`;
 
     return (
         <Pressable
             accessibilityRole="button"
-            onPress={onPress ? () => onPress(event) : undefined}
+            onPress={onPress ? () => onPress(item) : undefined}
             style={[
                 styles.container,
                 isCompact ? styles.containerCompact : null,
                 isNarrow ? styles.containerNarrow : null,
                 isVeryNarrow ? styles.containerVeryNarrow : null,
                 {
-                    top: event.top,
-                    height: event.height,
+                    top: item.top,
+                    height: item.height,
                     left: resolvedLeft,
                     width: resolvedWidth,
                     backgroundColor,
@@ -59,12 +57,12 @@ function EventCard({event, gridWidth, onPress}: EventCardProps) {
                             isUltraNarrow ? styles.titleUltraNarrow : null,
                             {color: textColor},
                         ]}>
-                        {event.title}
+                        {item.title}
                     </Text>
 
                     {isVeryCompact ? (
                         <Text numberOfLines={1} style={[styles.inlineRange, {color: textColor}]}>
-                            {event.rangeLabel}
+                            {item.rangeLabel}
                         </Text>
                     ) : null}
                 </View>
@@ -79,7 +77,7 @@ function EventCard({event, gridWidth, onPress}: EventCardProps) {
                             isUltraNarrow ? styles.rangeUltraCompact : null,
                             {color: textColor},
                         ]}>
-                        {event.rangeLabel}
+                        {item.rangeLabel}
                     </Text>
                 )}
             </View>
@@ -178,4 +176,4 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     });
 }
 
-export default EventCard;
+export default TimetableEventBlock;
