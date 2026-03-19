@@ -3,9 +3,9 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
 import {pushRoutes} from '../../config/navigationRoutes';
+import {rankingEntries} from '../../features/ranking/data';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-import {rankingEntries} from './data';
 
 function RankingScreen() {
     const {theme} = useTheme();

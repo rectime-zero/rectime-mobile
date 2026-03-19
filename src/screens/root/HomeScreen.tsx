@@ -3,9 +3,9 @@ import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
 import {pushRoutes} from '../../config/navigationRoutes';
+import {homeActions, homeHighlights} from '../../features/home/data';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-import {homeActions, homeHighlights} from './data';
 
 function HomeScreen() {
     const {theme} = useTheme();
@@ -218,31 +218,32 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         timelineMarker: {
             width: 10,
             height: 52,
-            borderRadius: 5,
+            borderRadius: 999,
             backgroundColor: theme.colors.navigationActive,
         },
         timelineMarkerMuted: {
             width: 10,
             height: 52,
-            borderRadius: 5,
-            backgroundColor: theme.colors.textMuted,
+            borderRadius: 999,
+            backgroundColor: theme.colors.surfaceAccent,
         },
         timelineCard: {
             flex: 1,
             borderRadius: 18,
             paddingHorizontal: 14,
-            paddingVertical: 14,
+            paddingVertical: 12,
             backgroundColor: theme.colors.surfaceMuted,
         },
         timelineTitle: {
             color: theme.colors.textPrimary,
             fontSize: 15,
-            fontWeight: '700',
+            fontWeight: '800',
         },
         timelineMeta: {
             marginTop: 4,
             color: theme.colors.textSecondary,
             fontSize: 13,
+            lineHeight: 20,
         },
     });
 }

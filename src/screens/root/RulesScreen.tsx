@@ -2,8 +2,8 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
+import {ruleEntries, rulesHeroCopy} from '../../features/rules/data';
 import {useTheme} from '../../theme';
-import {ruleEntries, rulesHeroCopy} from './data';
 
 function RulesScreen() {
     const {theme} = useTheme();

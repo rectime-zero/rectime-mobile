@@ -2,8 +2,8 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
+import {mapCopy, mapPlaces} from '../../features/map/data';
 import {useTheme} from '../../theme';
-import {mapCopy, mapPlaces} from './data';
 
 function MapScreen() {
     const {theme} = useTheme();

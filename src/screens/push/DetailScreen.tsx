@@ -1,13 +1,13 @@
-﻿import React from 'react';
+import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import AccessoryButton from '../../components/button/AccessoryButton';
 import PushScreenLayout from '../../components/layout/screen/PushScreenLayout';
 import {pushRoutes} from '../../config/navigationRoutes';
+import {recentMatches} from '../../features/detail/data';
 import {type AppRoute} from '../../navigation/types';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
-import {recentMatches} from './data';
 
 type DetailScreenProps = {
     route: AppRoute<'detail'>;

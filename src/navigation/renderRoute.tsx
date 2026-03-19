@@ -1,17 +1,19 @@
 import React from 'react';
-import {DetailScreen} from '../features/detail';
-import {DevMenuScreen} from '../features/dev/screens/DevMenuScreen';
-import {HelpCenterScreen} from '../features/helpCenter';
-import {HomeScreen} from '../features/home';
-import {MapScreen} from '../features/map';
-import {MatchInfoScreen} from '../features/matchInfo';
-import {NotificationsScreen} from '../features/notifications';
-import {RankingScreen} from '../features/ranking';
-import {RulesScreen} from '../features/rules';
 import {SampleBottomSheet} from '../features/sampleSheet';
-import {ScheduleScreen} from '../features/schedule';
-import {SettingsScreen} from '../features/settings';
 import {ThemeSheet} from '../features/themeSheet';
+import {
+    DetailScreen,
+    DevMenuScreen,
+    HelpCenterScreen,
+    HomeScreen,
+    MapScreen,
+    MatchInfoScreen,
+    NotificationsScreen,
+    RankingScreen,
+    RulesScreen,
+    ScheduleScreen,
+    SettingsScreen,
+} from '../screens';
 import {
     type AppRoute,
     type PushScreenName,
