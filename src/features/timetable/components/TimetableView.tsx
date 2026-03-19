@@ -1,22 +1,24 @@
 import React from 'react';
-import {LayoutChangeEvent, StyleSheet, Text, View} from 'react-native';
+import {LayoutChangeEvent, StyleSheet, View} from 'react-native';
+import {TIMETABLE_VIEW_CONFIG} from '../../../config/timetableConfig';
 import {
     type TimetableItem,
     type TimetableLayoutItem,
     calculateTimetableLayout,
     TIMETABLE_CONFIG,
     timetableGridHeight,
-    timetableHourSlots,
     timetableStartMinutes,
     TIMETABLE_INTERVAL_MINUTES,
     TIMETABLE_SLOT_HEIGHT,
 } from '../../../domain/timetable';
 import {useTheme} from '../../../theme';
+import TimetableCurrentTimeBadge from './TimetableCurrentTimeBadge';
+import TimetableCurrentTimeLine from './TimetableCurrentTimeLine';
 import TimetableEventBlock from './TimetableEventBlock';
+import TimetableGridLines from './TimetableGridLines';
 import TimetableOverflowIndicator from './TimetableOverflowIndicator';
-
-const TIME_LABEL_WIDTH = 52;
-const CURRENT_TIME_BADGE_WIDTH = 48;
+import TimetablePastOverlay from './TimetablePastOverlay';
+import TimetableTimeLabels from './TimetableTimeLabels';
 
 type TimetableViewProps = {
     items: TimetableItem[];
@@ -52,44 +54,17 @@ function TimetableView({items, onItemPress}: TimetableViewProps) {
 
     return (
         <View style={styles.timelineFrame}>
-            <View style={styles.labelsColumn}>
-                {timetableHourSlots.map(slot => {
-                    const top = ((slot.value - timetableStartMinutes) / TIMETABLE_INTERVAL_MINUTES) * TIMETABLE_SLOT_HEIGHT;
-
-                    return (
-                        <Text key={slot.value} style={[styles.axisLabel, {top: top - 8}]}>
-                            {slot.label}
-                        </Text>
-                    );
-                })}
+            <View style={styles.timeColumn}>
+                <TimetableTimeLabels />
+                {isCurrentTimeVisible ? <TimetableCurrentTimeBadge label={currentTimeLabel} top={currentTimeTop} /> : null}
             </View>
 
             <View onLayout={handleGridLayout} style={styles.gridColumn}>
-                {timetableHourSlots.slice(0, -1).map(slot => (
-                    <View
-                        key={slot.value}
-                        style={[
-                            styles.gridRow,
-                            {
-                                top:
-                                    ((slot.value - timetableStartMinutes) / TIMETABLE_INTERVAL_MINUTES) *
-                                    TIMETABLE_SLOT_HEIGHT,
-                            },
-                            styles.gridRowHour,
-                        ]}
-                    />
-                ))}
+                <TimetableGridLines />
 
-                {isCurrentTimeVisible && currentTimeTop > 0 ? <View style={[styles.pastOverlay, {height: currentTimeTop}]} /> : null}
+                {isCurrentTimeVisible && currentTimeTop > 0 ? <TimetablePastOverlay height={currentTimeTop} /> : null}
 
-                {isCurrentTimeVisible ? (
-                    <View style={[styles.currentTimeLayer, {top: currentTimeTop}]}>
-                        <View style={styles.currentTimeBadge}>
-                            <Text style={styles.currentTimeLabel}>{currentTimeLabel}</Text>
-                        </View>
-                        <View style={styles.currentTimeLine} />
-                    </View>
-                ) : null}
+                {isCurrentTimeVisible ? <TimetableCurrentTimeLine top={currentTimeTop} /> : null}
 
                 <View style={styles.eventsLayer}>
                     {layoutItems.map(item =>
@@ -118,66 +93,15 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             flexDirection: 'row',
             minHeight: timetableGridHeight,
         },
-        labelsColumn: {
-            width: TIME_LABEL_WIDTH,
+        timeColumn: {
+            width: TIMETABLE_VIEW_CONFIG.TIME_LABEL_WIDTH_PX,
+            height: timetableGridHeight,
             position: 'relative',
-        },
-        axisLabel: {
-            position: 'absolute',
-            left: 0,
-            color: theme.colors.timetableGridLine,
-            fontSize: 11,
-            fontWeight: '700',
         },
         gridColumn: {
             flex: 1,
             height: timetableGridHeight,
             position: 'relative',
-        },
-        gridRow: {
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            height: 1,
-            backgroundColor: theme.colors.timetableGridLine,
-        },
-        gridRowHour: {
-            backgroundColor: theme.colors.timetableGridLine,
-        },
-        currentTimeLayer: {
-            position: 'absolute',
-            left: -TIME_LABEL_WIDTH + 2,
-            right: 0,
-            zIndex: 40,
-            flexDirection: 'row',
-            alignItems: 'center',
-        },
-        currentTimeBadge: {
-            width: CURRENT_TIME_BADGE_WIDTH,
-            height: 22,
-            borderRadius: 4,
-            backgroundColor: theme.colors.timetableTimeLine,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 6,
-        },
-        currentTimeLabel: {
-            color: theme.colors.surfacePrimary,
-            fontSize: 10,
-            fontWeight: '800',
-        },
-        currentTimeLine: {
-            flex: 1,
-            height: 3,
-            backgroundColor: theme.colors.timetableTimeLine,
-        },
-        pastOverlay: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            left: 0,
-            backgroundColor: theme.colors.timetablePastOverlay,
-            zIndex: 5,
         },
         eventsLayer: {
             position: 'absolute',

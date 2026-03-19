@@ -1,17 +1,6 @@
+import {TIMETABLE_CONFIG} from '../../config/timetableConfig';
 import type {TimetableItem, TimetableLayoutItem} from './models';
 import {generateTimeSlots} from './time';
-
-export const TIMETABLE_CONFIG = {
-    START_HOUR: 9,
-    STOP_HOUR: 18,
-    DISPLAY_END_HOUR: 18.5,
-    SLOTS_PER_HOUR: 6,
-    SLOT_HEIGHT_PX: 16,
-    MAX_VISIBLE_EVENTS: 6,
-    MIN_EVENT_WIDTH_PX: 60,
-    COMPACT_THRESHOLD_PX: 40,
-    VERY_COMPACT_THRESHOLD_PX: 24,
-} as const;
 
 export const TIMETABLE_INTERVAL_MINUTES = 60 / TIMETABLE_CONFIG.SLOTS_PER_HOUR;
 export const TIMETABLE_SLOT_HEIGHT = TIMETABLE_CONFIG.SLOT_HEIGHT_PX;
