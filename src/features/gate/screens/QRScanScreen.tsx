@@ -1,121 +1,21 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import type {Code, CodeScanner} from 'react-native-vision-camera';
-import {getOptionalVisionCameraRuntime} from '../../../infrastructure/native/optionalVisionCamera';
+import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ScanCamera} from '../components/ScanCamera';
+import {useScanSession} from '../hooks/useScanSession';
 import {useNavigation} from '../../../navigation/useNavigation';
 
-export type GateCheckInPayload = {
-  qrData: string;
-  scannedAt: string; // ISO 8601
-};
-
-type CameraPermissionStatus = 'denied' | 'granted' | 'not-determined' | 'restricted';
-
 export const QRScanScreen = () => {
-  const { pop } = useNavigation();
-  const [permissionStatus, setPermissionStatus] = useState<CameraPermissionStatus>('not-determined');
-  const isScanning = useRef(false);
-  const visionCameraRuntime = useMemo(() => getOptionalVisionCameraRuntime(), []);
-  const CameraComponent = visionCameraRuntime.isAvailable ? visionCameraRuntime.CameraComponent : null;
-  const backDevice = useMemo(() => {
-    if (!visionCameraRuntime.isAvailable) {
-      return null;
-    }
+  const {pop} = useNavigation();
+  const {currentResult, handleScan, clearResult} = useScanSession();
 
-    return visionCameraRuntime.getAvailableCameraDevices().find(device => device.position === 'back') ?? null;
-  }, [visionCameraRuntime]);
+  const isResultVisible = currentResult.status !== 'idle';
 
-  useEffect(() => {
-    if (!visionCameraRuntime.isAvailable) {
-      return undefined;
-    }
-
-    setPermissionStatus(visionCameraRuntime.getCameraPermissionStatus());
-    return undefined;
-  }, [visionCameraRuntime]);
-
-  const onCodeScanned = useCallback((codes: Code[]) => {
-    if (isScanning.current || codes.length === 0) return;
-    isScanning.current = true;
-    const qrData = codes[0]?.value ?? '';
-    Alert.alert(
-      'QRコードを読み取りました',
-      `内容: ${qrData}`,
-      [
-        {
-          text: '続けてスキャン',
-          onPress: () => {
-            isScanning.current = false;
-          },
-        },
-        {
-          text: '閉じる',
-          onPress: () => pop(),
-          style: 'cancel',
-        },
-      ],
-      { cancelable: false }
-    );
-  }, [pop]);
-
-  const codeScanner = useMemo<CodeScanner | undefined>(() => {
-    if (!visionCameraRuntime.isAvailable) {
-      return undefined;
-    }
-
-    return {
-      codeTypes: ['qr'],
-      onCodeScanned,
-    };
-  }, [onCodeScanned, visionCameraRuntime]);
-
-  const hasPermission = permissionStatus === 'granted';
-
-  const requestPermission = useCallback(async () => {
-    if (!visionCameraRuntime.isAvailable) {
-      return;
-    }
-
-    const nextStatus = await visionCameraRuntime.requestCameraPermission();
-    setPermissionStatus(nextStatus);
-  }, [visionCameraRuntime]);
-
-  if (!visionCameraRuntime.isAvailable) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.permissionText}>カメラ機能を利用できません</Text>
-        <Text style={styles.unavailableText}>
-          VisionCamera のネイティブモジュールが見つかりません。`cd ios && pod install` の後にアプリを再ビルドしてください。
-        </Text>
-        <TouchableOpacity
-          style={styles.permissionButton}
-          onPress={() => pop()}
-        >
-          <Text style={styles.permissionButtonText}>閉じる</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  if (!hasPermission) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.permissionText}>カメラの権限が必要です</Text>
-        <TouchableOpacity
-          style={styles.permissionButton}
-          onPress={async () => {
-            await requestPermission();
-          }}
-        >
-          <Text style={styles.permissionButtonText}>権限を許可する</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  const handleContinue = React.useCallback(() => {
+    clearResult();
+  }, [clearResult]);
 
   return (
     <View style={styles.cameraContainer}>
-      {/* Header */}
       <View style={styles.cameraHeader}>
         <TouchableOpacity onPress={() => pop()}>
           <Text style={styles.closeButton}>✕</Text>
@@ -123,27 +23,22 @@ export const QRScanScreen = () => {
         <Text style={styles.cameraTitle}>QR 入場スキャン</Text>
         <View style={styles.spacer} />
       </View>
-      {/* Camera */}
-      {backDevice && CameraComponent ? (
-        <CameraComponent
-          style={styles.camera}
-          device={backDevice}
-          isActive={true}
-          codeScanner={codeScanner}
-        />
-      ) : (
-        <View style={styles.noCameraContainer}>
-          <Text style={styles.noCameraText}>カメラデバイスが見つかりません</Text>
+
+      <ScanCamera disabled={isResultVisible} onScan={handleScan} />
+
+      {isResultVisible ? (
+        <View style={styles.resultOverlay}>
+          <View style={styles.resultCard}>
+            <Text style={styles.resultLabel}>読み取り結果</Text>
+            <Text style={styles.resultValue}>{currentResult.qrData}</Text>
+            {currentResult.message ? <Text style={styles.resultMessage}>{currentResult.message}</Text> : null}
+            <TouchableOpacity style={styles.resultButton} onPress={handleContinue}>
+              <Text style={styles.resultButtonText}>続けて認証する</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      )}
-      {/* Overlay */}
-      <View style={styles.overlay}>
-        <View style={styles.scanFrame}>
-          {/* 四隅マーカー等は必要に応じて追加 */}
-        </View>
-        <Text style={styles.overlayText}>QRコードを枠内に合わせてください</Text>
-      </View>
-      {/* Footer */}
+      ) : null}
+
       <View style={styles.cameraFooter}>
         <Text style={styles.mockIndicator}>MOCK — API 未接続</Text>
       </View>
@@ -152,33 +47,6 @@ export const QRScanScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-  },
-  permissionText: {
-    color: 'white',
-    fontSize: 18,
-    marginBottom: 16,
-  },
-  permissionButton: {
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  permissionButtonText: {
-    color: 'white',
-  },
-  unavailableText: {
-    marginBottom: 16,
-    color: 'white',
-    fontSize: 13,
-    lineHeight: 18,
-    textAlign: 'center',
-  },
   cameraContainer: {
     flex: 1,
     backgroundColor: 'black',
@@ -205,18 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
-  camera: {
-    flex: 1,
-  },
-  noCameraContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  noCameraText: {
-    color: 'white',
-  },
-  overlay: {
+  resultOverlay: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -224,20 +81,47 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
   },
-  scanFrame: {
-    width: 256,
-    height: 256,
-    borderWidth: 4,
-    borderColor: '#fbbf24',
-    borderRadius: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  resultCard: {
+    width: '100%',
+    maxWidth: 360,
+    borderRadius: 18,
+    backgroundColor: 'rgba(17, 24, 39, 0.94)',
+    paddingHorizontal: 18,
+    paddingVertical: 20,
   },
-  overlayText: {
+  resultLabel: {
+    color: '#9ca3af',
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  resultValue: {
+    marginTop: 10,
     color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  resultMessage: {
+    marginTop: 10,
+    color: '#d1d5db',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  resultButton: {
     marginTop: 16,
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    backgroundColor: '#fbbf24',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+  },
+  resultButtonText: {
+    color: '#111827',
+    fontSize: 13,
+    fontWeight: '800',
   },
   cameraFooter: {
     position: 'absolute',

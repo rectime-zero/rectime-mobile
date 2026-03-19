@@ -8,4 +8,6 @@ export {default as SettingsScreen} from './push/SettingsScreen';
 export {default as MatchInfoScreen} from './push/MatchInfoScreen';
 export {default as NotificationsScreen} from './push/NotificationsScreen';
 export {default as HelpCenterScreen} from './push/HelpCenterScreen';
+export {default as OperatorMenuScreen} from './push/OperatorMenuScreen';
 export {DevMenuScreen, type GateCheckInPayload} from './push/DevMenuScreen';
+export {QRScanScreen} from '../features/gate';

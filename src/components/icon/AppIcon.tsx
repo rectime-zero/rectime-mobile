@@ -15,7 +15,17 @@ type ImageIconSpec = {
 };
 
 export type AppIconSpec = FontAwesomeIconSpec | ImageIconSpec;
-export type AppIconKey = 'home' | 'schedule' | 'ranking' | 'map' | 'rules' | 'match-info' | 'settings' | 'help-center' | 'dev';
+export type AppIconKey =
+    | 'home'
+    | 'schedule'
+    | 'ranking'
+    | 'map'
+    | 'rules'
+    | 'match-info'
+    | 'settings'
+    | 'help-center'
+    | 'dev'
+    | 'operator-menu';
 
 const appIconMap: Record<AppIconKey, AppIconSpec> = {
     home: {kind: 'font-awesome', name: 'home', iconStyle: 'solid'},
@@ -27,6 +37,7 @@ const appIconMap: Record<AppIconKey, AppIconSpec> = {
     settings: {kind: 'font-awesome', name: 'cog', iconStyle: 'solid'},
     'help-center': {kind: 'font-awesome', name: 'book-open', iconStyle: 'solid'},
     dev: {kind: 'font-awesome', name: 'code', iconStyle: 'solid'},
+    'operator-menu': {kind: 'font-awesome', name: 'users', iconStyle: 'solid'},
 };
 
 function resolveAppIcon(icon: AppIconKey | AppIconSpec): AppIconSpec {

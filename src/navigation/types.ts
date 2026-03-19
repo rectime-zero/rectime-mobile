@@ -4,7 +4,15 @@ export type PushTransitionSource = 'default' | 'side-menu';
 export type PushTransitionMode = 'idle' | 'enter';
 
 export type RootScreenName = 'home' | 'schedule' | 'ranking' | 'map' | 'rules';
-export type PushScreenName = 'detail' | 'settings' | 'match-info' | 'notifications' | 'help-center' | 'dev';
+export type PushScreenName =
+    | 'detail'
+    | 'settings'
+    | 'match-info'
+    | 'notifications'
+    | 'help-center'
+    | 'dev'
+    | 'operator-menu'
+    | 'gate-scan';
 export type SideMenuPushScreenName = Exclude<PushScreenName, 'detail'>;
 export type SheetScreenName = 'sample-sheet' | 'theme-sheet';
 export type AppScreenName = RootScreenName | PushScreenName | SheetScreenName;
@@ -30,6 +38,8 @@ export type RouteParamsMap = {
     notifications: undefined;
     'help-center': undefined;
     dev: undefined;
+    'operator-menu': undefined;
+    'gate-scan': undefined;
     'sample-sheet': undefined;
     'theme-sheet': undefined;
 };

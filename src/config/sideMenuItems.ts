@@ -10,6 +10,11 @@ export type SideMenuItem = {
 
 export const sideMenuItems: SideMenuItem[] = [
     {
+        route: sideMenuRoutes.operatorMenu(),
+        label: '運営メニュー',
+        icon: 'operator-menu',
+    },
+    {
         route: sideMenuRoutes.matchInfo('IA31', '最新の対戦結果やスコア推移を確認できます。'),
         label: '対戦情報',
         icon: 'match-info',

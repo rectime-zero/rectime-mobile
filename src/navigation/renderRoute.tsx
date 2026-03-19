@@ -9,6 +9,8 @@ import {
     MapScreen,
     MatchInfoScreen,
     NotificationsScreen,
+    OperatorMenuScreen,
+    QRScanScreen,
     RankingScreen,
     RulesScreen,
     ScheduleScreen,
@@ -48,6 +50,10 @@ export function renderPushScreen(route: AppRoute<PushScreenName>) {
             return <HelpCenterScreen route={route as AppRoute<'help-center'>} />;
         case 'match-info':
             return <MatchInfoScreen route={route as AppRoute<'match-info'>} />;
+        case 'operator-menu':
+            return <OperatorMenuScreen route={route as AppRoute<'operator-menu'>} />;
+        case 'gate-scan':
+            return <QRScanScreen />;
         case 'dev':
             return <DevMenuScreen />;
         case 'detail':

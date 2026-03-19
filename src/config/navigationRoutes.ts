@@ -31,6 +31,8 @@ const pushRouteTitles = {
     settings: '設定',
     'match-info': '対戦情報',
     dev: '開発メニュー',
+    'operator-menu': '運営メニュー',
+    'gate-scan': 'QR認証',
     notifications: '通知',
     'help-center': 'ヘルプセンター',
 } as const;
@@ -63,6 +65,10 @@ export const pushRoutes = {
             summary,
         },
     }),
+    gateScan: (): PushRouteTarget<'gate-scan'> => ({
+        name: 'gate-scan',
+        params: undefined,
+    }),
 } as const;
 
 export const sideMenuRoutes = {
@@ -83,6 +89,10 @@ export const sideMenuRoutes = {
     }),
     dev: (): SideMenuPushRouteTarget<'dev'> => ({
         name: 'dev',
+        params: undefined,
+    }),
+    operatorMenu: (): SideMenuPushRouteTarget<'operator-menu'> => ({
+        name: 'operator-menu',
         params: undefined,
     }),
 } as const;
