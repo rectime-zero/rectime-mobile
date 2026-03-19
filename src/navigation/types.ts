@@ -14,7 +14,7 @@ export type PushScreenName =
     | 'operator-menu'
     | 'gate-scan';
 export type SideMenuPushScreenName = Exclude<PushScreenName, 'detail'>;
-export type SheetScreenName = 'sample-sheet' | 'theme-sheet';
+export type SheetScreenName = 'sample-sheet' | 'theme-sheet' | 'ticket-sheet';
 export type AppScreenName = RootScreenName | PushScreenName | SheetScreenName;
 
 export type ActiveGesture = 'none' | 'menu' | 'back' | 'sheet';
@@ -42,6 +42,7 @@ export type RouteParamsMap = {
     'gate-scan': undefined;
     'sample-sheet': undefined;
     'theme-sheet': undefined;
+    'ticket-sheet': undefined;
 };
 
 type RouteName = keyof RouteParamsMap;

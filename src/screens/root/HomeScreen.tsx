@@ -2,14 +2,14 @@ import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import {pushRoutes} from '../../config/navigationRoutes';
+import {pushRoutes, sheetRoutes} from '../../config/navigationRoutes';
 import {homeActions, homeHighlights} from '../../features/home/data';
 import {useNavigation} from '../../navigation/useNavigation';
 import {useTheme} from '../../theme';
 
 function HomeScreen() {
     const {theme} = useTheme();
-    const {pushRoute} = useNavigation();
+    const {presentSheetRoute, pushRoute} = useNavigation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
 
     return (
@@ -45,6 +45,11 @@ function HomeScreen() {
                                         '勝敗と得点推移をまとめたカードとして試合詳細を確認できます。',
                                     ),
                                 );
+                                return;
+                            }
+
+                            if (action.label === 'マイQR') {
+                                presentSheetRoute(sheetRoutes.ticketQr);
                                 return;
                             }
 

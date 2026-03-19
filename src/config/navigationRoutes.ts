@@ -47,6 +47,7 @@ export function getPushRouteTitle(route: AppRoute<PushScreenName>) {
 
 export const sheetRoutes = {
     themePicker: {name: 'theme-sheet', params: undefined},
+    ticketQr: {name: 'ticket-sheet', params: undefined},
 } as const satisfies Record<string, SheetRouteTarget>;
 
 export const pushRoutes = {

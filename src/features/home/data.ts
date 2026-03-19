@@ -3,7 +3,7 @@ import {type HomeAction, type HomeHighlight} from './types';
 export const homeActions: HomeAction[] = [
     {label: '次の試合', icon: 'play-circle', tone: 'primary'},
     {label: '通知を確認', icon: 'bell', tone: 'secondary'},
-    {label: '会場メモ', icon: 'sticky-note', tone: 'secondary'},
+    {label: 'マイQR', icon: 'camera', tone: 'secondary'},
 ];
 
 export const homeHighlights: HomeHighlight[] = [

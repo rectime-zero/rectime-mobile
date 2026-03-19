@@ -1,5 +1,6 @@
 import React from 'react';
 import {SampleBottomSheet} from '../features/sampleSheet';
+import {TicketQrSheet} from '../features/ticket';
 import {ThemeSheet} from '../features/themeSheet';
 import {
     DetailScreen,
@@ -64,6 +65,8 @@ export function renderPushScreen(route: AppRoute<PushScreenName>) {
 
 export function renderSheetScreen(route: AppRoute<SheetScreenName>) {
     switch (route.name) {
+        case 'ticket-sheet':
+            return <TicketQrSheet />;
         case 'theme-sheet':
             return <ThemeSheet />;
         case 'sample-sheet':
@@ -74,6 +77,11 @@ export function renderSheetScreen(route: AppRoute<SheetScreenName>) {
 
 export function getSheetScreenOptions(route: AppRoute<SheetScreenName>): SheetScreenOptions {
     switch (route.name) {
+        case 'ticket-sheet':
+            return {
+                layoutMode: 'fit',
+                showHandle: true,
+            };
         case 'theme-sheet':
             return {
                 layoutMode: 'full',
