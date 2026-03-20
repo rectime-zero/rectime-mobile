@@ -6,14 +6,17 @@ import {useNavigation} from '../../../navigation/useNavigation';
 import OpenMenuButton from '../../../navigation/components/OpenMenuButton';
 import {screenLayout} from '../../../tokens/layout';
 
-type RootScreenLayoutProps = Omit<ScreenLayoutProps, 'title' | 'headerLeading' | 'headerTrailing'>;
+type RootScreenLayoutProps = Omit<ScreenLayoutProps, 'title' | 'headerLeading' | 'headerTrailing'> & {
+    includeBottomNavigationInset?: boolean;
+};
 
 function RootScreenLayout(props: RootScreenLayoutProps) {
+    const {contentContainerStyle, includeBottomNavigationInset = true, ...restProps} = props;
     const {rootRoute, pushRoute} = useNavigation();
 
     return (
         <ScreenLayoutBase
-            {...props}
+            {...restProps}
             headerLeading={<OpenMenuButton />}
             headerTrailing={
                 <AccessoryButton
@@ -23,7 +26,7 @@ function RootScreenLayout(props: RootScreenLayoutProps) {
                 />
             }
             title={getRootRouteTitle(rootRoute.name)}
-            contentContainerStyle={styles.contentWithBottomNavigation}
+            contentContainerStyle={[includeBottomNavigationInset ? styles.contentWithBottomNavigation : null, contentContainerStyle]}
         />
     );
 }
