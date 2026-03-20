@@ -8,19 +8,29 @@ import {screenLayout, size} from '../../tokens/layout';
 import NativeLiquidGlassView, {isNativeLiquidGlassAvailable} from '../surface/NativeLiquidGlassView';
 
 const HEADER_SCROLL_RANGE = 80;
+const HEADER_BELOW_HEIGHT = 56;
 
 type ScreenHeaderProps = {
     title: string;
     leading?: ReactNode;
     trailing?: ReactNode;
+    below?: ReactNode;
     scrollY: SharedValue<number>;
+    titleVisible?: boolean;
 };
 
-function ScreenHeader({title, leading, trailing, scrollY}: ScreenHeaderProps) {
+function ScreenHeader({
+    title,
+    leading,
+    trailing,
+    below,
+    scrollY,
+    titleVisible = true,
+}: ScreenHeaderProps) {
     const {theme} = useTheme();
     const insets = useSafeAreaInsets();
     const useLiquidGlass = isNativeLiquidGlassAvailable();
-    const styles = React.useMemo(() => createStyles(theme, insets.top), [insets.top, theme]);
+    const styles = React.useMemo(() => createStyles(theme, insets.top, Boolean(below)), [below, insets.top, theme]);
 
     React.useEffect(() => {
         console.log('[ScreenHeader] LiquidGlass available:', useLiquidGlass);
@@ -69,17 +79,25 @@ function ScreenHeader({title, leading, trailing, scrollY}: ScreenHeaderProps) {
 
             <View style={styles.header}>
                 <View style={styles.leading}>{leading}</View>
-                <Text numberOfLines={1} style={styles.title}>
-                    {title}
-                </Text>
+                {titleVisible ? (
+                    <Text numberOfLines={1} style={styles.title}>
+                        {title}
+                    </Text>
+                ) : (
+                    <View style={styles.titleSpacer} />
+                )}
                 <View style={styles.trailing}>{trailing}</View>
             </View>
+
+            {below ? <View style={styles.below}>{below}</View> : null}
         </View>
     );
 }
 
-function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: number) {
-    const headerHeight = topInset + size.headerAction + screenLayout.headerPaddingTop + screenLayout.headerPaddingBottom;
+function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: number, hasBelow: boolean) {
+    const extraHeight = hasBelow ? HEADER_BELOW_HEIGHT : 0;
+    const headerHeight =
+        topInset + size.headerAction + screenLayout.headerPaddingTop + screenLayout.headerPaddingBottom + extraHeight;
     const gradientHeight = headerHeight;
 
     return StyleSheet.create({
@@ -129,6 +147,15 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             color: theme.colors.textPrimary,
             fontSize: 18,
             fontWeight: '800',
+        },
+        titleSpacer: {
+            flex: 1,
+        },
+        below: {
+            minHeight: HEADER_BELOW_HEIGHT,
+            paddingHorizontal: screenLayout.horizontalPadding,
+            paddingBottom: screenLayout.headerPaddingBottom,
+            justifyContent: 'center',
         },
     });
 }

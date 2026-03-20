@@ -19,9 +19,11 @@ export type ScreenLayoutProps = {
     title: string;
     headerLeading?: ReactNode;
     headerTrailing?: ReactNode;
+    headerBelow?: ReactNode;
     children: ReactNode;
     contentContainerStyle?: StyleProp<ViewStyle>;
     headerMode?: ScreenLayoutHeaderMode;
+    headerTitleVisible?: boolean;
     scrollMode?: ScreenLayoutScrollMode;
     contentInsets?: ScreenLayoutContentInsets;
 };
@@ -30,9 +32,11 @@ function ScreenLayoutBase({
     title,
     headerLeading,
     headerTrailing,
+    headerBelow,
     children,
     contentContainerStyle,
     headerMode = 'inset',
+    headerTitleVisible = true,
     scrollMode = 'scroll',
     contentInsets,
 }: ScreenLayoutProps) {
@@ -40,8 +44,8 @@ function ScreenLayoutBase({
     const insets = useSafeAreaInsets();
     const scrollY = useSharedValue(0);
     const styles = React.useMemo(
-        () => createStyles(theme, insets.top, headerMode, contentInsets),
-        [theme, insets.top, headerMode, contentInsets],
+        () => createStyles(theme, insets.top, headerMode, Boolean(headerBelow), contentInsets),
+        [theme, headerBelow, insets.top, headerMode, contentInsets],
     );
     const scrollHandler = useAnimatedScrollHandler(event => {
         scrollY.value = event.contentOffset.y;
@@ -61,7 +65,14 @@ function ScreenLayoutBase({
                 <View style={[styles.fixedContent, styles.content, contentContainerStyle]}>{children}</View>
             )}
 
-            <ScreenHeader leading={headerLeading} scrollY={scrollY} title={title} trailing={headerTrailing} />
+            <ScreenHeader
+                leading={headerLeading}
+                below={headerBelow}
+                scrollY={scrollY}
+                title={title}
+                titleVisible={headerTitleVisible}
+                trailing={headerTrailing}
+            />
         </View>
     );
 }
@@ -70,9 +81,15 @@ function createStyles(
     theme: ReturnType<typeof useTheme>['theme'],
     topInset: number,
     headerMode: ScreenLayoutHeaderMode,
+    hasHeaderBelow: boolean,
     contentInsets?: ScreenLayoutContentInsets,
 ) {
-    const headerHeight = topInset + size.headerAction + screenLayout.headerPaddingTop + screenLayout.headerPaddingBottom;
+    const headerHeight =
+        topInset +
+        size.headerAction +
+        screenLayout.headerPaddingTop +
+        screenLayout.headerPaddingBottom +
+        (hasHeaderBelow ? 56 : 0);
     const includeHorizontalPadding = contentInsets?.horizontal ?? true;
     const includeBottomPadding = contentInsets?.bottom ?? true;
     const includeGap = contentInsets?.gap ?? true;
