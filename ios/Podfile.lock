@@ -65,6 +65,14 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - MapboxCommon (24.16.6):
+    - Turf (= 4.0.0)
+  - MapboxCoreMaps (11.16.6):
+    - MapboxCommon (= 24.16.6)
+  - MapboxMaps (11.16.6):
+    - MapboxCommon (= 24.16.6)
+    - MapboxCoreMaps (= 11.16.6)
+    - Turf (= 4.0.0)
   - MLImage (1.0.0-beta5)
   - MLKitBarcodeScanning (5.0.0):
     - MLKitCommon (~> 11.0)
@@ -1976,6 +1984,38 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - SocketRocket
+  - react-native-config (1.6.1):
+    - react-native-config/App (= 1.6.1)
+  - react-native-config/App (1.6.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - react-native-geolocation-service (5.3.1):
+    - React
   - react-native-netinfo (12.0.1):
     - boost
     - DoubleConversion
@@ -2708,6 +2748,38 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - rnmapbox-maps (10.2.10):
+    - MapboxMaps (~> 11.16.2)
+    - React
+    - React-Core
+    - rnmapbox-maps/DynamicLibrary (= 10.2.10)
+    - Turf
+  - rnmapbox-maps/DynamicLibrary (10.2.10):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - hermes-engine
+    - MapboxMaps (~> 11.16.2)
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Core
+    - React-featureflags
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Turf
+    - Yoga
   - RNReactNativeHapticFeedback (2.3.3):
     - boost
     - DoubleConversion
@@ -2975,6 +3047,7 @@ PODS:
     - SocketRocket
     - Yoga
   - SocketRocket (0.7.1)
+  - Turf (4.0.0)
   - vision-camera-code-scanner (0.2.0):
     - GoogleMLKit/BarcodeScanning
     - React-Core
@@ -3034,6 +3107,8 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -3073,6 +3148,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - "rnmapbox-maps (from `../node_modules/@rnmapbox/maps`)"
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -3090,6 +3166,9 @@ SPEC REPOS:
     - GoogleUtilities
     - GoogleUtilitiesComponents
     - GTMSessionFetcher
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
     - MLImage
     - MLKitBarcodeScanning
     - MLKitCommon
@@ -3097,6 +3176,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - SocketRocket
+    - Turf
 
 EXTERNAL SOURCES:
   boost:
@@ -3190,6 +3270,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
+  react-native-geolocation-service:
+    :path: "../node_modules/react-native-geolocation-service"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -3268,6 +3352,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  rnmapbox-maps:
+    :path: "../node_modules/@rnmapbox/maps"
   RNReactNativeHapticFeedback:
     :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
@@ -3299,6 +3385,9 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   hermes-engine: 0a561857e1679ebc107957c605aecc20aa51470e
   LiquidGlass: a8e51bb9c1b34c7ec8011e7e9ced69048ca664e4
+  MapboxCommon: 10cbf74edb23c9abcfe2424899d804f288a47334
+  MapboxCoreMaps: f19680d20681797067268284b2292349de861730
+  MapboxMaps: 04c7bf46d66265ad0f4b98484a251777a926c423
   MLImage: 1824212150da33ef225fbd3dc49f184cf611046c
   MLKitBarcodeScanning: 10ca0845a6d15f2f6e911f682a1998b68b973e8b
   MLKitCommon: afec63980417d29ffbb4790529a1b0a2291699e1
@@ -3341,6 +3430,8 @@ SPEC CHECKSUMS:
   React-logger: 9c8e7584dc54dbc2a05b06b95cc5ce79f7074c71
   React-Mapbuffer: a8b3f90538e7dfa4cadd7e8c6b5556b887dedae7
   React-microtasksnativemodule: 53a302fac7dddfca18b54051f9c3bdc4fba75b10
+  react-native-config: 2249b7e68644c86ea68358f5a0d746d1c648f900
+  react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
   react-native-netinfo: a0be8c77f8420a60ddf07eb87be1a36f02a1bd65
   react-native-safe-area-context: befb5404eb8a16fdc07fa2bebab3568ecabcbb8a
   react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
@@ -3380,15 +3471,17 @@ SPEC CHECKSUMS:
   ReactCommon: 02ee6650471e9c32a201abc0b593e4b0e5d1eede
   RNCAsyncStorage: 29f0230e1a25f36c20b05f65e2eb8958d6526e82
   RNGestureHandler: 0108b0a14d04c88c382138bea400c111ceb3f79f
+  rnmapbox-maps: 3d1e47317c5ca1763a120120c207825ab3728836
   RNReactNativeHapticFeedback: be4f1b4bf0398c30b59b76ed92ecb0a2ff3a69c6
   RNReanimated: f9ca89d6e14f5eff75a6a8980f2fe96e3eb13a79
   RNSVG: db85b4eb848b5978a77cdbf797738f4e3ed1bdbb
   RNWorklets: 7db4160b37e6716c63e75e5712d97b57f6c4e601
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  Turf: c9eb11a65d96af58cac523460fd40fec5061b081
   vision-camera-code-scanner: 11d37324829dd692c065eb98adf3501a792fad49
   VisionCamera: 7187b3dac1ff3071234ead959ce311875748e14f
   Yoga: 447c8baf495b8d96457a46e6691a2c9952cbd07f
 
-PODFILE CHECKSUM: a282f7bc6960c86774eb101ab0bf21b474f4d8f7
+PODFILE CHECKSUM: bb605ba0a501418ce08926af8a91a344af30bbe0
 
 COCOAPODS: 1.16.2

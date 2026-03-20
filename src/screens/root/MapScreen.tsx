@@ -1,26 +1,51 @@
 import React from 'react';
 import FontAwesome5 from '@react-native-vector-icons/fontawesome5';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Pressable, StyleSheet, Text, View} from 'react-native';
 import RootScreenLayout from '../../components/layout/screen/RootScreenLayout';
-import {mapCopy, mapPlaces} from '../../features/map/data';
+import {FacilityMapView} from '../../features/map/components/FacilityMapView';
+import {facilities, initialMapCenter, initialMapZoomLevel, mapCopy} from '../../features/map/data';
+import {useMapLocation} from '../../features/map/hooks/useMapLocation';
 import {useTheme} from '../../theme';
 
 function MapScreen() {
     const {theme} = useTheme();
+    const {latitude, longitude, hasPermission, isLoading} = useMapLocation();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
+    const userLocation = latitude !== null && longitude !== null ? {latitude, longitude} : null;
 
     return (
         <RootScreenLayout>
-            <View style={styles.mapPlaceholder}>
-                <View style={styles.blurLayer} />
-                <Text style={styles.placeholderTitle}>{mapCopy.title}</Text>
-                <Text style={styles.placeholderBody}>{mapCopy.body}</Text>
-
-                <View style={styles.floatingLeft}>
-                    <FontAwesome5 color={theme.colors.textOnAccent} iconStyle="solid" name="bullseye" size={18} />
+            <View style={styles.mapCard}>
+                <View style={styles.mapCopyBlock}>
+                    <Text style={styles.placeholderTitle}>{mapCopy.title}</Text>
+                    <Text style={styles.placeholderBody}>{mapCopy.body}</Text>
                 </View>
-                <View style={styles.floatingRight}>
-                    <FontAwesome5 color={theme.colors.textPrimary} iconStyle="solid" name="list-ul" size={18} />
+
+                <View style={styles.mapViewport}>
+                    <FacilityMapView
+                        facilities={facilities}
+                        initialCenter={initialMapCenter}
+                        initialZoomLevel={initialMapZoomLevel}
+                        unavailableBody={mapCopy.unavailableBody}
+                        unavailableTitle={mapCopy.unavailableTitle}
+                        userLocation={userLocation}
+                    />
+
+                    <View style={styles.topStatusRow}>
+                        {isLoading ? (
+                            <View style={styles.statusBadge}>
+                                <ActivityIndicator color={theme.colors.navigationActive} size="small" />
+                                <Text style={styles.statusText}>{mapCopy.currentLocationLoading}</Text>
+                            </View>
+                        ) : null}
+
+                        {!hasPermission ? (
+                            <View style={[styles.statusBadge, styles.permissionBadge]}>
+                                <FontAwesome5 color={theme.colors.textWarning} iconStyle="solid" name="map-marker-alt" size={14} />
+                                <Text style={styles.statusText}>{mapCopy.permissionRequired}</Text>
+                            </View>
+                        ) : null}
+                    </View>
                 </View>
             </View>
 
@@ -28,9 +53,14 @@ function MapScreen() {
                 <View style={styles.placeHandle} />
                 <Text style={styles.placeTitle}>{mapCopy.placeTitle}</Text>
                 <View style={styles.placeList}>
-                    {mapPlaces.map((place, index) => (
-                        <Pressable key={place.id} style={[styles.placeRow, index < mapPlaces.length - 1 ? styles.placeRowBorder : null]}>
-                            <Text style={styles.placeName}>{place.name}</Text>
+                    {facilities.map((facility, index) => (
+                        <Pressable
+                            key={facility.id}
+                            style={[styles.placeRow, index < facilities.length - 1 ? styles.placeRowBorder : null]}>
+                            <View style={styles.placeTextBlock}>
+                                <Text style={styles.placeName}>{facility.name}</Text>
+                                {facility.description ? <Text style={styles.placeDescription}>{facility.description}</Text> : null}
+                            </View>
                             <FontAwesome5 color={theme.colors.textMuted} iconStyle="solid" name="chevron-right" size={12} />
                         </Pressable>
                     ))}
@@ -42,18 +72,24 @@ function MapScreen() {
 
 function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
     return StyleSheet.create({
-        mapPlaceholder: {
-            height: 360,
-            justifyContent: 'flex-end',
+        mapCard: {
+            gap: 14,
+        },
+        mapCopyBlock: {
+            gap: 8,
+        },
+        mapViewport: {
+            height: 380,
             overflow: 'hidden',
             borderRadius: 28,
-            padding: 20,
-            backgroundColor: theme.colors.surfaceMuted,
         },
-        blurLayer: {
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: theme.colors.surfaceAccent,
-            opacity: 0.78,
+        topStatusRow: {
+            position: 'absolute',
+            top: 14,
+            left: 14,
+            right: 14,
+            gap: 8,
+            alignItems: 'flex-start',
         },
         placeholderTitle: {
             color: theme.colors.textPrimary,
@@ -67,30 +103,26 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             fontSize: 14,
             lineHeight: 22,
         },
-        floatingLeft: {
-            position: 'absolute',
-            left: 18,
-            bottom: 22,
-            width: 56,
-            height: 56,
+        statusBadge: {
+            flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 28,
-            backgroundColor: theme.colors.navigationActive,
-        },
-        floatingRight: {
-            position: 'absolute',
-            right: 18,
-            bottom: 22,
-            width: 56,
-            height: 56,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 28,
+            gap: 8,
+            borderRadius: 999,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
             backgroundColor: theme.colors.surfacePrimary,
+            borderWidth: 1,
+            borderColor: theme.colors.borderSubtle,
+        },
+        permissionBadge: {
+            backgroundColor: theme.colors.surfaceWarning,
+        },
+        statusText: {
+            color: theme.colors.textPrimary,
+            fontSize: 12,
+            fontWeight: '700',
         },
         placeCard: {
-            marginTop: -78,
             gap: 12,
             borderRadius: 28,
             paddingHorizontal: 18,
@@ -121,8 +153,13 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: 12,
             paddingHorizontal: 16,
             paddingVertical: 15,
+        },
+        placeTextBlock: {
+            flex: 1,
+            gap: 4,
         },
         placeRowBorder: {
             borderBottomWidth: 1,
@@ -132,6 +169,11 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
             color: theme.colors.textPrimary,
             fontSize: 15,
             fontWeight: '700',
+        },
+        placeDescription: {
+            color: theme.colors.textSecondary,
+            fontSize: 12,
+            lineHeight: 18,
         },
     });
 }

@@ -7,6 +7,7 @@ import NavigationProvider from './NavigationProvider';
 import NavigationRenderer from './NavigationRenderer';
 import {ThemeProvider, useTheme} from '../theme';
 import { SplashScreen } from '../components/SplashScreen';
+import {initializeMapbox} from '../config/mapbox';
 
 function AppContent() {
     const {resolvedMode, theme} = useTheme();
@@ -28,6 +29,10 @@ function AppContent() {
 
 function App() {
     const [splashDone, setSplashDone] = useState(false);
+
+    React.useEffect(() => {
+        initializeMapbox();
+    }, []);
 
     return (
         <GestureHandlerRootView style={styles.root}>

@@ -20,6 +20,16 @@ buildscript {
 
 apply plugin: "com.facebook.react.rootproject"
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+        }
+    }
+}
+
 subprojects { subproject ->
     subproject.plugins.withId("com.android.library") {
         subproject.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
