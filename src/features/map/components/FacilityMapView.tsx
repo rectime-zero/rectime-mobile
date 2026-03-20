@@ -10,6 +10,8 @@ type FacilityMapViewProps = {
     facilities: Facility[];
     initialCenter: [number, number];
     initialZoomLevel?: number;
+    isLocatingUser?: boolean;
+    onLocateUser: () => void;
     userLocation?: MapLocation | null;
     unavailableTitle: string;
     unavailableBody: string;
@@ -19,6 +21,8 @@ export function FacilityMapView({
     facilities,
     initialCenter,
     initialZoomLevel = 16,
+    isLocatingUser = false,
+    onLocateUser,
     userLocation = null,
     unavailableTitle,
     unavailableBody,
@@ -26,7 +30,15 @@ export function FacilityMapView({
     const {theme} = useTheme();
     const styles = React.useMemo(() => createStyles(theme), [theme]);
     const runtime = React.useMemo(() => getOptionalMapboxRuntime(), []);
-    const [cameraRevision, setCameraRevision] = React.useState(0);
+    const cameraRef = React.useRef<{
+        setCamera: (config: {
+            centerCoordinate?: [number, number];
+            zoomLevel?: number;
+            animationDuration?: number;
+            animationMode?: 'easeTo' | 'flyTo' | 'linearTo' | 'moveTo' | 'none';
+        }) => void;
+    } | null>(null);
+    const [isFollowingUser, setIsFollowingUser] = React.useState(false);
 
     if (!runtime.isAvailable || !runtime.mapbox || !getMapboxAccessToken()) {
         return (
@@ -42,18 +54,31 @@ export function FacilityMapView({
         ? [userLocation.longitude, userLocation.latitude] as [number, number]
         : initialCenter;
 
+    React.useEffect(() => {
+        if (!userLocation || !isFollowingUser) {
+            return;
+        }
+
+        cameraRef.current?.setCamera({
+            centerCoordinate: [userLocation.longitude, userLocation.latitude],
+            zoomLevel: initialZoomLevel,
+            animationDuration: 600,
+            animationMode: 'easeTo',
+        });
+    }, [initialZoomLevel, isFollowingUser, userLocation]);
+
     return (
         <View style={styles.container}>
             <Mapbox.MapView
                 attributionEnabled={false}
-                compassEnabled
+                compassEnabled={false}
                 logoEnabled={false}
                 rotateEnabled={false}
                 scaleBarEnabled={false}
                 style={styles.map}
                 styleURL={Mapbox.StyleURL.Street}>
                 <Mapbox.Camera
-                    key={`${centerCoordinate[0]}-${centerCoordinate[1]}-${cameraRevision}`}
+                    ref={cameraRef}
                     animationDuration={600}
                     centerCoordinate={centerCoordinate}
                     zoomLevel={initialZoomLevel}
@@ -63,26 +88,26 @@ export function FacilityMapView({
                     <Mapbox.PointAnnotation
                         key={facility.id}
                         coordinate={[facility.longitude, facility.latitude]}
-                        id={facility.id}
-                    />
+                        id={facility.id}>
+                        <View style={styles.facilityMarker} />
+                    </Mapbox.PointAnnotation>
                 ))}
 
                 {userLocation ? (
                     <Mapbox.PointAnnotation
                         coordinate={[userLocation.longitude, userLocation.latitude]}
-                        id="current-location"
-                    />
+                        id="current-location">
+                        <View style={styles.currentLocationMarker} />
+                    </Mapbox.PointAnnotation>
                 ) : null}
             </Mapbox.MapView>
 
             <MapLocationButton
-                disabled={!userLocation}
+                isLoading={isLocatingUser}
+                label={userLocation ? '現在地へ戻る' : '現在地を取得'}
                 onPress={() => {
-                    if (!userLocation) {
-                        return;
-                    }
-
-                    setCameraRevision(current => current + 1);
+                    setIsFollowingUser(true);
+                    void onLocateUser();
                 }}
             />
         </View>
@@ -99,6 +124,27 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme']) {
         },
         map: {
             flex: 1,
+        },
+        facilityMarker: {
+            width: 12,
+            height: 12,
+            borderRadius: 999,
+            backgroundColor: theme.colors.navigationActive,
+            borderWidth: 2,
+            borderColor: theme.colors.surfacePrimary,
+        },
+        currentLocationMarker: {
+            width: 22,
+            height: 22,
+            borderRadius: 999,
+            backgroundColor: 'rgba(46, 117, 255, 0.22)',
+            borderWidth: 1,
+            borderColor: 'rgba(46, 117, 255, 0.36)',
+            shadowColor: theme.colors.navigationActive,
+            shadowOffset: {width: 0, height: 0},
+            shadowOpacity: 0.22,
+            shadowRadius: 6,
+            elevation: 4,
         },
         unavailableState: {
             flex: 1,

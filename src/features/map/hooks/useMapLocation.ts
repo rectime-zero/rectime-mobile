@@ -1,5 +1,9 @@
 import React from 'react';
-import {requestMapLocationPermission, watchMapLocation} from '../services/mapLocationService';
+import {
+    getCurrentMapLocation,
+    requestMapLocationPermission,
+    watchMapLocation,
+} from '../services/mapLocationService';
 import {type MapLocation} from '../types';
 
 export type UseMapLocationResult = {
@@ -7,86 +11,77 @@ export type UseMapLocationResult = {
     longitude: number | null;
     hasPermission: boolean;
     isLoading: boolean;
+    requestCurrentLocation: () => Promise<void>;
 };
 
-function toResult(location: MapLocation | null, hasPermission: boolean, isLoading: boolean): UseMapLocationResult {
+function toResult(
+    location: MapLocation | null,
+    hasPermission: boolean,
+    isLoading: boolean,
+    requestCurrentLocation: () => Promise<void>,
+): UseMapLocationResult {
     return {
         latitude: location?.latitude ?? null,
         longitude: location?.longitude ?? null,
         hasPermission,
         isLoading,
+        requestCurrentLocation,
     };
 }
 
 export function useMapLocation(): UseMapLocationResult {
     const [location, setLocation] = React.useState<MapLocation | null>(null);
     const [hasPermission, setHasPermission] = React.useState(true);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const stopWatchingRef = React.useRef<(() => void) | null>(null);
 
-    React.useEffect(() => {
-        let isMounted = true;
-        let stopWatching: () => void = () => undefined;
-
-        async function startWatchingLocation() {
-            try {
-                const permissionGranted = await requestMapLocationPermission();
-
-                if (!isMounted) {
-                    return;
-                }
-
-                if (!permissionGranted) {
-                    setHasPermission(false);
-                    setIsLoading(false);
-                    return;
-                }
-
-                setHasPermission(true);
-
-                stopWatching = watchMapLocation(
-                    nextLocation => {
-                        if (!isMounted) {
-                            return;
-                        }
-
-                        setLocation(nextLocation);
-                        setIsLoading(false);
-                    },
-                    error => {
-                        if (!isMounted) {
-                            return;
-                        }
-
-                        console.error('Failed to watch current location.', error);
-                        setIsLoading(false);
-                    },
-                );
-            } catch (error) {
-                if (!isMounted) {
-                    return;
-                }
-
-                console.error('Failed to initialize current location flow.', error);
-                setHasPermission(false);
-                setIsLoading(false);
-            }
+    const startWatchingLocation = React.useCallback(() => {
+        if (stopWatchingRef.current) {
+            return;
         }
 
-        startWatchingLocation().catch(error => {
-            if (!isMounted) {
+        stopWatchingRef.current = watchMapLocation(
+            nextLocation => {
+                setLocation(nextLocation);
+                setIsLoading(false);
+            },
+            error => {
+                console.error('Failed to watch current location.', error);
+                setIsLoading(false);
+            },
+        );
+    }, []);
+
+    const requestCurrentLocation = React.useCallback(async () => {
+        setIsLoading(true);
+
+        try {
+            const permissionGranted = await requestMapLocationPermission();
+
+            if (!permissionGranted) {
+                setHasPermission(false);
                 return;
             }
 
-            console.error('Failed to start watching location.', error);
-            setHasPermission(false);
-            setIsLoading(false);
-        });
+            setHasPermission(true);
 
+            const nextLocation = await getCurrentMapLocation();
+            setLocation(nextLocation);
+            startWatchingLocation();
+        } catch (error) {
+            console.error('Failed to fetch current location.', error);
+            setHasPermission(false);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [startWatchingLocation]);
+
+    React.useEffect(() => {
         return () => {
-            isMounted = false;
-            stopWatching();
+            stopWatchingRef.current?.();
+            stopWatchingRef.current = null;
         };
     }, []);
 
-    return toResult(location, hasPermission, isLoading);
+    return toResult(location, hasPermission, isLoading, requestCurrentLocation);
 }

@@ -55,6 +55,32 @@ export async function requestMapLocationPermission(): Promise<boolean> {
     return permissionResult === PermissionsAndroid.RESULTS.GRANTED;
 }
 
+export function getCurrentMapLocation(): Promise<MapLocation> {
+    const geolocation = getOptionalGeolocationRuntime();
+
+    if (!geolocation) {
+        return Promise.reject(new Error('Geolocation runtime is unavailable.'));
+    }
+
+    return new Promise((resolve, reject) => {
+        geolocation.getCurrentPosition(
+            position => {
+                resolve(toMapLocation(position));
+            },
+            error => {
+                reject(error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 5000,
+                showLocationDialog: true,
+                forceRequestLocation: true,
+            },
+        );
+    });
+}
+
 export function watchMapLocation(
     onLocation: (location: MapLocation) => void,
     onError: (error: unknown) => void,

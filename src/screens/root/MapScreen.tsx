@@ -11,7 +11,7 @@ import {useTheme} from '../../theme';
 function MapScreen() {
     const {theme} = useTheme();
     const insets = useSafeAreaInsets();
-    const {latitude, longitude, hasPermission, isLoading} = useMapLocation();
+    const {latitude, longitude, hasPermission, isLoading, requestCurrentLocation} = useMapLocation();
     const styles = React.useMemo(() => createStyles(theme, insets.top), [theme, insets.top]);
     const userLocation = latitude !== null && longitude !== null ? {latitude, longitude} : null;
 
@@ -19,6 +19,7 @@ function MapScreen() {
         <RootScreenLayout
             contentInsets={{bottom: false, gap: false, horizontal: false}}
             headerMode="overlay"
+            headerTitleVisible={false}
             includeBottomNavigationInset={false}
             scrollMode="fixed">
             <View style={styles.mapCard}>
@@ -27,16 +28,14 @@ function MapScreen() {
                         facilities={facilities}
                         initialCenter={initialMapCenter}
                         initialZoomLevel={initialMapZoomLevel}
+                        isLocatingUser={isLoading}
+                        onLocateUser={requestCurrentLocation}
                         unavailableBody={mapCopy.unavailableBody}
                         unavailableTitle={mapCopy.unavailableTitle}
                         userLocation={userLocation}
                     />
 
                     <View style={styles.topStatusRow}>
-                        <View style={styles.titleBadge}>
-                            <Text style={styles.titleBadgeText}>{mapCopy.title}</Text>
-                        </View>
-
                         {isLoading ? (
                             <View style={styles.statusBadge}>
                                 <ActivityIndicator color={theme.colors.navigationActive} size="small" />
@@ -90,17 +89,6 @@ function createStyles(theme: ReturnType<typeof useTheme>['theme'], topInset: num
             right: 14,
             gap: 8,
             alignItems: 'flex-start',
-        },
-        titleBadge: {
-            borderRadius: 999,
-            paddingHorizontal: 14,
-            paddingVertical: 9,
-            backgroundColor: theme.colors.surfaceInverse,
-        },
-        titleBadgeText: {
-            color: theme.colors.textInverse,
-            fontSize: 13,
-            fontWeight: '800',
         },
         statusBadge: {
             flexDirection: 'row',
